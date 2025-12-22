@@ -9,10 +9,10 @@ services:
       - BETTER_AUTH_SECRET=$SERVICE_BASE64_64_AUTH
       - NEXT_PUBLIC_APP_URL=$SERVICE_URL_APP
 
-      # Database - Coolify sostituisce le variabili
-      - DB_HOST=postgresql
-      - DB_PORT=5432
-      - DB_NAME=${POSTGRES_DB:-auth_app}
+      # Database - usa ${VAR} per passare come ARG al build
+      - DB_HOST=${DB_HOST:-postgresql}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_NAME=${DB_NAME:-auth_app}
       - DB_USER=$SERVICE_USER_POSTGRESQL
       - DB_PASSWORD=$SERVICE_PASSWORD_POSTGRESQL
 
