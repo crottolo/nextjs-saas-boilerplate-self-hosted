@@ -12,8 +12,22 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+interface SessionWithUser {
+  id: string
+  token: string
+  userId: string
+  userAgent: string | null
+  ipAddress: string | null
+  createdAt: Date
+  expiresAt: Date
+  user?: {
+    email: string
+    name: string
+  }
+}
+
 export default function AdminSessionsPage() {
-  const [sessions, setSessions] = useState<any[]>([])
+  const [sessions, setSessions] = useState<SessionWithUser[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -22,25 +36,37 @@ export default function AdminSessionsPage() {
 
   async function loadSessions() {
     setLoading(true)
-    const { data } = await authClient.admin.listSessions({
-      query: { limit: 50 },
-    })
-    if (data) {
-      setSessions(data.sessions || [])
+    try {
+      // Fetch sessions from API endpoint
+      const res = await fetch("/api/admin/sessions")
+      if (res.ok) {
+        const data = await res.json()
+        setSessions(data.sessions || [])
+      }
+    } catch (error) {
+      console.error("Failed to load sessions:", error)
     }
     setLoading(false)
   }
 
-  async function handleRevokeSession(token: string) {
+  async function handleRevokeSession(sessionToken: string) {
     if (!confirm("Are you sure you want to revoke this session?")) return
-    await authClient.admin.revokeSession({ sessionToken: token })
-    loadSessions()
+    try {
+      await authClient.admin.revokeUserSession({ sessionToken })
+      loadSessions()
+    } catch (error) {
+      console.error("Failed to revoke session:", error)
+    }
   }
 
   async function handleRevokeUserSessions(userId: string) {
     if (!confirm("Are you sure you want to revoke all sessions for this user?")) return
-    await authClient.admin.revokeUserSessions({ userId })
-    loadSessions()
+    try {
+      await authClient.admin.revokeUserSessions({ userId })
+      loadSessions()
+    } catch (error) {
+      console.error("Failed to revoke user sessions:", error)
+    }
   }
 
   return (
@@ -78,12 +104,12 @@ export default function AdminSessionsPage() {
                       <p className="font-medium">
                         {session.user?.email || session.userId}
                       </p>
-                      {session.isCurrent && (
-                        <Badge variant="secondary">Current</Badge>
-                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {session.userAgent || "Unknown device"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      IP: {session.ipAddress || "Unknown"}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Created: {new Date(session.createdAt).toLocaleString()}
@@ -104,7 +130,6 @@ export default function AdminSessionsPage() {
                       variant="destructive"
                       size="sm"
                       onClick={() => handleRevokeSession(session.token)}
-                      disabled={session.isCurrent}
                     >
                       Revoke
                     </Button>

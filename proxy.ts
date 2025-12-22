@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server"
 const publicPaths = ["/", "/login", "/register", "/reset-password", "/verify", "/2fa"]
 const authPaths = ["/login", "/register", "/reset-password"]
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Skip API routes and static files

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
 
@@ -32,7 +32,7 @@ export default function ResetPasswordPage() {
     const formData = new FormData(e.currentTarget)
     const email = formData.get("email") as string
 
-    const { error } = await authClient.forgetPassword({
+    const { error } = await authClient.requestPasswordReset({
       email,
       redirectTo: "/reset-password",
     })
@@ -193,5 +193,13 @@ export default function ResetPasswordPage() {
         </Link>
       </CardFooter>
     </Card>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<Card><CardContent className="p-6">Loading...</CardContent></Card>}>
+      <ResetPasswordContent />
+    </Suspense>
   )
 }

@@ -82,8 +82,8 @@ export default function SecurityPage() {
     setLoading(false)
   }
 
-  async function handleRevokeSession(sessionId: string) {
-    await authClient.revokeSession({ id: sessionId })
+  async function handleRevokeSession(sessionToken: string) {
+    await authClient.revokeSession({ token: sessionToken })
     loadSessions()
   }
 
@@ -213,11 +213,11 @@ export default function SecurityPage() {
                     Created: {new Date(s.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                {s.id !== session?.session.id && (
+                {s.token !== session?.session.token && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleRevokeSession(s.id)}
+                    onClick={() => handleRevokeSession(s.token)}
                   >
                     Revoke
                   </Button>
