@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # NON usare ports: - Coolify gestisce il proxy automaticamente
+    # Per dev locale usa: docker compose up && open http://localhost:3000
+    environment:
+      # Obbligatorie - bordo rosso in Coolify se vuote
+      - DATABASE_URL=${DATABASE_URL:?postgresql://postgres:postgres@db:5432/auth_app}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?}
+
+      # Editabili con default
+      - NODE_ENV=${NODE_ENV:-production}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+
+      # Editabili senza default
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      # Per Coolify: usa magic variables per auto-generare credenziali sicure
+      # Per dev locale: fallback a valori fissi
+      - POSTGRES_USER=${SERVICE_USER_POSTGRES:-postgres}
+      - POSTGRES_PASSWORD=${SERVICE_PASSWORD_POSTGRES:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-auth_app}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      # Solo per accesso locale (Drizzle Studio, psql)
+      # Coolify ignora questa porta per il routing esterno
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
