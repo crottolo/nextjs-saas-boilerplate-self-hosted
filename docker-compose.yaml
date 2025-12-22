@@ -6,9 +6,9 @@ services:
     # NON usare ports: - Coolify gestisce il proxy automaticamente
     # Per dev locale usa: docker compose up && open http://localhost:3000
     environment:
-      # Obbligatorie - bordo rosso in Coolify se vuote
-      - DATABASE_URL=${DATABASE_URL:?postgresql://postgres:postgres@db:5432/auth_app}
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?}
+      # Auto-generati da Coolify con magic variables
+      - DATABASE_URL=${DATABASE_URL:-postgresql://${SERVICE_USER_POSTGRES:-postgres}:${SERVICE_PASSWORD_POSTGRES:-postgres}@db:5432/${POSTGRES_DB:-auth_app}}
+      - BETTER_AUTH_SECRET=${SERVICE_BASE64_AUTH_SECRET}
 
       # Editabili con default
       - NODE_ENV=${NODE_ENV:-production}
