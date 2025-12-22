@@ -32,7 +32,7 @@ export default function LoginPage() {
     const email = formData.get("email") as string
     const password = formData.get("password") as string
 
-    const { error } = await authClient.signIn.email({
+    const { error, data } = await authClient.signIn.email({
       email,
       password,
       callbackURL: "/dashboard",
@@ -41,6 +41,9 @@ export default function LoginPage() {
     if (error) {
       setError(error.message || "Login failed")
       setLoading(false)
+    } else if (data) {
+      // Redirect manually if auto-redirect doesn't work
+      router.push("/dashboard")
     }
   }
 
