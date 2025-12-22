@@ -3,45 +3,43 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # NON usare ports: - Coolify gestisce il proxy automaticamente
+    # NO ports: - Coolify gestisce il proxy
     environment:
-      # Database connection (usa credenziali auto-generate da Coolify)
-      - DATABASE_URL=${DATABASE_URL:-postgresql://${SERVICE_USER_POSTGRES:-postgres}:${SERVICE_PASSWORD_POSTGRES:-postgres}@db:5432/${POSTGRES_DB:-auth_app}}
+      # Auto-generati da Coolify magic variables
+      - BETTER_AUTH_SECRET=$SERVICE_BASE64_64_AUTH
+      - NEXT_PUBLIC_APP_URL=$SERVICE_URL_APP
+      - DATABASE_URL=postgresql://$SERVICE_USER_POSTGRESQL:$SERVICE_PASSWORD_POSTGRESQL@postgresql:5432/${POSTGRES_DB:-auth_app}
 
-      # OBBLIGATORIO: Imposta BETTER_AUTH_SECRET nell'UI di Coolify
-      # Genera con: openssl rand -base64 32
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?}
-
-      # Editabili con default
+      # Editabili manualmente nell'UI Coolify
       - NODE_ENV=${NODE_ENV:-production}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-
-      # Editabili senza default
       - RESEND_API_KEY=${RESEND_API_KEY}
       - EMAIL_FROM=${EMAIL_FROM}
     depends_on:
-      db:
+      postgresql:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
     restart: unless-stopped
 
-  db:
+  postgresql:
     image: postgres:16-alpine
     environment:
-      # Per Coolify: usa magic variables per auto-generare credenziali sicure
-      # Per dev locale: fallback a valori fissi
-      - POSTGRES_USER=${SERVICE_USER_POSTGRES:-postgres}
-      - POSTGRES_PASSWORD=${SERVICE_PASSWORD_POSTGRES:-postgres}
+      # Auto-generati da Coolify magic variables
+      - POSTGRES_USER=$SERVICE_USER_POSTGRESQL
+      - POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRESQL
       - POSTGRES_DB=${POSTGRES_DB:-auth_app}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    # NON esporre ports su Coolify - causa conflitti
-    # Per dev locale aggiungi: ports: ["5433:5432"]
+      - postgres-data:/var/lib/postgresql/data
+    # NO ports: - comunicazione interna via nome servizio
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth_app"]
       interval: 5s
-      timeout: 5s
-      retries: 5
+      timeout: 20s
+      retries: 10
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres-data:
