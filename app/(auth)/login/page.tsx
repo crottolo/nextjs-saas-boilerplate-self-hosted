@@ -38,10 +38,14 @@ export default function LoginPage() {
       callbackURL: "/dashboard",
     })
 
+    console.log("[Login] signIn response:", { error: error?.message, hasData: !!data, data })
+
     if (error) {
+      console.log("[Login] Error:", error)
       setError(error.message || "Login failed")
       setLoading(false)
     } else if (data) {
+      console.log("[Login] Success, redirecting to dashboard...")
       // Redirect manually if auto-redirect doesn't work
       router.push("/dashboard")
     }

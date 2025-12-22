@@ -4,8 +4,17 @@ import { admin, organization, twoFactor, magicLink } from "better-auth/plugins"
 import { db } from "./db"
 import { sendEmail } from "./email"
 
+// DEBUG: Log configurazione auth
+console.log("[Auth] Initializing with baseURL:", process.env.NEXT_PUBLIC_APP_URL)
+console.log("[Auth] NODE_ENV:", process.env.NODE_ENV)
+
 export const auth = betterAuth({
   baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+
+  // Cookie sicuri per HTTPS production
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === "production",
+  },
 
   database: drizzleAdapter(db, {
     provider: "pg",

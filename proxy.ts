@@ -16,8 +16,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Get session from Better Auth
-  const sessionCookie = request.cookies.get("better-auth.session_token")
+  // DEBUG: Log cookies disponibili
+  const allCookies = request.cookies.getAll()
+  console.log("[Proxy] pathname:", pathname)
+  console.log("[Proxy] cookies:", allCookies.map(c => c.name))
+
+  // Get session from Better Auth - check both possible cookie names
+  // In HTTPS with useSecureCookies, the cookie name has __Secure- prefix
+  const sessionCookie =
+    request.cookies.get("__Secure-better-auth.session_token") ||
+    request.cookies.get("better-auth.session_token")
+
+  console.log("[Proxy] sessionCookie found:", sessionCookie?.name, "hasValue:", !!sessionCookie?.value)
+
   const hasSession = !!sessionCookie?.value
 
   // Check if path is public
