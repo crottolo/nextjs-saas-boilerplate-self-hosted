@@ -5,6 +5,8 @@ import { db } from "./db"
 import { sendEmail } from "./email"
 
 export const auth = betterAuth({
+  baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
