@@ -8,7 +8,13 @@ services:
       # Auto-generati da Coolify magic variables
       - BETTER_AUTH_SECRET=$SERVICE_BASE64_64_AUTH
       - NEXT_PUBLIC_APP_URL=$SERVICE_URL_APP
-      - DATABASE_URL=postgresql://$SERVICE_USER_POSTGRESQL:$SERVICE_PASSWORD_POSTGRESQL@postgresql:5432/${POSTGRES_DB:-auth_app}
+
+      # Database - Coolify sostituisce le variabili
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB:-auth_app}
+      - DB_USER=$SERVICE_USER_POSTGRESQL
+      - DB_PASSWORD=$SERVICE_PASSWORD_POSTGRESQL
 
       # Editabili manualmente nell'UI Coolify
       - NODE_ENV=${NODE_ENV:-production}
