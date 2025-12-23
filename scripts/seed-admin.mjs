@@ -54,11 +54,12 @@ async function hashPassword(password) {
   const saltHex = saltBytes.toString("hex")
   // Better Auth uses @noble/hashes which takes salt as string
   // Node.js scrypt takes salt as buffer, so we pass saltHex as buffer
+  // maxmem = 128 * N * r * p (need ~32MB for these params)
   const key = await scryptAsync(
     password.normalize("NFKC"),
     saltHex, // Pass as string like @noble/hashes does
     SCRYPT_CONFIG.dkLen,
-    { N: SCRYPT_CONFIG.N, r: SCRYPT_CONFIG.r, p: SCRYPT_CONFIG.p }
+    { N: SCRYPT_CONFIG.N, r: SCRYPT_CONFIG.r, p: SCRYPT_CONFIG.p, maxmem: 128 * SCRYPT_CONFIG.N * SCRYPT_CONFIG.r * 2 }
   )
   return `${saltHex}:${key.toString("hex")}`
 }
