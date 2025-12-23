@@ -75,6 +75,7 @@ export function SignupForm({
     const formData = new FormData(e.currentTarget)
     const name = formData.get('name') as string
     const email = formData.get('email') as string
+    const phoneNumber = formData.get('phoneNumber') as string
     const password = formData.get('password') as string
     const confirmPassword = formData.get('confirm-password') as string
 
@@ -94,6 +95,7 @@ export function SignupForm({
       email,
       password,
       name,
+      phoneNumber: phoneNumber || undefined,
     })
 
     if (signUpError) {
@@ -184,6 +186,16 @@ export function SignupForm({
             placeholder="m@example.com"
             defaultValue={defaultEmail}
             required
+            disabled={loading}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="phoneNumber">Phone Number (optional)</Label>
+          <Input
+            id="phoneNumber"
+            name="phoneNumber"
+            type="tel"
+            placeholder="+39 333 1234567"
             disabled={loading}
           />
         </div>

@@ -23,6 +23,16 @@ export const auth = betterAuth({
     provider: 'pg',
   }),
 
+  user: {
+    additionalFields: {
+      phoneNumber: {
+        type: 'string',
+        required: false,
+        fieldName: 'phoneNumber',
+      },
+    },
+  },
+
   // OAuth Providers
   socialProviders: {
     github: {

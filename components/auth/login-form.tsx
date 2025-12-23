@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { authClient } from '@/lib/auth-client'
 
 // GitHub SVG icon
@@ -66,6 +67,7 @@ export function LoginForm({
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [magicLinkSent, setMagicLinkSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -100,12 +102,29 @@ export function LoginForm({
     })
   }
 
+  async function handleMagicLink(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('magic-email') as string
+
+    const { error } = await authClient.signIn.magicLink({
+      email,
+      callbackURL: callbackUrl,
+    })
+
+    if (error) {
+      setError(error.message || 'Failed to send magic link')
+    } else {
+      setMagicLinkSent(true)
+    }
+    setLoading(false)
+  }
+
   return (
-    <form
-      className={cn('flex flex-col gap-6', className)}
-      onSubmit={handleSubmit}
-      {...props}
-    >
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -119,41 +138,93 @@ export function LoginForm({
         </div>
       )}
 
-      <div className="grid gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="m@example.com"
-            defaultValue={defaultEmail}
-            required
-            disabled={loading}
-          />
-        </div>
-        <div className="grid gap-2">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            <a
-              href="/reset-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </a>
-          </div>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            required
-            disabled={loading}
-          />
-        </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Signing in...' : 'Login'}
-        </Button>
-      </div>
+      <Tabs defaultValue="password" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="password">Password</TabsTrigger>
+          <TabsTrigger value="magic">Magic Link</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="password">
+          <form onSubmit={handleSubmit} className="grid gap-4 mt-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="m@example.com"
+                defaultValue={defaultEmail}
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <a
+                  href="/reset-password"
+                  className="ml-auto text-sm underline-offset-4 hover:underline"
+                >
+                  Forgot your password?
+                </a>
+              </div>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                disabled={loading}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Signing in...' : 'Login'}
+            </Button>
+          </form>
+        </TabsContent>
+
+        <TabsContent value="magic">
+          {magicLinkSent ? (
+            <div className="text-center py-8">
+              <div className="rounded-full bg-green-100 dark:bg-green-900 p-3 w-fit mx-auto mb-4">
+                <svg
+                  className="h-6 w-6 text-green-600 dark:text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Check your email for the magic link!
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleMagicLink} className="grid gap-4 mt-4">
+              <div className="grid gap-2">
+                <Label htmlFor="magic-email">Email</Label>
+                <Input
+                  id="magic-email"
+                  name="magic-email"
+                  type="email"
+                  placeholder="m@example.com"
+                  defaultValue={defaultEmail}
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Sending...' : 'Send magic link'}
+              </Button>
+            </form>
+          )}
+        </TabsContent>
+      </Tabs>
 
       <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
         <span className="relative z-10 bg-background px-2 text-muted-foreground">
@@ -193,6 +264,6 @@ export function LoginForm({
           Sign up
         </a>
       </div>
-    </form>
+    </div>
   )
 }
