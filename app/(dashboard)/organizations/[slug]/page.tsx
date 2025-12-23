@@ -17,6 +17,17 @@ import { MembersTable } from '@/components/organization/members-table'
 import { InviteDialog } from '@/components/organization/invite-dialog'
 import { RoleBadge } from '@/components/organization/role-badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 
 interface FullOrganization {
   id: string
@@ -51,6 +62,10 @@ export default function OrganizationDetailPage() {
   const [org, setOrg] = useState<FullOrganization | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [cancelInvitationId, setCancelInvitationId] = useState<string | null>(
+    null
+  )
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const slug = params.slug as string
 
@@ -86,13 +101,17 @@ export default function OrganizationDetailPage() {
   const pendingInvitations =
     org?.invitations.filter((i) => i.status === 'pending') || []
 
-  async function handleCancelInvitation(invitationId: string) {
-    if (!confirm('Cancel this invitation?')) return
+  async function handleCancelInvitation() {
+    if (!cancelInvitationId) return
     try {
-      await authClient.organization.cancelInvitation({ invitationId })
+      await authClient.organization.cancelInvitation({
+        invitationId: cancelInvitationId,
+      })
       setRefreshKey((k) => k + 1)
+      setCancelInvitationId(null)
     } catch (error) {
       console.error('Failed to cancel invitation:', error)
+      toast.error('Failed to cancel invitation')
     }
   }
 
@@ -105,26 +124,21 @@ export default function OrganizationDetailPage() {
         organizationId: org.id,
         resend: true,
       })
-      alert('Invitation resent successfully!')
+      toast.success('Invitation resent successfully!')
     } catch (error) {
       console.error('Failed to resend invitation:', error)
-      alert('Failed to resend invitation')
+      toast.error('Failed to resend invitation')
     }
   }
 
   async function handleDeleteOrganization() {
     if (!org) return
-    if (
-      !confirm(
-        `Are you sure you want to delete "${org.name}"? This action cannot be undone.`
-      )
-    )
-      return
     try {
       await authClient.organization.delete({ organizationId: org.id })
       router.push('/organizations')
     } catch (error) {
       console.error('Failed to delete organization:', error)
+      toast.error('Failed to delete organization')
     }
   }
 
@@ -268,7 +282,7 @@ export default function OrganizationDetailPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleCancelInvitation(inv.id)}
+                            onClick={() => setCancelInvitationId(inv.id)}
                           >
                             Cancel
                           </Button>
@@ -301,7 +315,7 @@ export default function OrganizationDetailPage() {
                   </div>
                   <Button
                     variant="destructive"
-                    onClick={handleDeleteOrganization}
+                    onClick={() => setDeleteDialogOpen(true)}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
@@ -312,6 +326,50 @@ export default function OrganizationDetailPage() {
           </TabsContent>
         )}
       </Tabs>
+
+      {/* Cancel Invitation Dialog */}
+      <AlertDialog
+        open={!!cancelInvitationId}
+        onOpenChange={(open) => !open && setCancelInvitationId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Invitation</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to cancel this invitation? The invited user
+              will no longer be able to join.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Invitation</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancelInvitation}>
+              Cancel Invitation
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Organization Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Organization</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{org.name}&quot;? This
+              action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteOrganization}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

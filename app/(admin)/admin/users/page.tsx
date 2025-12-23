@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 import { MoreHorizontal, Plus, Search, Trash2, Ban, Check } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface User {
   id: string
@@ -112,8 +113,9 @@ export default function AdminUsersPage() {
     })
 
     if (error) {
-      alert(error.message)
+      toast.error(error.message)
     } else {
+      toast.success('User created successfully!')
       setDialogOpen(false)
       setRefreshKey((k) => k + 1)
     }

@@ -14,12 +14,21 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { toast } from 'sonner'
 
 interface Session {
   id: string
   token: string
-  userAgent?: string
-  createdAt: string
+  userAgent?: string | null
+  createdAt: Date
 }
 
 export default function SecurityPage() {
@@ -28,6 +37,8 @@ export default function SecurityPage() {
   const [message, setMessage] = useState('')
   const [sessions, setSessions] = useState<Session[]>([])
   const [refreshKey, setRefreshKey] = useState(0)
+  const [disable2FAOpen, setDisable2FAOpen] = useState(false)
+  const [disable2FAPassword, setDisable2FAPassword] = useState('')
 
   useEffect(() => {
     let ignore = false
@@ -81,13 +92,18 @@ export default function SecurityPage() {
   }
 
   async function handleDisable2FA() {
+    if (!disable2FAPassword) return
     setLoading(true)
     const { error } = await authClient.twoFactor.disable({
-      password: prompt('Enter your password to disable 2FA') || '',
+      password: disable2FAPassword,
     })
 
     if (error) {
-      alert(error.message)
+      toast.error(error.message)
+    } else {
+      toast.success('Two-factor authentication disabled')
+      setDisable2FAOpen(false)
+      setDisable2FAPassword('')
     }
     setLoading(false)
   }
@@ -131,7 +147,7 @@ export default function SecurityPage() {
             {session?.user.twoFactorEnabled ? (
               <Button
                 variant="destructive"
-                onClick={handleDisable2FA}
+                onClick={() => setDisable2FAOpen(true)}
                 disabled={loading}
               >
                 Disable 2FA
@@ -250,6 +266,48 @@ export default function SecurityPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Disable 2FA Dialog */}
+      <Dialog
+        open={disable2FAOpen}
+        onOpenChange={(open) => {
+          setDisable2FAOpen(open)
+          if (!open) setDisable2FAPassword('')
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Disable Two-Factor Authentication</DialogTitle>
+            <DialogDescription>
+              Enter your password to disable two-factor authentication.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="disable2fa-password">Password</Label>
+              <Input
+                id="disable2fa-password"
+                type="password"
+                value={disable2FAPassword}
+                onChange={(e) => setDisable2FAPassword(e.target.value)}
+                placeholder="Enter your password"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDisable2FAOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDisable2FA}
+              disabled={loading || !disable2FAPassword}
+            >
+              {loading ? 'Disabling...' : 'Disable 2FA'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

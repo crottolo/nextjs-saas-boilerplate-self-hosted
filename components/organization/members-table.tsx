@@ -28,6 +28,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 
 interface Member {
   id: string
@@ -57,6 +68,9 @@ export function MembersTable({
   onUpdate,
 }: MembersTableProps) {
   const [updating, setUpdating] = useState<string | null>(null)
+  const [removeMemberEmail, setRemoveMemberEmail] = useState<string | null>(
+    null
+  )
 
   const canManageMembers =
     currentUserRole === 'owner' || currentUserRole === 'admin'
@@ -78,17 +92,18 @@ export function MembersTable({
     }
   }
 
-  async function handleRemoveMember(memberIdOrEmail: string) {
-    if (!confirm('Are you sure you want to remove this member?')) return
-
+  async function handleRemoveMember() {
+    if (!removeMemberEmail) return
     try {
       await authClient.organization.removeMember({
-        memberIdOrEmail,
+        memberIdOrEmail: removeMemberEmail,
         organizationId,
       })
       onUpdate()
+      setRemoveMemberEmail(null)
     } catch (error) {
       console.error('Failed to remove member:', error)
+      toast.error('Failed to remove member')
     }
   }
 
@@ -157,7 +172,9 @@ export function MembersTable({
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={() => handleRemoveMember(member.user.email)}
+                          onClick={() =>
+                            setRemoveMemberEmail(member.user.email)
+                          }
                           className="text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
@@ -172,6 +189,31 @@ export function MembersTable({
           )
         })}
       </TableBody>
+
+      {/* Remove Member Dialog */}
+      <AlertDialog
+        open={!!removeMemberEmail}
+        onOpenChange={(open) => !open && setRemoveMemberEmail(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Member</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove {removeMemberEmail} from this
+              organization?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRemoveMember}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Table>
   )
 }

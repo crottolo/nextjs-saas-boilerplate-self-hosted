@@ -10,6 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { toast } from 'sonner'
 
 interface SessionWithUser {
   id: string
@@ -29,6 +40,12 @@ export default function AdminSessionsPage() {
   const [sessions, setSessions] = useState<SessionWithUser[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [revokeSessionToken, setRevokeSessionToken] = useState<string | null>(
+    null
+  )
+  const [revokeUserSessionsId, setRevokeUserSessionsId] = useState<
+    string | null
+  >(null)
 
   useEffect(() => {
     let ignore = false
@@ -51,24 +68,31 @@ export default function AdminSessionsPage() {
     }
   }, [refreshKey])
 
-  async function handleRevokeSession(sessionToken: string) {
-    if (!confirm('Are you sure you want to revoke this session?')) return
+  async function handleRevokeSession() {
+    if (!revokeSessionToken) return
     try {
-      await authClient.admin.revokeUserSession({ sessionToken })
+      await authClient.admin.revokeUserSession({
+        sessionToken: revokeSessionToken,
+      })
       setRefreshKey((k) => k + 1)
+      setRevokeSessionToken(null)
     } catch (error) {
       console.error('Failed to revoke session:', error)
+      toast.error('Failed to revoke session')
     }
   }
 
-  async function handleRevokeUserSessions(userId: string) {
-    if (!confirm('Are you sure you want to revoke all sessions for this user?'))
-      return
+  async function handleRevokeUserSessions() {
+    if (!revokeUserSessionsId) return
     try {
-      await authClient.admin.revokeUserSessions({ userId })
+      await authClient.admin.revokeUserSessions({
+        userId: revokeUserSessionsId,
+      })
       setRefreshKey((k) => k + 1)
+      setRevokeUserSessionsId(null)
     } catch (error) {
       console.error('Failed to revoke user sessions:', error)
+      toast.error('Failed to revoke user sessions')
     }
   }
 
@@ -121,14 +145,14 @@ export default function AdminSessionsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleRevokeUserSessions(session.userId)}
+                      onClick={() => setRevokeUserSessionsId(session.userId)}
                     >
                       Revoke All
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => handleRevokeSession(session.token)}
+                      onClick={() => setRevokeSessionToken(session.token)}
                     >
                       Revoke
                     </Button>
@@ -139,6 +163,56 @@ export default function AdminSessionsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Revoke Single Session Dialog */}
+      <AlertDialog
+        open={!!revokeSessionToken}
+        onOpenChange={(open) => !open && setRevokeSessionToken(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke Session</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to revoke this session? The user will be
+              logged out.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRevokeSession}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Revoke
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Revoke All User Sessions Dialog */}
+      <AlertDialog
+        open={!!revokeUserSessionsId}
+        onOpenChange={(open) => !open && setRevokeUserSessionsId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke All Sessions</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to revoke all sessions for this user? They
+              will be logged out from all devices.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRevokeUserSessions}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Revoke All
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
