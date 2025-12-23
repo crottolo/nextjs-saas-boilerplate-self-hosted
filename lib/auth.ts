@@ -87,12 +87,49 @@ export const auth = betterAuth({
       issuer: 'AuthApp',
     }),
     organization({
-      teams: {
-        enabled: true,
+      async sendInvitationEmail(data) {
+        const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${data.id}`
+        await sendEmail({
+          to: data.email,
+          subject: `You've been invited to join ${data.organization.name}`,
+          html: `
+            <h1>You're invited!</h1>
+            <p><strong>${data.inviter.user.name}</strong> has invited you to join <strong>${data.organization.name}</strong>.</p>
+            <p>Click the link below to accept the invitation:</p>
+            <a href="${inviteLink}" style="display:inline-block;padding:12px 24px;background:#000;color:#fff;text-decoration:none;border-radius:6px;">Accept Invitation</a>
+            <p>This invitation will expire in 48 hours.</p>
+          `,
+        })
       },
     }),
     admin(),
   ],
+
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          // Auto-create personal workspace for new users
+          const baseURL =
+            process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+          try {
+            await fetch(`${baseURL}/api/auth/organization/create`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: `${user.name || 'My'} Workspace`,
+                slug: `workspace-${user.id.slice(0, 8)}`,
+                userId: user.id,
+              }),
+            })
+            console.log('[Auth] Created personal workspace for user:', user.id)
+          } catch (error) {
+            console.error('[Auth] Failed to create personal workspace:', error)
+          }
+        },
+      },
+    },
+  },
 
   rateLimit: {
     enabled: true,

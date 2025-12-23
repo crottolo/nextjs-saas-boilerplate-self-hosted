@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  GalleryVerticalEnd,
-  Home,
-  Building2,
-  Settings,
-  Sun,
-  Moon,
-  Monitor,
-} from 'lucide-react'
+import { Home, Building2, Settings, Sun, Moon, Monitor } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 import {
@@ -29,6 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { NavMain } from './nav-main'
 import { NavUser } from './nav-user'
+import { OrgSwitcher } from '@/components/organization/org-switcher'
 
 interface AppSidebarProps {
   user: {
@@ -64,17 +57,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="/dashboard">
-                <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEnd className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">AuthApp</span>
-                  <span className="truncate text-xs">Self-hosted</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
+            <OrgSwitcher />
           </SidebarMenuItem>
           <SidebarMenuItem>
             <DropdownMenu>
