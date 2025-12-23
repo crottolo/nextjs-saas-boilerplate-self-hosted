@@ -43,3 +43,8 @@ next-env.d.ts
 # claude code
 .claude/
 .mcp.json
+
+# docker local
+docker-compose.local.yml
+.env.docker
+/pgadmin/

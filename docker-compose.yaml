@@ -32,6 +32,7 @@ services:
 
   postgresql:
     image: postgres:16-alpine
+    # NO ports: - comunicazione interna via nome servizio (Coolify gestisce il proxy)
     environment:
       # Auto-generati da Coolify magic variables
       - POSTGRES_USER=$SERVICE_USER_POSTGRESQL
@@ -41,11 +42,31 @@ services:
       - postgres-data:/var/lib/postgresql/data
     # NO ports: - comunicazione interna via nome servizio
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d auth_app"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-auth_app}"]
       interval: 5s
       timeout: 20s
       retries: 10
     restart: unless-stopped
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    # NO ports: - Coolify gestisce il proxy e assegna dominio
+    environment:
+      # Email editabile, password auto-generata da Coolify
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@admin.com}
+      - PGADMIN_DEFAULT_PASSWORD=$SERVICE_PASSWORD_PGADMIN
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/misc/ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
 volumes:
   postgres-data:
+  pgadmin-data:
