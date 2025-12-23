@@ -52,6 +52,8 @@ services:
     image: dpage/pgadmin4:latest
     # NO ports: - Coolify gestisce il proxy e assegna dominio
     environment:
+      # Questo dice a Coolify di generare un URL per pgAdmin sulla porta 80
+      - SERVICE_FQDN_PGADMIN_80
       # Email editabile, password auto-generata da Coolify
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@admin.com}
       - PGADMIN_DEFAULT_PASSWORD=$SERVICE_PASSWORD_PGADMIN
