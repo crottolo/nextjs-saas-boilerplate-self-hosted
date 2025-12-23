@@ -8,6 +8,7 @@ import {
   Home,
   LogOut,
   ChevronsUpDown,
+  Settings,
 } from 'lucide-react'
 
 import {
@@ -58,6 +59,11 @@ const adminNavItems = [
     title: 'Sessions',
     url: '/admin/sessions',
     icon: Activity,
+  },
+  {
+    title: 'Settings',
+    url: '/admin/settings',
+    icon: Settings,
   },
 ]
 
