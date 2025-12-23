@@ -34,7 +34,6 @@ RUN chmod +x ./scripts/start.sh
 # Copy dependencies for migrations and admin seed
 COPY --from=builder /app/node_modules/postgres ./node_modules/postgres
 COPY --from=builder /app/node_modules/drizzle-orm ./node_modules/drizzle-orm
-COPY --from=builder /app/node_modules/@noble ./node_modules/@noble
 
 USER nextjs
 

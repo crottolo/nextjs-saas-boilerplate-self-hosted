@@ -1,9 +1,11 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import { eq } from "drizzle-orm"
-import { scrypt } from "@noble/hashes/scrypt"
-import { bytesToHex, randomBytes } from "@noble/hashes/utils"
+import { scrypt, randomBytes } from "node:crypto"
+import { promisify } from "node:util"
 import { pgTable, text, boolean, timestamp } from "drizzle-orm/pg-core"
+
+const scryptAsync = promisify(scrypt)
 
 // Schema inline (to avoid import issues in standalone build)
 const user = pgTable("user", {
@@ -37,7 +39,7 @@ const account = pgTable("account", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })
 
-// Better Auth scrypt config
+// Better Auth scrypt config (must match @noble/hashes format)
 const SCRYPT_CONFIG = {
   N: 16384,
   r: 16,
@@ -46,11 +48,19 @@ const SCRYPT_CONFIG = {
 }
 
 // Hash password in Better Auth format: salt:key (hex)
+// Better Auth passes salt as hex STRING to scrypt, not as bytes
 async function hashPassword(password) {
   const saltBytes = randomBytes(16)
-  const saltHex = bytesToHex(saltBytes)
-  const key = scrypt(password.normalize("NFKC"), saltHex, SCRYPT_CONFIG)
-  return `${saltHex}:${bytesToHex(key)}`
+  const saltHex = saltBytes.toString("hex")
+  // Better Auth uses @noble/hashes which takes salt as string
+  // Node.js scrypt takes salt as buffer, so we pass saltHex as buffer
+  const key = await scryptAsync(
+    password.normalize("NFKC"),
+    saltHex, // Pass as string like @noble/hashes does
+    SCRYPT_CONFIG.dkLen,
+    { N: SCRYPT_CONFIG.N, r: SCRYPT_CONFIG.r, p: SCRYPT_CONFIG.p }
+  )
+  return `${saltHex}:${key.toString("hex")}`
 }
 
 // Configuration from environment
