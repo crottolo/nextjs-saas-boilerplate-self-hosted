@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { useSession } from '@/lib/auth-client'
 import {
   SidebarProvider,
@@ -13,9 +14,18 @@ import { Separator } from '@/components/ui/separator'
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
+
+const pathLabels: Record<string, string> = {
+  admin: 'Admin',
+  users: 'Users',
+  sessions: 'Sessions',
+  settings: 'Account',
+}
 
 export default function AdminLayout({
   children,
@@ -24,6 +34,17 @@ export default function AdminLayout({
 }) {
   const { data: session, isPending } = useSession()
   const router = useRouter()
+  const pathname = usePathname()
+
+  // Generate breadcrumb items from pathname
+  const segments = pathname.split('/').filter(Boolean)
+  const breadcrumbs = segments.map((segment, index) => {
+    const path = '/' + segments.slice(0, index + 1).join('/')
+    const label =
+      pathLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
+    const isLast = index === segments.length - 1
+    return { path, label, isLast }
+  })
 
   useEffect(() => {
     if (!isPending && !session) {
@@ -62,9 +83,20 @@ export default function AdminLayout({
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Admin Panel</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumbs.map((crumb, index) => (
+                  <span key={crumb.path} className="contents">
+                    {index > 0 && <BreadcrumbSeparator />}
+                    <BreadcrumbItem>
+                      {crumb.isLast ? (
+                        <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink asChild>
+                          <Link href={crumb.path}>{crumb.label}</Link>
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </span>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

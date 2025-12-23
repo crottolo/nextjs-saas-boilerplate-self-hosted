@@ -5,9 +5,13 @@ import {
   BadgeCheck,
   ChevronsUpDown,
   LogOut,
+  Moon,
+  Monitor,
   Settings,
   Shield,
+  Sun,
 } from 'lucide-react'
+import { useTheme } from 'next-themes'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -38,6 +42,7 @@ interface NavUserProps {
 export function NavUser({ user }: NavUserProps) {
   const router = useRouter()
   const { isMobile } = useSidebar()
+  const { setTheme } = useTheme()
 
   const initials =
     user.name
@@ -104,11 +109,26 @@ export function NavUser({ user }: NavUserProps) {
                 Security
               </DropdownMenuItem>
               {user.role === 'admin' && (
-                <DropdownMenuItem onClick={() => router.push('/admin/users')}>
+                <DropdownMenuItem onClick={() => router.push('/admin')}>
                   <BadgeCheck className="mr-2 h-4 w-4" />
                   Admin Panel
                 </DropdownMenuItem>
               )}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => setTheme('light')}>
+                <Sun className="mr-2 h-4 w-4" />
+                Light
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <Moon className="mr-2 h-4 w-4" />
+                Dark
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('system')}>
+                <Monitor className="mr-2 h-4 w-4" />
+                System
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>

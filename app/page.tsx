@@ -54,10 +54,10 @@ export default function LoginPage() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="https://placehold.co/1920x1080/1a1a2e/eaeaea?text=AuthApp"
+          src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1920&q=80"
           alt="Authentication"
           fill
-          className="object-cover dark:brightness-[0.2] dark:grayscale"
+          className="object-cover"
           priority
         />
       </div>
