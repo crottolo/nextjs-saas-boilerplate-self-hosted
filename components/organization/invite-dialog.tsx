@@ -94,24 +94,15 @@ export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent className="min-w-[200px]">
-                <SelectItem value="admin" textValue="Admin">
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">Admin</span>
-                    <span className="text-xs text-muted-foreground">
-                      Can manage members and settings
-                    </span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="member" textValue="Member">
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium">Member</span>
-                    <span className="text-xs text-muted-foreground">
-                      Read-only access
-                    </span>
-                  </div>
-                </SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="member">Member</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground">
+              {role === 'admin'
+                ? 'Can manage members and settings'
+                : 'Read-only access'}
+            </p>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>

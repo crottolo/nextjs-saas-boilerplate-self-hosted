@@ -88,7 +88,7 @@ export default function AdminUsersPage() {
   const [editName, setEditName] = useState('')
   const [editEmail, setEditEmail] = useState('')
   const [editPhone, setEditPhone] = useState('')
-  const [editRole, setEditRole] = useState('')
+  const [editRole, setEditRole] = useState<'user' | 'admin' | ''>('')
 
   useEffect(() => {
     let ignore = false
@@ -173,7 +173,7 @@ export default function AdminUsersPage() {
     }
   }
 
-  async function handleSetRole(userId: string, role: string) {
+  async function handleSetRole(userId: string, role: 'user' | 'admin') {
     const { error } = await authClient.admin.setRole({ userId, role })
     if (error) {
       toast.error(error.message)
@@ -209,9 +209,9 @@ export default function AdminUsersPage() {
     // Update user data (name, email, phone)
     const { error: updateError } = await authClient.admin.updateUser({
       userId: selectedUser.id,
-      name: editName || undefined,
-      email: editEmail || undefined,
       data: {
+        name: editName || undefined,
+        email: editEmail || undefined,
         phoneNumber: editPhone || undefined,
       },
     })
@@ -222,7 +222,10 @@ export default function AdminUsersPage() {
     }
 
     // Update role separately if changed
-    if (editRole && editRole !== selectedUser.role) {
+    if (
+      (editRole === 'user' || editRole === 'admin') &&
+      editRole !== selectedUser.role
+    ) {
       const { error: roleError } = await authClient.admin.setRole({
         userId: selectedUser.id,
         role: editRole,
@@ -254,7 +257,7 @@ export default function AdminUsersPage() {
     setEditName(user.name || '')
     setEditEmail(user.email)
     setEditPhone(user.phoneNumber || '')
-    setEditRole(user.role || 'user')
+    setEditRole((user.role as 'user' | 'admin') || 'user')
     setEditDialogOpen(true)
   }
 
@@ -646,7 +649,10 @@ export default function AdminUsersPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="editRole">Role</Label>
-              <Select value={editRole} onValueChange={setEditRole}>
+              <Select
+                value={editRole}
+                onValueChange={(v) => setEditRole(v as 'user' | 'admin')}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>

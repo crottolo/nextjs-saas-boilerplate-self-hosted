@@ -53,7 +53,7 @@ function GoogleIcon() {
   )
 }
 
-interface LoginFormProps extends React.ComponentProps<'form'> {
+interface LoginFormProps extends React.ComponentProps<'div'> {
   defaultEmail?: string
   callbackUrl?: string
 }

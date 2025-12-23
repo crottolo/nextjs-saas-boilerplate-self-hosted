@@ -37,10 +37,12 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false)
   const [profileMessage, setProfileMessage] = useState('')
   const [passwordMessage, setPasswordMessage] = useState('')
+  const [newPasswordMessage, setNewPasswordMessage] = useState('')
   const [sessions, setSessions] = useState<Session[]>([])
   const [refreshKey, setRefreshKey] = useState(0)
   const [disable2FAOpen, setDisable2FAOpen] = useState(false)
   const [disable2FAPassword, setDisable2FAPassword] = useState('')
+  const [hasCredential, setHasCredential] = useState<boolean | null>(null)
 
   useEffect(() => {
     let ignore = false
@@ -55,6 +57,25 @@ export default function ProfilePage() {
       ignore = true
     }
   }, [refreshKey])
+
+  useEffect(() => {
+    let ignore = false
+    async function checkCredential() {
+      try {
+        const response = await fetch('/api/auth/has-credential')
+        const data = await response.json()
+        if (!ignore) {
+          setHasCredential(data.hasCredential)
+        }
+      } catch {
+        if (!ignore) setHasCredential(false)
+      }
+    }
+    checkCredential()
+    return () => {
+      ignore = true
+    }
+  }, [])
 
   async function handleUpdateProfile(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -111,6 +132,51 @@ export default function ProfilePage() {
     } else {
       setPasswordMessage('Password changed successfully!')
       ;(e.target as HTMLFormElement).reset()
+    }
+    setLoading(false)
+  }
+
+  async function handleSetPassword(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setLoading(true)
+    setNewPasswordMessage('')
+
+    const formData = new FormData(e.currentTarget)
+    const password = formData.get('setPassword') as string
+    const confirmPassword = formData.get('setConfirmPassword') as string
+
+    if (password !== confirmPassword) {
+      setNewPasswordMessage('Error: Passwords do not match')
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 8) {
+      setNewPasswordMessage('Error: Password must be at least 8 characters')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/auth/set-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPassword: password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setNewPasswordMessage(`Error: ${data.error}`)
+      } else {
+        setNewPasswordMessage(
+          'Password set successfully! You can now sign in with email and password.'
+        )
+        setHasCredential(true)
+        ;(e.target as HTMLFormElement).reset()
+      }
+    } catch {
+      setNewPasswordMessage('Error: Failed to set password')
     }
     setLoading(false)
   }
@@ -257,59 +323,107 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>Update your password</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form
-                onSubmit={handleChangePassword}
-                className="space-y-4 max-w-md"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="currentPassword">Current Password</Label>
-                  <Input
-                    id="currentPassword"
-                    name="currentPassword"
-                    type="password"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <Input
-                    id="newPassword"
-                    name="newPassword"
-                    type="password"
-                    placeholder="At least 8 characters"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    required
-                  />
-                </div>
+          {hasCredential === false && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Set Password</CardTitle>
+                <CardDescription>
+                  Add a password to your account to sign in with email and
+                  password
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSetPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="setPassword">Password</Label>
+                    <Input
+                      id="setPassword"
+                      name="setPassword"
+                      type="password"
+                      placeholder="At least 8 characters"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="setConfirmPassword">Confirm Password</Label>
+                    <Input
+                      id="setConfirmPassword"
+                      name="setConfirmPassword"
+                      type="password"
+                      required
+                    />
+                  </div>
 
-                {passwordMessage && (
-                  <p
-                    className={`text-sm ${passwordMessage.startsWith('Error') ? 'text-destructive' : 'text-green-600'}`}
-                  >
-                    {passwordMessage}
-                  </p>
-                )}
+                  {newPasswordMessage && (
+                    <p
+                      className={`text-sm ${newPasswordMessage.startsWith('Error') ? 'text-destructive' : 'text-green-600'}`}
+                    >
+                      {newPasswordMessage}
+                    </p>
+                  )}
 
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Changing...' : 'Change password'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  <Button type="submit" disabled={loading}>
+                    {loading ? 'Setting...' : 'Set password'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+
+          {hasCredential === true && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Change Password</CardTitle>
+                <CardDescription>Update your password</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleChangePassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="currentPassword">Current Password</Label>
+                    <Input
+                      id="currentPassword"
+                      name="currentPassword"
+                      type="password"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">New Password</Label>
+                    <Input
+                      id="newPassword"
+                      name="newPassword"
+                      type="password"
+                      placeholder="At least 8 characters"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">
+                      Confirm New Password
+                    </Label>
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      required
+                    />
+                  </div>
+
+                  {passwordMessage && (
+                    <p
+                      className={`text-sm ${passwordMessage.startsWith('Error') ? 'text-destructive' : 'text-green-600'}`}
+                    >
+                      {passwordMessage}
+                    </p>
+                  )}
+
+                  <Button type="submit" disabled={loading}>
+                    {loading ? 'Changing...' : 'Change password'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         {/* Sessions Tab */}

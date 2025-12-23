@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Trash2, UserCog } from 'lucide-react'
+import { MoreHorizontal, Trash2 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { RoleBadge } from './role-badge'
 import { Button } from '@/components/ui/button'

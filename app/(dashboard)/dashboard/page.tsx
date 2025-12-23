@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useSession } from '@/lib/auth-client'
 import {
   Card,
@@ -80,24 +81,24 @@ export default function DashboardPage() {
             <CardDescription>Common tasks</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <a
+            <Link
               href="/settings"
               className="block text-sm text-primary hover:underline"
             >
               Update profile →
-            </a>
-            <a
+            </Link>
+            <Link
               href="/settings/security"
               className="block text-sm text-primary hover:underline"
             >
               Security settings →
-            </a>
-            <a
+            </Link>
+            <Link
               href="/organizations"
               className="block text-sm text-primary hover:underline"
             >
               Manage organizations →
-            </a>
+            </Link>
           </CardContent>
         </Card>
       </div>
