@@ -1,43 +1,43 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { authClient } from '@/lib/auth-client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
 export default function CreateOrganizationPage() {
   const router = useRouter()
-  const [error, setError] = useState("")
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError("")
+    setError('')
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const name = formData.get("name") as string
-    const slug = formData.get("slug") as string
+    const name = formData.get('name') as string
+    const slug = formData.get('slug') as string
 
     const { error } = await authClient.organization.create({
       name,
-      slug: slug || name.toLowerCase().replace(/\s+/g, "-"),
+      slug: slug || name.toLowerCase().replace(/\s+/g, '-'),
     })
 
     if (error) {
-      setError(error.message || "Failed to create organization")
+      setError(error.message || 'Failed to create organization')
       setLoading(false)
     } else {
-      router.push("/organizations")
+      router.push('/organizations')
     }
   }
 
@@ -75,13 +75,11 @@ export default function CreateOrganizationPage() {
               </p>
             </div>
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <div className="flex gap-2">
               <Button type="submit" disabled={loading}>
-                {loading ? "Creating..." : "Create Organization"}
+                {loading ? 'Creating...' : 'Create Organization'}
               </Button>
               <Button
                 type="button"

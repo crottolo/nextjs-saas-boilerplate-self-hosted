@@ -1,12 +1,12 @@
-"use client"
+'use client'
 
-import { Suspense, useState } from "react"
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Suspense, useState } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { authClient } from '@/lib/auth-client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -14,31 +14,31 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams()
-  const token = searchParams.get("token")
+  const token = searchParams.get('token')
 
-  const [error, setError] = useState("")
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
 
   async function handleRequestReset(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError("")
+    setError('')
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const email = formData.get("email") as string
+    const email = formData.get('email') as string
 
     const { error } = await authClient.requestPasswordReset({
       email,
-      redirectTo: "/reset-password",
+      redirectTo: '/reset-password',
     })
 
     if (error) {
-      setError(error.message || "Failed to send reset email")
+      setError(error.message || 'Failed to send reset email')
     } else {
       setSuccess(true)
     }
@@ -47,21 +47,21 @@ function ResetPasswordContent() {
 
   async function handleResetPassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError("")
+    setError('')
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const password = formData.get("password") as string
-    const confirmPassword = formData.get("confirmPassword") as string
+    const password = formData.get('password') as string
+    const confirmPassword = formData.get('confirmPassword') as string
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError('Passwords do not match')
       setLoading(false)
       return
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters")
+      setError('Password must be at least 8 characters')
       setLoading(false)
       return
     }
@@ -72,7 +72,7 @@ function ResetPasswordContent() {
     })
 
     if (error) {
-      setError(error.message || "Failed to reset password")
+      setError(error.message || 'Failed to reset password')
     } else {
       setSuccess(true)
     }
@@ -85,7 +85,8 @@ function ResetPasswordContent() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Check your email</CardTitle>
           <CardDescription>
-            If an account exists with that email, we&apos;ve sent a password reset link.
+            If an account exists with that email, we&apos;ve sent a password
+            reset link.
           </CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
@@ -144,12 +145,10 @@ function ResetPasswordContent() {
               />
             </div>
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Resetting..." : "Reset password"}
+              {loading ? 'Resetting...' : 'Reset password'}
             </Button>
           </form>
         </CardContent>
@@ -178,17 +177,18 @@ function ResetPasswordContent() {
             />
           </div>
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Sending..." : "Send reset link"}
+            {loading ? 'Sending...' : 'Send reset link'}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="justify-center">
-        <Link href="/login" className="text-sm text-muted-foreground hover:underline">
+        <Link
+          href="/login"
+          className="text-sm text-muted-foreground hover:underline"
+        >
           Back to login
         </Link>
       </CardFooter>
@@ -198,7 +198,13 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<Card><CardContent className="p-6">Loading...</CardContent></Card>}>
+    <Suspense
+      fallback={
+        <Card>
+          <CardContent className="p-6">Loading...</CardContent>
+        </Card>
+      }
+    >
       <ResetPasswordContent />
     </Suspense>
   )

@@ -1,16 +1,15 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from 'react'
+import { authClient } from '@/lib/auth-client'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
 interface SessionWithUser {
   id: string
@@ -29,43 +28,47 @@ interface SessionWithUser {
 export default function AdminSessionsPage() {
   const [sessions, setSessions] = useState<SessionWithUser[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
-    loadSessions()
-  }, [])
-
-  async function loadSessions() {
-    setLoading(true)
-    try {
-      // Fetch sessions from API endpoint
-      const res = await fetch("/api/admin/sessions")
-      if (res.ok) {
-        const data = await res.json()
-        setSessions(data.sessions || [])
+    let ignore = false
+    async function fetchSessions() {
+      setLoading(true)
+      try {
+        const res = await fetch('/api/admin/sessions')
+        if (res.ok && !ignore) {
+          const data = await res.json()
+          setSessions(data.sessions || [])
+        }
+      } catch (error) {
+        console.error('Failed to load sessions:', error)
       }
-    } catch (error) {
-      console.error("Failed to load sessions:", error)
+      if (!ignore) setLoading(false)
     }
-    setLoading(false)
-  }
+    fetchSessions()
+    return () => {
+      ignore = true
+    }
+  }, [refreshKey])
 
   async function handleRevokeSession(sessionToken: string) {
-    if (!confirm("Are you sure you want to revoke this session?")) return
+    if (!confirm('Are you sure you want to revoke this session?')) return
     try {
       await authClient.admin.revokeUserSession({ sessionToken })
-      loadSessions()
+      setRefreshKey((k) => k + 1)
     } catch (error) {
-      console.error("Failed to revoke session:", error)
+      console.error('Failed to revoke session:', error)
     }
   }
 
   async function handleRevokeUserSessions(userId: string) {
-    if (!confirm("Are you sure you want to revoke all sessions for this user?")) return
+    if (!confirm('Are you sure you want to revoke all sessions for this user?'))
+      return
     try {
       await authClient.admin.revokeUserSessions({ userId })
-      loadSessions()
+      setRefreshKey((k) => k + 1)
     } catch (error) {
-      console.error("Failed to revoke user sessions:", error)
+      console.error('Failed to revoke user sessions:', error)
     }
   }
 
@@ -73,17 +76,13 @@ export default function AdminSessionsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Sessions</h1>
-        <p className="text-muted-foreground">
-          View and manage active sessions
-        </p>
+        <p className="text-muted-foreground">View and manage active sessions</p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Active Sessions</CardTitle>
-          <CardDescription>
-            {sessions.length} active session(s)
-          </CardDescription>
+          <CardDescription>{sessions.length} active session(s)</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -106,10 +105,10 @@ export default function AdminSessionsPage() {
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {session.userAgent || "Unknown device"}
+                      {session.userAgent || 'Unknown device'}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      IP: {session.ipAddress || "Unknown"}
+                      IP: {session.ipAddress || 'Unknown'}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Created: {new Date(session.createdAt).toLocaleString()}

@@ -1,25 +1,21 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { authClient, useSession } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession } from '@/lib/auth-client'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
-const navigation = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Organizations", href: "/organizations" },
-  { name: "Settings", href: "/settings" },
-]
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/dashboard/app-sidebar'
+import { Separator } from '@/components/ui/separator'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb'
 
 export default function DashboardLayout({
   children,
@@ -28,23 +24,17 @@ export default function DashboardLayout({
 }) {
   const { data: session, isPending } = useSession()
   const router = useRouter()
-  const pathname = usePathname()
 
   useEffect(() => {
     if (!isPending && !session) {
-      router.push("/login")
+      router.push('/')
     }
   }, [session, isPending, router])
 
-  async function handleSignOut() {
-    await authClient.signOut()
-    router.push("/login")
-  }
-
   if (isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="flex min-h-svh items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     )
   }
@@ -53,75 +43,31 @@ export default function DashboardLayout({
     return null
   }
 
-  const initials = session.user.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase() || "U"
-
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-8">
-            <Link href="/dashboard" className="font-bold text-xl">
-              AuthApp
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              {navigation.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
-                    pathname.startsWith(item.href)
-                      ? "text-primary"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
+    <SidebarProvider>
+      <AppSidebar
+        user={{
+          name: session.user.name || 'User',
+          email: session.user.email,
+          role: session.user.role,
+        }}
+      />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {session.user.name}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {session.user.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/settings">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings/security">Security</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut}>
-                Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
-
-      <main className="container mx-auto py-8 px-4">
-        {children}
-      </main>
-    </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

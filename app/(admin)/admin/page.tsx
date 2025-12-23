@@ -1,15 +1,15 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { authClient } from "@/lib/auth-client"
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { authClient } from '@/lib/auth-client'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
@@ -19,31 +19,35 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadStats()
-  }, [])
-
-  async function loadStats() {
-    try {
-      const { data: users } = await authClient.admin.listUsers({
-        query: { limit: 1 },
-      })
-      setStats({
-        totalUsers: users?.total || 0,
-        activeSessions: 0, // Would need session count endpoint
-      })
-    } catch (error) {
-      console.error("Failed to load stats:", error)
+    let ignore = false
+    async function fetchStats() {
+      try {
+        const { data: users } = await authClient.admin.listUsers({
+          query: { limit: 1 },
+        })
+        if (!ignore) {
+          setStats({
+            totalUsers: users?.total || 0,
+            activeSessions: 0,
+          })
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error('Failed to load stats:', error)
+        if (!ignore) setLoading(false)
+      }
     }
-    setLoading(false)
-  }
+    fetchStats()
+    return () => {
+      ignore = true
+    }
+  }, [])
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          Overview of your application
-        </p>
+        <p className="text-muted-foreground">Overview of your application</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -51,7 +55,7 @@ export default function AdminDashboardPage() {
           <CardHeader className="pb-2">
             <CardDescription>Total Users</CardDescription>
             <CardTitle className="text-4xl">
-              {loading ? "..." : stats.totalUsers}
+              {loading ? '...' : stats.totalUsers}
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
-import { useSession } from "@/lib/auth-client"
+import { useSession } from '@/lib/auth-client'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
 export default function DashboardPage() {
   const { data: session } = useSession()
@@ -17,7 +17,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {session?.user.name || "User"}!
+          Welcome back, {session?.user.name || 'User'}!
         </p>
       </div>
 
@@ -35,12 +35,14 @@ export default function DashboardPage() {
               </div>
               <div>
                 <dt className="text-muted-foreground">Name</dt>
-                <dd className="font-medium">{session?.user.name || "Not set"}</dd>
+                <dd className="font-medium">
+                  {session?.user.name || 'Not set'}
+                </dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">2FA</dt>
                 <dd className="font-medium">
-                  {session?.user.twoFactorEnabled ? "Enabled" : "Disabled"}
+                  {session?.user.twoFactorEnabled ? 'Enabled' : 'Disabled'}
                 </dd>
               </div>
             </dl>
@@ -65,7 +67,7 @@ export default function DashboardPage() {
                 <dd className="font-medium">
                   {session?.session.createdAt
                     ? new Date(session.session.createdAt).toLocaleDateString()
-                    : "Unknown"}
+                    : 'Unknown'}
                 </dd>
               </div>
             </dl>

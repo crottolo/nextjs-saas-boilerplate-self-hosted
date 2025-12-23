@@ -1,12 +1,12 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { authClient } from '@/lib/auth-client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -14,58 +14,62 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [error, setError] = useState("")
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [magicLinkSent, setMagicLinkSent] = useState(false)
 
   async function handleEmailLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError("")
+    setError('')
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
     const { error, data } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: "/dashboard",
+      callbackURL: '/dashboard',
     })
 
-    console.log("[Login] signIn response:", { error: error?.message, hasData: !!data, data })
+    console.log('[Login] signIn response:', {
+      error: error?.message,
+      hasData: !!data,
+      data,
+    })
 
     if (error) {
-      console.log("[Login] Error:", error)
-      setError(error.message || "Login failed")
+      console.log('[Login] Error:', error)
+      setError(error.message || 'Login failed')
       setLoading(false)
     } else if (data) {
-      console.log("[Login] Success, redirecting to dashboard...")
+      console.log('[Login] Success, redirecting to dashboard...')
       // Redirect manually if auto-redirect doesn't work
-      router.push("/dashboard")
+      router.push('/dashboard')
     }
   }
 
   async function handleMagicLink(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError("")
+    setError('')
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const email = formData.get("magic-email") as string
+    const email = formData.get('magic-email') as string
 
     const { error } = await authClient.signIn.magicLink({
       email,
-      callbackURL: "/dashboard",
+      callbackURL: '/dashboard',
     })
 
     if (error) {
-      setError(error.message || "Failed to send magic link")
+      setError(error.message || 'Failed to send magic link')
     } else {
       setMagicLinkSent(true)
     }
@@ -107,20 +111,13 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                />
+                <Input id="password" name="password" type="password" required />
               </div>
 
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
+              {error && <p className="text-sm text-destructive">{error}</p>}
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
           </TabsContent>
@@ -145,12 +142,10 @@ export default function LoginPage() {
                   />
                 </div>
 
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
 
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Sending..." : "Send magic link"}
+                  {loading ? 'Sending...' : 'Send magic link'}
                 </Button>
               </form>
             )}
@@ -159,7 +154,7 @@ export default function LoginPage() {
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
+          Don&apos;t have an account?{' '}
           <Link href="/register" className="text-primary hover:underline">
             Sign up
           </Link>

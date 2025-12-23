@@ -1,39 +1,51 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { authClient } from '@/lib/auth-client'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+
+interface Organization {
+  id: string
+  name: string
+  isActive?: boolean
+  role?: string
+  members?: { id: string }[]
+}
 
 export default function OrganizationsPage() {
-  const [organizations, setOrganizations] = useState<any[]>([])
+  const [organizations, setOrganizations] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
-    loadOrganizations()
-  }, [])
-
-  async function loadOrganizations() {
-    const { data } = await authClient.organization.list()
-    if (data) {
-      setOrganizations(data)
+    let ignore = false
+    async function fetchOrganizations() {
+      const { data } = await authClient.organization.list()
+      if (!ignore && data) {
+        setOrganizations(data as Organization[])
+      }
+      if (!ignore) setLoading(false)
     }
-    setLoading(false)
-  }
+    fetchOrganizations()
+    return () => {
+      ignore = true
+    }
+  }, [refreshKey])
 
   async function handleSetActive(orgId: string) {
     await authClient.organization.setActive({
       organizationId: orgId,
     })
-    loadOrganizations()
+    setRefreshKey((k) => k + 1)
   }
 
   if (loading) {
@@ -72,9 +84,7 @@ export default function OrganizationsPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{org.name}</CardTitle>
-                  {org.isActive && (
-                    <Badge>Active</Badge>
-                  )}
+                  {org.isActive && <Badge>Active</Badge>}
                 </div>
                 <CardDescription>
                   {org.members?.length || 0} member(s)
@@ -82,7 +92,7 @@ export default function OrganizationsPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Role: {org.role || "Member"}
+                  Role: {org.role || 'Member'}
                 </p>
                 <div className="flex gap-2">
                   {!org.isActive && (

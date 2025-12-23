@@ -44,6 +44,28 @@ pnpm db:migrate
 pnpm dev
 ```
 
+### 3. Admin User
+
+Per creare un utente admin di default:
+
+```bash
+pnpm db:seed-admin
+```
+
+**Credenziali di default:**
+| Campo | Valore |
+|-------|--------|
+| Email | `admin@example.com` |
+| Password | `AdminPassword123!` |
+
+Puoi personalizzare le credenziali tramite variabili ambiente:
+
+```env
+ADMIN_EMAIL=admin@tuodominio.com
+ADMIN_PASSWORD=TuaPasswordSicura!
+ADMIN_NAME=Nome Admin
+```
+
 ## Configurazione Provider
 
 ### Resend (Email)
@@ -115,17 +137,17 @@ pnpm dev
 
 ## Variabili Ambiente
 
-| Variabile | Descrizione | Obbligatorio |
-|-----------|-------------|--------------|
-| `DATABASE_URL` | Connection string PostgreSQL | ✅ |
-| `BETTER_AUTH_SECRET` | Secret per JWT/sessioni (min 32 char) | ✅ |
-| `NEXT_PUBLIC_APP_URL` | URL base app | ✅ |
-| `RESEND_API_KEY` | API key Resend | ✅ |
-| `EMAIL_FROM` | Email mittente | ✅ |
-| `GITHUB_CLIENT_ID` | GitHub OAuth ID | ❌ |
-| `GITHUB_CLIENT_SECRET` | GitHub OAuth Secret | ❌ |
-| `GOOGLE_CLIENT_ID` | Google OAuth ID | ❌ |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth Secret | ❌ |
+| Variabile              | Descrizione                           | Obbligatorio |
+| ---------------------- | ------------------------------------- | ------------ |
+| `DATABASE_URL`         | Connection string PostgreSQL          | ✅           |
+| `BETTER_AUTH_SECRET`   | Secret per JWT/sessioni (min 32 char) | ✅           |
+| `NEXT_PUBLIC_APP_URL`  | URL base app                          | ✅           |
+| `RESEND_API_KEY`       | API key Resend                        | ✅           |
+| `EMAIL_FROM`           | Email mittente                        | ✅           |
+| `GITHUB_CLIENT_ID`     | GitHub OAuth ID                       | ❌           |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth Secret                   | ❌           |
+| `GOOGLE_CLIENT_ID`     | Google OAuth ID                       | ❌           |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth Secret                   | ❌           |
 
 ## Generare BETTER_AUTH_SECRET
 

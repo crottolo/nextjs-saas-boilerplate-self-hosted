@@ -1,17 +1,21 @@
-"use client"
+'use client'
 
-import { useEffect } from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { authClient, useSession } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-
-const adminNavigation = [
-  { name: "Dashboard", href: "/admin" },
-  { name: "Users", href: "/admin/users" },
-  { name: "Sessions", href: "/admin/sessions" },
-]
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession } from '@/lib/auth-client'
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
+import { AdminSidebar } from '@/components/admin/admin-sidebar'
+import { Separator } from '@/components/ui/separator'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb'
 
 export default function AdminLayout({
   children,
@@ -20,69 +24,53 @@ export default function AdminLayout({
 }) {
   const { data: session, isPending } = useSession()
   const router = useRouter()
-  const pathname = usePathname()
 
   useEffect(() => {
     if (!isPending && !session) {
-      router.push("/login")
+      router.push('/')
     }
-    // Check if user is admin
-    if (!isPending && session && session.user.role !== "admin") {
-      router.push("/dashboard")
+    if (!isPending && session && session.user.role !== 'admin') {
+      router.push('/dashboard')
     }
   }, [session, isPending, router])
 
   if (isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="flex min-h-svh items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     )
   }
 
-  if (!session || session.user.role !== "admin") {
+  if (!session || session.user.role !== 'admin') {
     return null
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-muted/50">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-8">
-            <Link href="/admin" className="flex items-center gap-2">
-              <span className="font-bold text-xl">AuthApp</span>
-              <Badge variant="secondary">Admin</Badge>
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              {adminNavigation.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
-                    pathname === item.href
-                      ? "text-primary"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
+    <SidebarProvider>
+      <AdminSidebar
+        user={{
+          name: session.user.name || 'Admin',
+          email: session.user.email,
+          role: session.user.role,
+        }}
+      />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Admin Panel</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </div>
-
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm">
-                Back to App
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto py-8 px-4">
-        {children}
-      </main>
-    </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

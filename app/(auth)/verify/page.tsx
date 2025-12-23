@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
 export default function VerifyPage() {
   return (
@@ -15,12 +15,14 @@ export default function VerifyPage() {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Check your email</CardTitle>
         <CardDescription>
-          We&apos;ve sent you a verification link. Please check your email to verify your account.
+          We&apos;ve sent you a verification link. Please check your email to
+          verify your account.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-center text-sm text-muted-foreground">
         <p>
-          Didn&apos;t receive the email? Check your spam folder or try signing in again to resend.
+          Didn&apos;t receive the email? Check your spam folder or try signing
+          in again to resend.
         </p>
       </CardContent>
       <CardFooter className="justify-center">

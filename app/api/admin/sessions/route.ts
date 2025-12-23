@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
-import { db } from "@/lib/db"
-import { session, user } from "@/lib/db/auth-schema"
-import { eq, gt } from "drizzle-orm"
+import { NextResponse } from 'next/server'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
+import { db } from '@/lib/db'
+import { session, user } from '@/lib/db/auth-schema'
+import { eq, gt } from 'drizzle-orm'
 
 export async function GET() {
   try {
@@ -13,12 +13,12 @@ export async function GET() {
     })
 
     if (!sessionData?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Check if user is admin
-    if (sessionData.user.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if (sessionData.user.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Get all active sessions with user data
@@ -42,9 +42,9 @@ export async function GET() {
 
     return NextResponse.json({ sessions })
   } catch (error) {
-    console.error("Error fetching sessions:", error)
+    console.error('Error fetching sessions:', error)
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

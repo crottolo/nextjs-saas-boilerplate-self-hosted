@@ -1,56 +1,66 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { authClient, useSession } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { authClient, useSession } from '@/lib/auth-client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+} from '@/components/ui/card'
+
+interface Session {
+  id: string
+  token: string
+  userAgent?: string
+  createdAt: string
+}
 
 export default function SecurityPage() {
   const { data: session } = useSession()
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState("")
-  const [sessions, setSessions] = useState<any[]>([])
+  const [message, setMessage] = useState('')
+  const [sessions, setSessions] = useState<Session[]>([])
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
-    loadSessions()
-  }, [])
-
-  async function loadSessions() {
-    const { data } = await authClient.listSessions()
-    if (data) {
-      setSessions(data)
+    let ignore = false
+    async function fetchSessions() {
+      const { data } = await authClient.listSessions()
+      if (!ignore && data) {
+        setSessions(data as Session[])
+      }
     }
-  }
+    fetchSessions()
+    return () => {
+      ignore = true
+    }
+  }, [refreshKey])
 
   async function handleChangePassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    setMessage("")
+    setMessage('')
 
     const formData = new FormData(e.currentTarget)
-    const currentPassword = formData.get("currentPassword") as string
-    const newPassword = formData.get("newPassword") as string
-    const confirmPassword = formData.get("confirmPassword") as string
+    const currentPassword = formData.get('currentPassword') as string
+    const newPassword = formData.get('newPassword') as string
+    const confirmPassword = formData.get('confirmPassword') as string
 
     if (newPassword !== confirmPassword) {
-      setMessage("Error: Passwords do not match")
+      setMessage('Error: Passwords do not match')
       setLoading(false)
       return
     }
 
     if (newPassword.length < 8) {
-      setMessage("Error: Password must be at least 8 characters")
+      setMessage('Error: Password must be at least 8 characters')
       setLoading(false)
       return
     }
@@ -64,7 +74,7 @@ export default function SecurityPage() {
     if (error) {
       setMessage(`Error: ${error.message}`)
     } else {
-      setMessage("Password changed successfully!")
+      setMessage('Password changed successfully!')
       ;(e.target as HTMLFormElement).reset()
     }
     setLoading(false)
@@ -73,7 +83,7 @@ export default function SecurityPage() {
   async function handleDisable2FA() {
     setLoading(true)
     const { error } = await authClient.twoFactor.disable({
-      password: prompt("Enter your password to disable 2FA") || "",
+      password: prompt('Enter your password to disable 2FA') || '',
     })
 
     if (error) {
@@ -84,12 +94,12 @@ export default function SecurityPage() {
 
   async function handleRevokeSession(sessionToken: string) {
     await authClient.revokeSession({ token: sessionToken })
-    loadSessions()
+    setRefreshKey((k) => k + 1)
   }
 
   async function handleRevokeOtherSessions() {
     await authClient.revokeOtherSessions()
-    loadSessions()
+    setRefreshKey((k) => k + 1)
   }
 
   return (
@@ -114,12 +124,16 @@ export default function SecurityPage() {
               <p className="font-medium">Status</p>
               <p className="text-sm text-muted-foreground">
                 {session?.user.twoFactorEnabled
-                  ? "Two-factor authentication is enabled"
-                  : "Two-factor authentication is not enabled"}
+                  ? 'Two-factor authentication is enabled'
+                  : 'Two-factor authentication is not enabled'}
               </p>
             </div>
             {session?.user.twoFactorEnabled ? (
-              <Button variant="destructive" onClick={handleDisable2FA} disabled={loading}>
+              <Button
+                variant="destructive"
+                onClick={handleDisable2FA}
+                disabled={loading}
+              >
                 Disable 2FA
               </Button>
             ) : (
@@ -168,13 +182,15 @@ export default function SecurityPage() {
             </div>
 
             {message && (
-              <p className={`text-sm ${message.startsWith("Error") ? "text-destructive" : "text-green-600"}`}>
+              <p
+                className={`text-sm ${message.startsWith('Error') ? 'text-destructive' : 'text-green-600'}`}
+              >
                 {message}
               </p>
             )}
 
             <Button type="submit" disabled={loading}>
-              {loading ? "Changing..." : "Change password"}
+              {loading ? 'Changing...' : 'Change password'}
             </Button>
           </form>
         </CardContent>
@@ -197,13 +213,20 @@ export default function SecurityPage() {
         <CardContent>
           <div className="space-y-4">
             {sessions.map((s) => (
-              <div key={s.id} className="flex items-center justify-between py-2">
+              <div
+                key={s.id}
+                className="flex items-center justify-between py-2"
+              >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-sm">
-                      {s.userAgent?.includes("Chrome") ? "Chrome" :
-                       s.userAgent?.includes("Firefox") ? "Firefox" :
-                       s.userAgent?.includes("Safari") ? "Safari" : "Unknown browser"}
+                      {s.userAgent?.includes('Chrome')
+                        ? 'Chrome'
+                        : s.userAgent?.includes('Firefox')
+                          ? 'Firefox'
+                          : s.userAgent?.includes('Safari')
+                            ? 'Safari'
+                            : 'Unknown browser'}
                     </p>
                     {s.id === session?.session.id && (
                       <Badge variant="secondary">Current</Badge>
