@@ -31,9 +31,10 @@ COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/scripts ./scripts
 RUN chmod +x ./scripts/start.sh
 
-# Copy postgres and drizzle-orm for migrations
+# Copy dependencies for migrations and admin seed
 COPY --from=builder /app/node_modules/postgres ./node_modules/postgres
 COPY --from=builder /app/node_modules/drizzle-orm ./node_modules/drizzle-orm
+COPY --from=builder /app/node_modules/@noble ./node_modules/@noble
 
 USER nextjs
 
