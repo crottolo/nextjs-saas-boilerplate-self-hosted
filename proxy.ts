@@ -2,7 +2,14 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // "/" is now the login page
-const publicPaths = ['/', '/register', '/reset-password', '/verify', '/2fa']
+const publicPaths = [
+  '/',
+  '/register',
+  '/reset-password',
+  '/verify',
+  '/2fa',
+  '/invite',
+]
 const authPaths = ['/', '/register', '/reset-password']
 
 export async function proxy(request: NextRequest) {
@@ -17,15 +24,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  
-
   // Get session from Better Auth - check both possible cookie names
   // In HTTPS with useSecureCookies, the cookie name has __Secure- prefix
   const sessionCookie =
     request.cookies.get('__Secure-better-auth.session_token') ||
     request.cookies.get('better-auth.session_token')
-
-  
 
   const hasSession = !!sessionCookie?.value
 

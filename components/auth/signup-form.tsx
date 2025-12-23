@@ -52,10 +52,17 @@ function GoogleIcon() {
   )
 }
 
+interface SignupFormProps extends React.ComponentProps<'form'> {
+  defaultEmail?: string
+  callbackUrl?: string
+}
+
 export function SignupForm({
   className,
+  defaultEmail = '',
+  callbackUrl = '/dashboard',
   ...props
-}: React.ComponentProps<'form'>) {
+}: SignupFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -103,7 +110,7 @@ export function SignupForm({
 
     await authClient.signIn.social({
       provider,
-      callbackURL: '/dashboard',
+      callbackURL: callbackUrl,
     })
   }
 
@@ -175,6 +182,7 @@ export function SignupForm({
             name="email"
             type="email"
             placeholder="m@example.com"
+            defaultValue={defaultEmail}
             required
             disabled={loading}
           />
@@ -238,7 +246,10 @@ export function SignupForm({
 
       <div className="text-center text-sm">
         Already have an account?{' '}
-        <Link href="/" className="underline underline-offset-4">
+        <Link
+          href={`/${defaultEmail || callbackUrl !== '/dashboard' ? `?${new URLSearchParams({ ...(defaultEmail && { email: defaultEmail }), ...(callbackUrl !== '/dashboard' && { callbackUrl }) }).toString()}` : ''}`}
+          className="underline underline-offset-4"
+        >
           Sign in
         </Link>
       </div>

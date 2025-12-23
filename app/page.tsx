@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { GalleryVerticalEnd } from 'lucide-react'
@@ -9,9 +9,13 @@ import { LoginForm } from '@/components/auth/login-form'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { authClient } from '@/lib/auth-client'
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session, isPending } = authClient.useSession()
+
+  const defaultEmail = searchParams.get('email') || ''
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
   // Redirect to dashboard if already logged in
   useEffect(() => {
@@ -48,7 +52,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm />
+            <LoginForm defaultEmail={defaultEmail} callbackUrl={callbackUrl} />
           </div>
         </div>
       </div>
@@ -62,5 +66,19 @@ export default function LoginPage() {
         />
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-svh items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   )
 }

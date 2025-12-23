@@ -90,21 +90,21 @@ export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
               value={role}
               onValueChange={(v) => setRole(v as 'admin' | 'member')}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="min-w-[200px]">
                 <SelectItem value="admin">
-                  <div className="flex flex-col">
-                    <span>Admin</span>
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Admin</span>
                     <span className="text-xs text-muted-foreground">
                       Can manage members and settings
                     </span>
                   </div>
                 </SelectItem>
                 <SelectItem value="member">
-                  <div className="flex flex-col">
-                    <span>Member</span>
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium">Member</span>
                     <span className="text-xs text-muted-foreground">
                       Read-only access
                     </span>

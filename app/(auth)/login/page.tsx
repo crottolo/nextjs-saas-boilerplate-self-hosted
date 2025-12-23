@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,11 +17,15 @@ import {
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [magicLinkSent, setMagicLinkSent] = useState(false)
+
+  const prefillEmail = searchParams.get('email') || ''
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
   async function handleEmailLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -35,7 +39,7 @@ export default function LoginPage() {
     const { error, data } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: '/dashboard',
+      callbackURL: callbackUrl,
     })
 
     console.log('[Login] signIn response:', {
@@ -98,6 +102,7 @@ export default function LoginPage() {
                   name="email"
                   type="email"
                   placeholder="you@example.com"
+                  defaultValue={prefillEmail}
                   required
                 />
               </div>
@@ -138,6 +143,7 @@ export default function LoginPage() {
                     name="magic-email"
                     type="email"
                     placeholder="you@example.com"
+                    defaultValue={prefillEmail}
                     required
                   />
                 </div>
@@ -161,5 +167,19 @@ export default function LoginPage() {
         </p>
       </CardFooter>
     </Card>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <Card>
+          <CardContent className="p-6">Loading...</CardContent>
+        </Card>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   )
 }

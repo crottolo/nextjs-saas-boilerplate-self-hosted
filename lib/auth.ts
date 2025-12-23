@@ -88,7 +88,7 @@ export const auth = betterAuth({
     }),
     organization({
       async sendInvitationEmail(data) {
-        const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${data.id}`
+        const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${data.id}?email=${encodeURIComponent(data.email)}`
         await sendEmail({
           to: data.email,
           subject: `You've been invited to join ${data.organization.name}`,

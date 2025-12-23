@@ -1,12 +1,18 @@
 'use client'
 
+import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 import { GalleryVerticalEnd } from 'lucide-react'
 import { SignupForm } from '@/components/auth/signup-form'
 import { ThemeToggle } from '@/components/theme-toggle'
 
-export default function RegisterPage() {
+function RegisterPageContent() {
+  const searchParams = useSearchParams()
+  const defaultEmail = searchParams.get('email') || ''
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -23,7 +29,7 @@ export default function RegisterPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <SignupForm />
+            <SignupForm defaultEmail={defaultEmail} callbackUrl={callbackUrl} />
           </div>
         </div>
       </div>
@@ -37,5 +43,19 @@ export default function RegisterPage() {
         />
       </div>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-svh items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      }
+    >
+      <RegisterPageContent />
+    </Suspense>
   )
 }

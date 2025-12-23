@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,41 +12,42 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 
 interface Organization {
   id: string
   name: string
-  isActive?: boolean
   role?: string
   members?: { id: string }[]
 }
 
 export default function OrganizationsPage() {
+  const router = useRouter()
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
-  const [refreshKey, setRefreshKey] = useState(0)
+
+  // Use reactive hook for active organization
+  const { data: activeOrg } = authClient.useActiveOrganization()
 
   useEffect(() => {
-    let ignore = false
-    async function fetchOrganizations() {
+    async function fetchOrgs() {
       const { data } = await authClient.organization.list()
-      if (!ignore && data) {
+      if (data) {
         setOrganizations(data as Organization[])
       }
-      if (!ignore) setLoading(false)
+      setLoading(false)
     }
-    fetchOrganizations()
-    return () => {
-      ignore = true
-    }
-  }, [refreshKey])
+    fetchOrgs()
+  }, [])
 
-  async function handleSetActive(orgId: string) {
-    await authClient.organization.setActive({
-      organizationId: orgId,
-    })
-    setRefreshKey((k) => k + 1)
+  async function handleToggleActive(orgId: string, isCurrentlyActive: boolean) {
+    if (isCurrentlyActive) {
+      await authClient.organization.setActive({ organizationId: null })
+    } else {
+      await authClient.organization.setActive({ organizationId: orgId })
+    }
+    router.refresh()
   }
 
   if (loading) {
@@ -79,40 +81,43 @@ export default function OrganizationsPage() {
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {organizations.map((org) => (
-            <Card key={org.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{org.name}</CardTitle>
-                  {org.isActive && <Badge>Active</Badge>}
-                </div>
-                <CardDescription>
-                  {org.members?.length || 0} member(s)
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  Role: {org.role || 'Member'}
-                </p>
-                <div className="flex gap-2">
-                  {!org.isActive && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleSetActive(org.id)}
-                    >
-                      Set Active
-                    </Button>
-                  )}
+          {organizations.map((org) => {
+            const isActive = activeOrg?.id === org.id
+            return (
+              <Card key={org.id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{org.name}</CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor={`active-${org.id}`} className="text-xs">
+                        Active
+                      </Label>
+                      <Switch
+                        id={`active-${org.id}`}
+                        checked={isActive}
+                        onCheckedChange={() =>
+                          handleToggleActive(org.id, isActive)
+                        }
+                      />
+                    </div>
+                  </div>
+                  <CardDescription>
+                    {org.members?.length || 0} member(s)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Role: {org.role || 'Member'}
+                  </p>
                   <Link href={`/organizations/${org.id}`}>
                     <Button variant="ghost" size="sm">
                       Manage →
                     </Button>
                   </Link>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
     </div>

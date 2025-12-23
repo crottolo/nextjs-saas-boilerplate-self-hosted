@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { useSession } from '@/lib/auth-client'
+import { authClient, useSession } from '@/lib/auth-client'
 import {
   SidebarProvider,
   SidebarInset,
@@ -34,6 +34,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const { data: session, isPending } = useSession()
+  const { data: organizations } = authClient.useListOrganizations()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -41,8 +42,12 @@ export default function DashboardLayout({
   const segments = pathname.split('/').filter(Boolean)
   const breadcrumbs = segments.map((segment, index) => {
     const path = '/' + segments.slice(0, index + 1).join('/')
+    // Try to find org name if this segment is an org ID
+    const orgName = organizations?.find((o) => o.id === segment)?.name
     const label =
-      pathLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
+      pathLabels[segment] ||
+      orgName ||
+      segment.charAt(0).toUpperCase() + segment.slice(1)
     const isLast = index === segments.length - 1
     return { path, label, isLast }
   })
@@ -71,7 +76,7 @@ export default function DashboardLayout({
         user={{
           name: session.user.name || 'User',
           email: session.user.email,
-          role: session.user.role,
+          role: session.user.role ?? undefined,
         }}
       />
       <SidebarInset>

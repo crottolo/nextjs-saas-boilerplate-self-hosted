@@ -52,10 +52,17 @@ function GoogleIcon() {
   )
 }
 
+interface LoginFormProps extends React.ComponentProps<'form'> {
+  defaultEmail?: string
+  callbackUrl?: string
+}
+
 export function LoginForm({
   className,
+  defaultEmail = '',
+  callbackUrl = '/dashboard',
   ...props
-}: React.ComponentProps<'form'>) {
+}: LoginFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -72,14 +79,14 @@ export function LoginForm({
     const { error: signInError } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: '/dashboard',
+      callbackURL: callbackUrl,
     })
 
     if (signInError) {
       setError(signInError.message || 'Login failed')
       setLoading(false)
     } else {
-      router.push('/dashboard')
+      router.push(callbackUrl)
     }
   }
 
@@ -89,7 +96,7 @@ export function LoginForm({
 
     await authClient.signIn.social({
       provider,
-      callbackURL: '/dashboard',
+      callbackURL: callbackUrl,
     })
   }
 
@@ -120,6 +127,7 @@ export function LoginForm({
             name="email"
             type="email"
             placeholder="m@example.com"
+            defaultValue={defaultEmail}
             required
             disabled={loading}
           />
@@ -178,7 +186,10 @@ export function LoginForm({
 
       <div className="text-center text-sm">
         Don&apos;t have an account?{' '}
-        <a href="/register" className="underline underline-offset-4">
+        <a
+          href={`/register${defaultEmail || callbackUrl !== '/dashboard' ? `?${new URLSearchParams({ ...(defaultEmail && { email: defaultEmail }), ...(callbackUrl !== '/dashboard' && { callbackUrl }) }).toString()}` : ''}`}
+          className="underline underline-offset-4"
+        >
           Sign up
         </a>
       </div>

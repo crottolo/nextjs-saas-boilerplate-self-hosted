@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Building2, Mail, Clock } from 'lucide-react'
+import { ArrowLeft, Building2, Mail, Clock, Trash2 } from 'lucide-react'
 import { authClient, useSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -60,7 +60,7 @@ export default function OrganizationDetailPage() {
       setLoading(true)
       try {
         const { data } = await authClient.organization.getFullOrganization({
-          organizationSlug: slug,
+          query: { organizationId: slug },
         })
         if (!ignore && data) {
           setOrg(data as FullOrganization)
@@ -81,7 +81,8 @@ export default function OrganizationDetailPage() {
     (m) => m.user.id === session?.user?.id
   )
   const currentUserRole = currentMember?.role || 'member'
-  const canInvite = currentUserRole === 'owner' || currentUserRole === 'admin'
+  const isOwner = currentUserRole === 'owner'
+  const canInvite = isOwner || currentUserRole === 'admin'
   const pendingInvitations =
     org?.invitations.filter((i) => i.status === 'pending') || []
 
@@ -92,6 +93,38 @@ export default function OrganizationDetailPage() {
       setRefreshKey((k) => k + 1)
     } catch (error) {
       console.error('Failed to cancel invitation:', error)
+    }
+  }
+
+  async function handleResendInvitation(email: string, role: string | null) {
+    if (!org) return
+    try {
+      await authClient.organization.inviteMember({
+        email,
+        role: (role || 'member') as 'member' | 'admin' | 'owner',
+        organizationId: org.id,
+        resend: true,
+      })
+      alert('Invitation resent successfully!')
+    } catch (error) {
+      console.error('Failed to resend invitation:', error)
+      alert('Failed to resend invitation')
+    }
+  }
+
+  async function handleDeleteOrganization() {
+    if (!org) return
+    if (
+      !confirm(
+        `Are you sure you want to delete "${org.name}"? This action cannot be undone.`
+      )
+    )
+      return
+    try {
+      await authClient.organization.delete({ organizationId: org.id })
+      router.push('/organizations')
+    } catch (error) {
+      console.error('Failed to delete organization:', error)
     }
   }
 
@@ -161,6 +194,7 @@ export default function OrganizationDetailPage() {
               Invitations ({pendingInvitations.length})
             </TabsTrigger>
           )}
+          {isOwner && <TabsTrigger value="settings">Settings</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="members" className="mt-4">
@@ -221,17 +255,58 @@ export default function OrganizationDetailPage() {
                             </div>
                           </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleCancelInvitation(inv.id)}
-                        >
-                          Cancel
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              handleResendInvitation(inv.email, inv.role)
+                            }
+                          >
+                            Resend
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCancelInvitation(inv.id)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {isOwner && (
+          <TabsContent value="settings" className="mt-4">
+            <Card className="border-destructive">
+              <CardHeader>
+                <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                <CardDescription>
+                  Irreversible actions for this organization
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Delete Organization</p>
+                    <p className="text-sm text-muted-foreground">
+                      Permanently delete this organization and all its data
+                    </p>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteOrganization}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

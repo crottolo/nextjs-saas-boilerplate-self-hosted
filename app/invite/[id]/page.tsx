@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { Building2, Check, X, Loader2 } from 'lucide-react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { Building2, Check, X, Loader2, Mail } from 'lucide-react'
 import { authClient, useSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -20,41 +20,48 @@ interface Invitation {
   role: string | null
   status: string
   expiresAt: Date
-  organization: {
-    id: string
-    name: string
-    slug: string
-  }
-  inviter: {
-    user: {
-      name: string
-      email: string
-    }
-  }
+  organizationId: string
+  organizationName: string
+  organizationSlug: string
+  inviterId: string
+  inviterEmail: string
 }
 
 export default function InvitePage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session, isPending: sessionLoading } = useSession()
+  const invitedEmail = searchParams.get('email') || ''
   const [invitation, setInvitation] = useState<Invitation | null>(null)
   const [loading, setLoading] = useState(true)
   const [accepting, setAccepting] = useState(false)
   const [rejecting, setRejecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [magicLinkSent, setMagicLinkSent] = useState(false)
+  const [sendingMagicLink, setSendingMagicLink] = useState(false)
 
   const invitationId = params.id as string
 
   useEffect(() => {
     async function fetchInvitation() {
+      // Wait for session check to complete
+      if (sessionLoading) return
+
+      // If not logged in, don't try to fetch (API requires auth)
+      if (!session) {
+        setLoading(false)
+        return
+      }
+
       try {
         const { data, error } = await authClient.organization.getInvitation({
-          id: invitationId,
+          query: { id: invitationId },
         })
         if (error) {
           setError('Invitation not found or expired')
         } else if (data) {
-          setInvitation(data as Invitation)
+          setInvitation(data as unknown as Invitation)
         }
       } catch {
         setError('Failed to load invitation')
@@ -63,12 +70,16 @@ export default function InvitePage() {
       }
     }
     fetchInvitation()
-  }, [invitationId])
+  }, [invitationId, session, sessionLoading])
 
   async function handleAccept() {
     if (!session) {
-      // Redirect to login with callback
-      router.push(`/login?callbackUrl=/invite/${invitationId}`)
+      // Redirect to login with callback and pre-filled email
+      const params = new URLSearchParams({
+        callbackUrl: `/invite/${invitationId}`,
+        email: invitation?.email || '',
+      })
+      router.push(`/login?${params.toString()}`)
       return
     }
 
@@ -88,9 +99,37 @@ export default function InvitePage() {
     }
   }
 
+  async function handleSendMagicLink() {
+    if (!invitedEmail) return
+
+    setSendingMagicLink(true)
+    setError(null)
+
+    try {
+      const { error: magicLinkError } = await authClient.signIn.magicLink({
+        email: invitedEmail,
+        callbackURL: `/invite/${invitationId}?email=${encodeURIComponent(invitedEmail)}`,
+      })
+
+      if (magicLinkError) {
+        setError(magicLinkError.message || 'Failed to send magic link')
+      } else {
+        setMagicLinkSent(true)
+      }
+    } catch {
+      setError('Failed to send magic link')
+    } finally {
+      setSendingMagicLink(false)
+    }
+  }
+
   async function handleReject() {
     if (!session) {
-      router.push(`/login?callbackUrl=/invite/${invitationId}`)
+      const params = new URLSearchParams({
+        callbackUrl: `/invite/${invitationId}`,
+        email: invitation?.email || '',
+      })
+      router.push(`/?${params.toString()}`)
       return
     }
 
@@ -114,6 +153,99 @@ export default function InvitePage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  // Show magic link flow if not authenticated
+  if (!session && !invitation) {
+    // Magic link sent - show success message
+    if (magicLinkSent) {
+      return (
+        <div className="flex min-h-screen items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
+                <Mail className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <CardTitle>Check your email</CardTitle>
+              <CardDescription>
+                We sent a magic link to <strong>{invitedEmail}</strong>
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Click the link in your email to sign in and accept this
+                invitation.
+              </p>
+            </CardContent>
+            <CardFooter className="justify-center">
+              <Button variant="outline" onClick={() => setMagicLinkSent(false)}>
+                Use a different method
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      )
+    }
+
+    // Show magic link form
+    return (
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <Building2 className="h-6 w-6 text-primary" />
+            </div>
+            <CardTitle>Organization Invitation</CardTitle>
+            <CardDescription>
+              {invitedEmail
+                ? `This invitation is for ${invitedEmail}`
+                : 'You have been invited to join an organization'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            {error && <p className="text-sm text-destructive">{error}</p>}
+            {invitedEmail ? (
+              <p className="text-sm text-muted-foreground">
+                Click below to receive a sign-in link at your email.
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Please sign in to view and accept this invitation.
+              </p>
+            )}
+          </CardContent>
+          <CardFooter className="flex flex-col gap-2">
+            {invitedEmail && (
+              <Button
+                className="w-full"
+                onClick={handleSendMagicLink}
+                disabled={sendingMagicLink}
+              >
+                {sendingMagicLink ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="mr-2 h-4 w-4" />
+                )}
+                Send Magic Link to {invitedEmail}
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                const loginParams = new URLSearchParams({
+                  callbackUrl: `/invite/${invitationId}${invitedEmail ? `?email=${encodeURIComponent(invitedEmail)}` : ''}`,
+                  ...(invitedEmail && { email: invitedEmail }),
+                })
+                router.push(`/?${loginParams.toString()}`)
+              }}
+            >
+              Sign in with password instead
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     )
   }
@@ -180,17 +312,15 @@ export default function InvitePage() {
           </div>
           <CardTitle>You&apos;re Invited!</CardTitle>
           <CardDescription>
-            <strong>{invitation.inviter.user.name}</strong> has invited you to
-            join <strong>{invitation.organization.name}</strong>
+            <strong>{invitation.inviterEmail}</strong> has invited you to join{' '}
+            <strong>{invitation.organizationName}</strong>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg border p-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Organization</span>
-              <span className="font-medium">
-                {invitation.organization.name}
-              </span>
+              <span className="font-medium">{invitation.organizationName}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Role</span>
@@ -200,9 +330,7 @@ export default function InvitePage() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Invited by</span>
-              <span className="font-medium">
-                {invitation.inviter.user.name}
-              </span>
+              <span className="font-medium">{invitation.inviterEmail}</span>
             </div>
           </div>
 
