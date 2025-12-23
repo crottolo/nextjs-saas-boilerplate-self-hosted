@@ -94,7 +94,7 @@ export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent className="min-w-[200px]">
-                <SelectItem value="admin">
+                <SelectItem value="admin" textValue="Admin">
                   <div className="flex flex-col items-start">
                     <span className="font-medium">Admin</span>
                     <span className="text-xs text-muted-foreground">
@@ -102,7 +102,7 @@ export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
                     </span>
                   </div>
                 </SelectItem>
-                <SelectItem value="member">
+                <SelectItem value="member" textValue="Member">
                   <div className="flex flex-col items-start">
                     <span className="font-medium">Member</span>
                     <span className="text-xs text-muted-foreground">

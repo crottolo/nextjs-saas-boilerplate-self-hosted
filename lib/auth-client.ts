@@ -6,6 +6,7 @@ import {
   organizationClient,
   twoFactorClient,
   magicLinkClient,
+  inferAdditionalFields,
 } from 'better-auth/client/plugins'
 
 export const authClient = createAuthClient({
@@ -19,6 +20,14 @@ export const authClient = createAuthClient({
       },
     }),
     magicLinkClient(),
+    inferAdditionalFields({
+      user: {
+        phoneNumber: {
+          type: 'string',
+          required: false,
+        },
+      },
+    }),
   ],
 })
 

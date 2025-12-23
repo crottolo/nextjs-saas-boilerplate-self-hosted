@@ -9,7 +9,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
@@ -62,16 +61,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size="sm"
-                  className="w-full group-data-[collapsible=icon]:justify-center"
-                >
-                  <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    Theme
-                  </span>
-                </SidebarMenuButton>
+                
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" side="right">
                 <DropdownMenuItem onClick={() => setTheme('light')}>

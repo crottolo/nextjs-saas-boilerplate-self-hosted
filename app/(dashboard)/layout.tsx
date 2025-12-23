@@ -11,6 +11,9 @@ import {
 } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/dashboard/app-sidebar'
 import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Eye } from 'lucide-react'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -56,6 +59,14 @@ export default function DashboardLayout({
       router.push('/')
     }
   }, [session, isPending, router])
+
+  async function handleStopImpersonating() {
+    await authClient.admin.stopImpersonating()
+    router.push('/admin/users')
+  }
+
+  const isImpersonating = !!(session?.session as { impersonatedBy?: string })
+    ?.impersonatedBy
 
   if (isPending) {
     return (
@@ -103,7 +114,27 @@ export default function DashboardLayout({
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          {isImpersonating && (
+            <Alert className="bg-amber-50 border-amber-200 dark:bg-amber-950 dark:border-amber-800">
+              <Eye className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="flex items-center justify-between">
+                <span className="text-amber-800 dark:text-amber-200">
+                  You are currently impersonating this user
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleStopImpersonating}
+                  className="ml-4"
+                >
+                  Stop Impersonating
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )

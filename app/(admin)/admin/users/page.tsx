@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,14 +31,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { MoreHorizontal, Plus, Search, Trash2, Ban, Check } from 'lucide-react'
+import {
+  MoreHorizontal,
+  Plus,
+  Search,
+  Trash2,
+  Ban,
+  Check,
+  Shield,
+  User,
+  Key,
+  Pencil,
+  Eye,
+  Activity,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
-interface User {
+interface UserType {
   id: string
   name?: string
   email: string
+  phoneNumber?: string
   banned?: boolean
   emailVerified?: boolean
   role?: string
@@ -45,16 +67,28 @@ interface User {
 }
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<User[]>([])
+  const router = useRouter()
+  const [users, setUsers] = useState<UserType[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(0)
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const limit = 10
+
+  // Dialog states
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
+
+  // Form states
+  const [newPassword, setNewPassword] = useState('')
+  const [editName, setEditName] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+  const [editPhone, setEditPhone] = useState('')
+  const [editRole, setEditRole] = useState('')
 
   useEffect(() => {
     let ignore = false
@@ -70,7 +104,7 @@ export default function AdminUsersPage() {
         },
       })
       if (!ignore && data) {
-        setUsers(data.users as User[])
+        setUsers(data.users as UserType[])
         setTotal(data.total)
       }
       if (!ignore) setLoading(false)
@@ -81,22 +115,40 @@ export default function AdminUsersPage() {
     }
   }, [page, search, refreshKey])
 
+  // Handlers
   async function handleBanUser(userId: string) {
-    await authClient.admin.banUser({ userId })
-    setRefreshKey((k) => k + 1)
+    const { error } = await authClient.admin.banUser({ userId })
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('User banned')
+      setRefreshKey((k) => k + 1)
+    }
   }
 
   async function handleUnbanUser(userId: string) {
-    await authClient.admin.unbanUser({ userId })
-    setRefreshKey((k) => k + 1)
+    const { error } = await authClient.admin.unbanUser({ userId })
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('User unbanned')
+      setRefreshKey((k) => k + 1)
+    }
   }
 
   async function handleDeleteUser() {
     if (!selectedUser) return
-    await authClient.admin.removeUser({ userId: selectedUser.id })
-    setDeleteDialogOpen(false)
-    setSelectedUser(null)
-    setRefreshKey((k) => k + 1)
+    const { error } = await authClient.admin.removeUser({
+      userId: selectedUser.id,
+    })
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('User deleted')
+      setDeleteDialogOpen(false)
+      setSelectedUser(null)
+      setRefreshKey((k) => k + 1)
+    }
   }
 
   async function handleCreateUser(e: React.FormEvent<HTMLFormElement>) {
@@ -116,9 +168,94 @@ export default function AdminUsersPage() {
       toast.error(error.message)
     } else {
       toast.success('User created successfully!')
-      setDialogOpen(false)
+      setCreateDialogOpen(false)
       setRefreshKey((k) => k + 1)
     }
+  }
+
+  async function handleSetRole(userId: string, role: string) {
+    const { error } = await authClient.admin.setRole({ userId, role })
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success(`Role updated to ${role}`)
+      setRefreshKey((k) => k + 1)
+    }
+  }
+
+  async function handleResetPassword() {
+    if (!selectedUser || !newPassword) return
+    if (newPassword.length < 8) {
+      toast.error('Password must be at least 8 characters')
+      return
+    }
+    const { error } = await authClient.admin.setUserPassword({
+      userId: selectedUser.id,
+      newPassword,
+    })
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('Password reset successfully')
+      setResetPasswordDialogOpen(false)
+      setNewPassword('')
+      setSelectedUser(null)
+    }
+  }
+
+  async function handleUpdateUser() {
+    if (!selectedUser) return
+
+    // Update user data (name, email, phone)
+    const { error: updateError } = await authClient.admin.updateUser({
+      userId: selectedUser.id,
+      name: editName || undefined,
+      email: editEmail || undefined,
+      data: {
+        phoneNumber: editPhone || undefined,
+      },
+    })
+
+    if (updateError) {
+      toast.error(updateError.message)
+      return
+    }
+
+    // Update role separately if changed
+    if (editRole && editRole !== selectedUser.role) {
+      const { error: roleError } = await authClient.admin.setRole({
+        userId: selectedUser.id,
+        role: editRole,
+      })
+      if (roleError) {
+        toast.error(roleError.message)
+        return
+      }
+    }
+
+    toast.success('User updated successfully')
+    setEditDialogOpen(false)
+    setSelectedUser(null)
+    setRefreshKey((k) => k + 1)
+  }
+
+  async function handleImpersonate(userId: string) {
+    const { error } = await authClient.admin.impersonateUser({ userId })
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('Impersonating user...')
+      router.push('/dashboard')
+    }
+  }
+
+  function openEditDialog(user: UserType) {
+    setSelectedUser(user)
+    setEditName(user.name || '')
+    setEditEmail(user.email)
+    setEditPhone(user.phoneNumber || '')
+    setEditRole(user.role || 'user')
+    setEditDialogOpen(true)
   }
 
   const totalPages = Math.ceil(total / limit)
@@ -133,7 +270,7 @@ export default function AdminUsersPage() {
           </p>
         </div>
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
@@ -183,7 +320,7 @@ export default function AdminUsersPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setDialogOpen(false)}
+                  onClick={() => setCreateDialogOpen(false)}
                 >
                   Cancel
                 </Button>
@@ -273,6 +410,65 @@ export default function AdminUsersPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
+
+                        {/* Edit User */}
+                        <DropdownMenuItem onClick={() => openEditDialog(user)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit User
+                        </DropdownMenuItem>
+
+                        {/* Reset Password */}
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedUser(user)
+                            setNewPassword('')
+                            setResetPasswordDialogOpen(true)
+                          }}
+                        >
+                          <Key className="mr-2 h-4 w-4" />
+                          Reset Password
+                        </DropdownMenuItem>
+
+                        {/* Set Role */}
+                        {user.role === 'admin' ? (
+                          <DropdownMenuItem
+                            onClick={() => handleSetRole(user.id, 'user')}
+                          >
+                            <User className="mr-2 h-4 w-4" />
+                            Make User
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem
+                            onClick={() => handleSetRole(user.id, 'admin')}
+                          >
+                            <Shield className="mr-2 h-4 w-4" />
+                            Make Admin
+                          </DropdownMenuItem>
+                        )}
+
+                        <DropdownMenuSeparator />
+
+                        {/* Impersonate */}
+                        <DropdownMenuItem
+                          onClick={() => handleImpersonate(user.id)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          Impersonate
+                        </DropdownMenuItem>
+
+                        {/* View Sessions */}
+                        <DropdownMenuItem
+                          onClick={() =>
+                            router.push(`/admin/sessions?userId=${user.id}`)
+                          }
+                        >
+                          <Activity className="mr-2 h-4 w-4" />
+                          View Sessions
+                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator />
+
+                        {/* Ban/Unban */}
                         {user.banned ? (
                           <DropdownMenuItem
                             onClick={() => handleUnbanUser(user.id)}
@@ -288,6 +484,8 @@ export default function AdminUsersPage() {
                             Ban User
                           </DropdownMenuItem>
                         )}
+
+                        {/* Delete */}
                         <DropdownMenuItem
                           className="text-destructive"
                           onClick={() => {
@@ -334,6 +532,7 @@ export default function AdminUsersPage() {
         </div>
       )}
 
+      {/* Delete User Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -361,6 +560,108 @@ export default function AdminUsersPage() {
             <Button variant="destructive" onClick={handleDeleteUser}>
               Delete
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog
+        open={resetPasswordDialogOpen}
+        onOpenChange={setResetPasswordDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Set a new password for {selectedUser?.email}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                placeholder="Min 8 characters"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setResetPasswordDialogOpen(false)
+                setNewPassword('')
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleResetPassword} disabled={!newPassword}>
+              Reset Password
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit User Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>
+              Update user information for {selectedUser?.email}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="editName">Name</Label>
+              <Input
+                id="editName"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="John Doe"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editEmail">Email</Label>
+              <Input
+                id="editEmail"
+                type="email"
+                value={editEmail}
+                onChange={(e) => setEditEmail(e.target.value)}
+                placeholder="john@example.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editPhone">Phone Number</Label>
+              <Input
+                id="editPhone"
+                type="tel"
+                value={editPhone}
+                onChange={(e) => setEditPhone(e.target.value)}
+                placeholder="+39 333 1234567"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editRole">Role</Label>
+              <Select value={editRole} onValueChange={setEditRole}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateUser}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
