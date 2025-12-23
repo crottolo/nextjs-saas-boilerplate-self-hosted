@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, Building2, Settings, Sun, Moon, Monitor } from 'lucide-react'
+import { Home, Building2, User, Sun, Moon, Monitor } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 import {
@@ -43,9 +43,9 @@ const mainNavItems = [
     icon: Building2,
   },
   {
-    title: 'Settings',
-    url: '/settings',
-    icon: Settings,
+    title: 'Profile',
+    url: '/profile',
+    icon: User,
   },
 ]
 

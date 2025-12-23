@@ -7,8 +7,7 @@ import {
   LogOut,
   Moon,
   Monitor,
-  Settings,
-  Shield,
+  User,
   Sun,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -98,15 +97,9 @@ export function NavUser({ user }: NavUserProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push('/settings')}>
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => router.push('/settings/security')}
-              >
-                <Shield className="mr-2 h-4 w-4" />
-                Security
+              <DropdownMenuItem onClick={() => router.push('/profile')}>
+                <User className="mr-2 h-4 w-4" />
+                Profile
               </DropdownMenuItem>
               {user.role === 'admin' && (
                 <DropdownMenuItem onClick={() => router.push('/admin')}>

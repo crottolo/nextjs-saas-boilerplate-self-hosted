@@ -22,8 +22,7 @@ import {
 
 const pathLabels: Record<string, string> = {
   dashboard: 'Dashboard',
-  settings: 'Settings',
-  security: 'Security',
+  profile: 'Profile',
   organizations: 'Organizations',
   create: 'Create',
 }
