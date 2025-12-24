@@ -4,14 +4,45 @@ Sistema di autenticazione completo self-hosted.
 
 ## Features
 
+### Authentication
+
 - Email/password registration & login
 - Magic link authentication
 - Password reset via email
 - 2FA/MFA con TOTP
-- Multi-tenancy (organizzazioni)
-- Rate limiting
 - Session management multi-device
+
+### User Portal
+
+- Profile management con avatar upload
+- Dark mode persistence (salvataggio preferenza su DB)
+- Multi-step onboarding wizard
+- Activity log (cronologia azioni utente)
+- Notification center con bell dropdown
+- Help/FAQ page
+
+### Multi-tenancy
+
+- Organizzazioni con ruoli (owner, admin, member)
+- Team management
+- Inviti via email
+
+### Billing
+
+- Stripe integration
+- Subscription management
+- Billing portal
+
+### Admin
+
 - Dashboard admin completa
+- User management (ban, impersonate, reset password)
+- Rate limiting
+
+### Legal
+
+- Privacy Policy page
+- Terms of Service page
 
 ## Quick Start
 

@@ -138,16 +138,27 @@ export default function AdminUsersPage() {
 
   async function handleDeleteUser() {
     if (!selectedUser) return
-    const { error } = await authClient.admin.removeUser({
-      userId: selectedUser.id,
-    })
-    if (error) {
-      toast.error(error.message)
-    } else {
-      toast.success('User deleted')
-      setDeleteDialogOpen(false)
-      setSelectedUser(null)
-      setRefreshKey((k) => k + 1)
+    try {
+      const response = await fetch('/api/admin/delete-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedUser.id }),
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        toast.error(data.error || 'Failed to delete user')
+      } else {
+        const orgMsg =
+          data.deletedOrganizations > 0
+            ? ` (${data.deletedOrganizations} orphaned org deleted)`
+            : ''
+        toast.success(`User deleted${orgMsg}`)
+        setDeleteDialogOpen(false)
+        setSelectedUser(null)
+        setRefreshKey((k) => k + 1)
+      }
+    } catch {
+      toast.error('Failed to delete user')
     }
   }
 
