@@ -31,7 +31,26 @@ export async function POST(request: NextRequest) {
 
     if (!dbUser?.stripeCustomerId) {
       return NextResponse.json(
-        { error: 'No Stripe customer found' },
+        { error: 'No subscription found. Please subscribe first.' },
+        { status: 404 }
+      )
+    }
+
+    // Verify customer exists in Stripe
+    try {
+      await stripe.customers.retrieve(dbUser.stripeCustomerId)
+    } catch {
+      // Customer doesn't exist in Stripe - clear from DB
+      console.warn(
+        `Customer ${dbUser.stripeCustomerId} not found in Stripe, clearing`
+      )
+      await db
+        .update(user)
+        .set({ stripeCustomerId: null })
+        .where(eq(user.id, session.user.id))
+
+      return NextResponse.json(
+        { error: 'No subscription found. Please subscribe first.' },
         { status: 404 }
       )
     }
