@@ -78,6 +78,23 @@ export default function PricingPage() {
     periodEnd?: string
   } | null>(null)
 
+  // Show success toast if upgraded (from URL param or session check)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('upgraded') === 'true') {
+      toast.success('Subscription upgraded successfully!', { duration: 6000 })
+      // Clean URL
+      window.history.replaceState({}, '', '/pricing')
+    }
+    // Also check session_id from Stripe (alternative success detection)
+    if (params.get('session_id')) {
+      toast.success('Payment successful! Subscription activated.', {
+        duration: 6000,
+      })
+      window.history.replaceState({}, '', '/pricing')
+    }
+  }, [])
+
   useEffect(() => {
     async function fetchSubscription() {
       try {
@@ -107,11 +124,28 @@ export default function PricingPage() {
   async function handleUpgrade(planName: string) {
     setLoading(planName)
     try {
-      const { error } = await authClient.subscription.upgrade({
+      const baseUrl = window.location.origin
+      const successUrl = `${baseUrl}/pricing?upgraded=true`
+      const cancelUrl = `${baseUrl}/pricing`
+      console.log('[Pricing] Upgrading with URLs:', { successUrl, cancelUrl })
+      const { data, error } = await authClient.subscription.upgrade({
         plan: planName.toLowerCase(),
-        successUrl: `${window.location.origin}/dashboard?upgraded=true`,
-        cancelUrl: `${window.location.origin}/pricing`,
+        successUrl,
+        cancelUrl,
+        returnUrl: successUrl, // For billing portal (plan switch)
+        disableRedirect: true,
       })
+      console.log('[Pricing] Upgrade response:', { data, error })
+      if (data?.url) {
+        // New checkout - redirect to Stripe
+        console.log('[Pricing] Checkout URL:', data.url)
+        window.location.href = data.url
+      } else if (!error) {
+        // Plan switch - no checkout needed, show success
+        toast.success('Plan switched successfully!', { duration: 6000 })
+        // Refresh subscription data
+        window.location.href = '/pricing?upgraded=true'
+      }
       if (error) {
         toast.error(error.message || 'Failed to upgrade')
       }
@@ -195,7 +229,7 @@ export default function PricingPage() {
               className={cn(
                 'relative transition-all',
                 isCurrentPlan &&
-                  'border-2 border-primary ring-2 ring-primary/20 shadow-lg bg-secondary',
+                  'border-5 border-primary ring-2 ring-primary/20 shadow-lg',
                 plan.popular && !isCurrentPlan && 'border-primary/50 shadow-md'
               )}
             >
@@ -215,7 +249,7 @@ export default function PricingPage() {
                 </Badge>
               )}
 
-              <CardHeader className={cn(isCurrentPlan && 'bg-primary/5')}>
+              <CardHeader className={cn(isCurrentPlan)}>
                 <CardTitle className="flex items-center gap-2">
                   {plan.name}
                   {isCurrentPlan && <Check className="h-5 w-5 text-primary" />}
