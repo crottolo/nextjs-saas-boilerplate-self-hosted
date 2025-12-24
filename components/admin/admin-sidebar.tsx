@@ -13,6 +13,7 @@ import {
   Moon,
   Monitor,
   Building2,
+  Bell,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
@@ -63,6 +64,11 @@ const adminNavItems = [
     title: 'Organizations',
     url: '/admin/organizations',
     icon: Building2,
+  },
+  {
+    title: 'Notifications',
+    url: '/admin/notifications',
+    icon: Bell,
   },
   {
     title: 'Sessions',

@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { logActivityClient } from '@/lib/activity-client'
 
 export default function CreateOrganizationPage() {
   const router = useRouter()
@@ -37,6 +38,7 @@ export default function CreateOrganizationPage() {
       setError(error.message || 'Failed to create organization')
       setLoading(false)
     } else {
+      logActivityClient('organization_created', name)
       router.push('/organizations')
     }
   }

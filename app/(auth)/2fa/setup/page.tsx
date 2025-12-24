@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { logActivityClient } from '@/lib/activity-client'
 
 export default function TwoFactorSetupPage() {
   const router = useRouter()
@@ -62,6 +63,7 @@ export default function TwoFactorSetupPage() {
       setError(error.message || 'Invalid code')
       setLoading(false)
     } else {
+      logActivityClient('2fa_enabled')
       router.push('/settings/security')
     }
   }

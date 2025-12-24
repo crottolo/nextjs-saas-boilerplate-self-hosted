@@ -25,6 +25,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
 import { AvatarUpload } from '@/components/profile/avatar-upload'
+import { logActivityClient } from '@/lib/activity-client'
 
 interface Session {
   id: string
@@ -96,6 +97,7 @@ export default function ProfilePage() {
       setProfileMessage(`Error: ${error.message}`)
     } else {
       setProfileMessage('Profile updated successfully!')
+      logActivityClient('profile_updated')
     }
     setLoading(false)
   }
@@ -132,6 +134,7 @@ export default function ProfilePage() {
       setPasswordMessage(`Error: ${error.message}`)
     } else {
       setPasswordMessage('Password changed successfully!')
+      logActivityClient('password_change')
       ;(e.target as HTMLFormElement).reset()
     }
     setLoading(false)
@@ -193,6 +196,7 @@ export default function ProfilePage() {
       toast.error(error.message)
     } else {
       toast.success('Two-factor authentication disabled')
+      logActivityClient('2fa_disabled')
       setDisable2FAOpen(false)
       setDisable2FAPassword('')
     }

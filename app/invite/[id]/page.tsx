@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { logActivityClient } from '@/lib/activity-client'
 
 interface Invitation {
   id: string
@@ -90,6 +91,7 @@ export default function InvitePage() {
       await authClient.organization.acceptInvitation({
         invitationId,
       })
+      logActivityClient('organization_joined', invitation?.organizationName)
       router.push('/organizations')
     } catch (err) {
       setError(

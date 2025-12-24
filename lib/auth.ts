@@ -5,6 +5,7 @@ import { stripe } from '@better-auth/stripe'
 import Stripe from 'stripe'
 import { db } from './db'
 import { sendEmail } from './email'
+import { logActivity } from './activity'
 
 // Stripe client
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -179,6 +180,18 @@ export const auth = betterAuth({
           } catch (error) {
             console.error('[Auth] Failed to create personal workspace:', error)
           }
+        },
+      },
+    },
+    session: {
+      create: {
+        after: async (session) => {
+          // Log login activity
+          await logActivity({
+            userId: session.userId,
+            action: 'login',
+            userAgent: session.userAgent || undefined,
+          })
         },
       },
     },
