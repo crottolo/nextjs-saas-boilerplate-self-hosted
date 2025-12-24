@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { db } from '@/lib/db'
-import { user } from '@/lib/db/auth-schema'
+import { user, notification } from '@/lib/db/auth-schema'
+import { desc, sql } from 'drizzle-orm'
 import {
   createNotification,
   createBulkNotifications,
@@ -40,7 +41,29 @@ export async function GET(request: NextRequest) {
         )
       : users
 
-    return NextResponse.json({ users: filtered })
+    // Get recent notifications with recipient info
+    const notifications = await db
+      .select({
+        id: notification.id,
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        link: notification.link,
+        createdAt: notification.createdAt,
+        recipientName: sql<string | null>`(
+          SELECT "user".name FROM "user"
+          WHERE "user".id = ${notification.userId}
+        )`,
+        recipientEmail: sql<string>`(
+          SELECT "user".email FROM "user"
+          WHERE "user".id = ${notification.userId}
+        )`,
+      })
+      .from(notification)
+      .orderBy(desc(notification.createdAt))
+      .limit(100)
+
+    return NextResponse.json({ users: filtered, notifications })
   } catch (error) {
     console.error('List users error:', error)
     return NextResponse.json({ error: 'Failed to list users' }, { status: 500 })

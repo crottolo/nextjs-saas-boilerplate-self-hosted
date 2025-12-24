@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { db } from '@/lib/db'
-import { member, organization } from '@/lib/db/auth-schema'
+import { member, organization, user } from '@/lib/db/auth-schema'
 import { eq, sql, desc } from 'drizzle-orm'
 
 export async function GET(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search') || ''
 
-    // Get all organizations with member count
+    // Get all organizations with member count and owner
     const orgs = await db
       .select({
         id: organization.id,
@@ -29,6 +29,20 @@ export async function GET(request: NextRequest) {
         memberCount: sql<number>`(
           SELECT COUNT(*) FROM member
           WHERE member.organization_id = ${organization.id}
+        )`,
+        ownerName: sql<string | null>`(
+          SELECT "user".name FROM member
+          INNER JOIN "user" ON member.user_id = "user".id
+          WHERE member.organization_id = ${organization.id}
+          AND member.role = 'owner'
+          LIMIT 1
+        )`,
+        ownerEmail: sql<string | null>`(
+          SELECT "user".email FROM member
+          INNER JOIN "user" ON member.user_id = "user".id
+          WHERE member.organization_id = ${organization.id}
+          AND member.role = 'owner'
+          LIMIT 1
         )`,
       })
       .from(organization)

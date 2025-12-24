@@ -44,6 +44,8 @@ interface Organization {
   logo?: string | null
   createdAt: string
   memberCount: number
+  ownerName: string | null
+  ownerEmail: string | null
 }
 
 export default function AdminOrganizationsPage() {
@@ -151,6 +153,7 @@ export default function AdminOrganizationsPage() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Slug</TableHead>
+              <TableHead>Owner</TableHead>
               <TableHead>Members</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="w-[70px]"></TableHead>
@@ -159,13 +162,13 @@ export default function AdminOrganizationsPage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : organizations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   No organizations found.
                 </TableCell>
               </TableRow>
@@ -175,6 +178,18 @@ export default function AdminOrganizationsPage() {
                   <TableCell className="font-medium">{org.name}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {org.slug}
+                  </TableCell>
+                  <TableCell>
+                    {org.ownerName ? (
+                      <div>
+                        <div className="font-medium">{org.ownerName}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {org.ownerEmail}
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

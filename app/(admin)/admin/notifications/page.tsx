@@ -22,6 +22,14 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
   Search,
   Send,
   Users,
@@ -38,6 +46,17 @@ interface UserOption {
   id: string
   name: string | null
   email: string
+}
+
+interface SentNotification {
+  id: string
+  type: string
+  title: string
+  message: string | null
+  link: string | null
+  createdAt: string
+  recipientName: string | null
+  recipientEmail: string
 }
 
 type NotificationType = 'info' | 'success' | 'warning' | 'system' | 'invite'
@@ -75,9 +94,11 @@ const typeConfig: Record<
 
 export default function AdminNotificationsPage() {
   const [users, setUsers] = useState<UserOption[]>([])
+  const [notifications, setNotifications] = useState<SentNotification[]>([])
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [search, setSearch] = useState('')
+  const [refreshKey, setRefreshKey] = useState(0)
 
   // Form state
   const [type, setType] = useState<NotificationType>('info')
@@ -88,21 +109,24 @@ export default function AdminNotificationsPage() {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
 
   useEffect(() => {
-    async function fetchUsers() {
+    async function fetchData() {
       try {
         const response = await fetch('/api/admin/notifications/send')
         const data = await response.json()
         if (data.users) {
           setUsers(data.users)
         }
+        if (data.notifications) {
+          setNotifications(data.notifications)
+        }
       } catch {
-        toast.error('Failed to load users')
+        toast.error('Failed to load data')
       } finally {
         setLoading(false)
       }
     }
-    fetchUsers()
-  }, [])
+    fetchData()
+  }, [refreshKey])
 
   const filteredUsers = search
     ? users.filter(
@@ -160,11 +184,12 @@ export default function AdminNotificationsPage() {
         toast.error(data.error || 'Failed to send notification')
       } else {
         toast.success(`Notification sent to ${data.count} user(s)`)
-        // Reset form
+        // Reset form and refresh list
         setTitle('')
         setMessage('')
         setLink('')
         setSelectedUsers([])
+        setRefreshKey((k) => k + 1)
       }
     } catch {
       toast.error('Failed to send notification')
@@ -399,6 +424,85 @@ export default function AdminNotificationsPage() {
           {sending ? 'Sending...' : 'Send Notification'}
         </Button>
       </div>
+
+      {/* Sent notifications table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Sent Notifications</CardTitle>
+          <CardDescription>
+            Recent notifications ({notifications.length})
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Recipient</TableHead>
+                  <TableHead>Sent</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : notifications.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                      No notifications sent yet.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  notifications.map((n) => (
+                    <TableRow key={n.id}>
+                      <TableCell>
+                        <div
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-white text-xs ${
+                            typeConfig[n.type as NotificationType]?.color ||
+                            'bg-gray-500'
+                          }`}
+                        >
+                          {typeConfig[n.type as NotificationType]?.icon}
+                          {typeConfig[n.type as NotificationType]?.label ||
+                            n.type}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{n.title}</div>
+                          {n.message && (
+                            <div className="text-xs text-muted-foreground truncate max-w-xs">
+                              {n.message}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">
+                            {n.recipientName || 'No name'}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {n.recipientEmail}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(n.createdAt).toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

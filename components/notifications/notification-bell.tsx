@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Bell, CheckCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +28,7 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     let isMounted = true
@@ -34,24 +36,24 @@ export function NotificationBell() {
     const fetchNotifications = async () => {
       try {
         const res = await fetch('/api/notifications?limit=5')
+        if (!res.ok) return
         const data = await res.json()
         if (isMounted) {
           setNotifications(data.notifications || [])
           setUnreadCount(data.unreadCount || 0)
         }
-      } catch (error) {
-        console.error('Failed to fetch notifications:', error)
+      } catch {
+        // Ignore fetch errors
       }
     }
 
+    // Fetch on mount and on every route change
     fetchNotifications()
-    const interval = setInterval(fetchNotifications, 60000)
 
     return () => {
       isMounted = false
-      clearInterval(interval)
     }
-  }, [])
+  }, [pathname])
 
   const markAsRead = async (id: string) => {
     try {
