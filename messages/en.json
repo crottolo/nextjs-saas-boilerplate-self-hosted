@@ -580,6 +580,20 @@
         "stripeId": "Stripe Customer ID",
         "stripeIdPlaceholder": "cus_xxx",
         "clearStripe": "Clear to remove Stripe association from this user"
+      },
+      "noUsers": "No users found.",
+      "toast": {
+        "banned": "User banned",
+        "unbanned": "User unbanned",
+        "deleted": "User deleted",
+        "deletedWithOrgs": "User deleted ({count} orphaned org deleted)",
+        "deleteFailed": "Failed to delete user",
+        "created": "User created successfully!",
+        "roleUpdated": "Role updated to {role}",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "passwordReset": "Password reset successfully",
+        "updated": "User updated successfully",
+        "impersonating": "Impersonating user..."
       }
     },
     "sessions": {

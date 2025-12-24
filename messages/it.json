@@ -580,6 +580,20 @@
         "stripeId": "ID Cliente Stripe",
         "stripeIdPlaceholder": "cus_xxx",
         "clearStripe": "Cancella per rimuovere l'associazione Stripe da questo utente"
+      },
+      "noUsers": "Nessun utente trovato.",
+      "toast": {
+        "banned": "Utente bannato",
+        "unbanned": "Utente sbannato",
+        "deleted": "Utente eliminato",
+        "deletedWithOrgs": "Utente eliminato ({count} org orfana eliminata)",
+        "deleteFailed": "Impossibile eliminare l'utente",
+        "created": "Utente creato con successo!",
+        "roleUpdated": "Ruolo aggiornato a {role}",
+        "passwordMinLength": "La password deve essere di almeno 8 caratteri",
+        "passwordReset": "Password reimpostata con successo",
+        "updated": "Utente aggiornato con successo",
+        "impersonating": "Impersonando utente..."
       }
     },
     "sessions": {

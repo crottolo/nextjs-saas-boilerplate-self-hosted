@@ -579,12 +579,26 @@
         "selectRole": "Select role",
         "stripeId": "Stripe Customer ID",
         "stripeIdPlaceholder": "cus_xxx",
-        "clearStripe": "Clear to remove Stripe association from this user"
+        "clearStripe": "Zrušit pro odstranění asociace se Stripe"
+      },
+      "noUsers": "Nenalezeni žádní uživatelé.",
+      "toast": {
+        "banned": "Uživatel zablokován",
+        "unbanned": "Uživatel odblokován",
+        "deleted": "Uživatel smazán",
+        "deletedWithOrgs": "Uživatel smazán ({count} osiřelá org. smazána)",
+        "deleteFailed": "Nepodařilo se smazat uživatele",
+        "created": "Uživatel úspěšně vytvořen!",
+        "roleUpdated": "Role změněna na {role}",
+        "passwordMinLength": "Heslo musí mít alespoň 8 znaků",
+        "passwordReset": "Heslo úspěšně resetováno",
+        "updated": "Uživatel úspěšně aktualizován",
+        "impersonating": "Přihlašování jako uživatel..."
       }
     },
     "sessions": {
-      "title": "Sessions",
-      "description": "View and manage all active sessions"
+      "title": "Relace",
+      "description": "Zobrazit a spravovat všechny aktivní relace"
     },
     "organizations": {
       "title": "Organizations",

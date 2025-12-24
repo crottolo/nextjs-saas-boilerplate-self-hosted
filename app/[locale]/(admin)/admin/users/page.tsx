@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -68,6 +69,8 @@ interface UserType {
 }
 
 export default function AdminUsersPage() {
+  const t = useTranslations('admin.users')
+  const tCommon = useTranslations('common')
   const router = useRouter()
   const [users, setUsers] = useState<UserType[]>([])
   const [total, setTotal] = useState(0)
@@ -123,7 +126,7 @@ export default function AdminUsersPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('User banned')
+      toast.success(t('toast.banned'))
       setRefreshKey((k) => k + 1)
     }
   }
@@ -133,7 +136,7 @@ export default function AdminUsersPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('User unbanned')
+      toast.success(t('toast.unbanned'))
       setRefreshKey((k) => k + 1)
     }
   }
@@ -148,19 +151,19 @@ export default function AdminUsersPage() {
       })
       const data = await response.json()
       if (!response.ok) {
-        toast.error(data.error || 'Failed to delete user')
+        toast.error(data.error || t('toast.deleteFailed'))
       } else {
-        const orgMsg =
+        const msg =
           data.deletedOrganizations > 0
-            ? ` (${data.deletedOrganizations} orphaned org deleted)`
-            : ''
-        toast.success(`User deleted${orgMsg}`)
+            ? t('toast.deletedWithOrgs', { count: data.deletedOrganizations })
+            : t('toast.deleted')
+        toast.success(msg)
         setDeleteDialogOpen(false)
         setSelectedUser(null)
         setRefreshKey((k) => k + 1)
       }
     } catch {
-      toast.error('Failed to delete user')
+      toast.error(t('toast.deleteFailed'))
     }
   }
 
@@ -180,7 +183,7 @@ export default function AdminUsersPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('User created successfully!')
+      toast.success(t('toast.created'))
       setCreateDialogOpen(false)
       setRefreshKey((k) => k + 1)
     }
@@ -191,7 +194,7 @@ export default function AdminUsersPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success(`Role updated to ${role}`)
+      toast.success(t('toast.roleUpdated', { role }))
       setRefreshKey((k) => k + 1)
     }
   }
@@ -199,7 +202,7 @@ export default function AdminUsersPage() {
   async function handleResetPassword() {
     if (!selectedUser || !newPassword) return
     if (newPassword.length < 8) {
-      toast.error('Password must be at least 8 characters')
+      toast.error(t('toast.passwordMinLength'))
       return
     }
     const { error } = await authClient.admin.setUserPassword({
@@ -209,7 +212,7 @@ export default function AdminUsersPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('Password reset successfully')
+      toast.success(t('toast.passwordReset'))
       setResetPasswordDialogOpen(false)
       setNewPassword('')
       setSelectedUser(null)
@@ -250,7 +253,7 @@ export default function AdminUsersPage() {
       }
     }
 
-    toast.success('User updated successfully')
+    toast.success(t('toast.updated'))
     setEditDialogOpen(false)
     setSelectedUser(null)
     setRefreshKey((k) => k + 1)
@@ -261,7 +264,7 @@ export default function AdminUsersPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('Impersonating user...')
+      toast.success(t('toast.impersonating'))
       router.push('/dashboard')
     }
   }
@@ -282,54 +285,52 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
-          <p className="text-muted-foreground">
-            Manage all users in your application ({total} total)
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('description', { total })}</p>
         </div>
 
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add User
+              {t('addUser')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <form onSubmit={handleCreateUser}>
               <DialogHeader>
-                <DialogTitle>Create User</DialogTitle>
+                <DialogTitle>{t('createUser.title')}</DialogTitle>
                 <DialogDescription>
-                  Create a new user account manually.
+                  {t('createUser.description')}
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">{t('createUser.name')}</Label>
                   <Input
                     id="name"
                     name="name"
-                    placeholder="John Doe"
+                    placeholder={t('createUser.namePlaceholder')}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('createUser.email')}</Label>
                   <Input
                     id="email"
                     name="email"
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder={t('createUser.emailPlaceholder')}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('createUser.password')}</Label>
                   <Input
                     id="password"
                     name="password"
                     type="password"
-                    placeholder="Min 8 characters"
+                    placeholder={t('createUser.passwordPlaceholder')}
                     required
                   />
                 </div>
@@ -340,9 +341,9 @@ export default function AdminUsersPage() {
                   variant="outline"
                   onClick={() => setCreateDialogOpen(false)}
                 >
-                  Cancel
+                  {tCommon('cancel')}
                 </Button>
-                <Button type="submit">Create</Button>
+                <Button type="submit">{t('createUser.submit')}</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -353,7 +354,7 @@ export default function AdminUsersPage() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by email..."
+            placeholder={t('search')}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -368,12 +369,12 @@ export default function AdminUsersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Stripe ID</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>{t('columns.name')}</TableHead>
+              <TableHead>{t('columns.email')}</TableHead>
+              <TableHead>{t('columns.status')}</TableHead>
+              <TableHead>{t('columns.role')}</TableHead>
+              <TableHead>{t('columns.stripeId')}</TableHead>
+              <TableHead>{t('columns.created')}</TableHead>
               <TableHead className="w-[70px]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -381,39 +382,45 @@ export default function AdminUsersPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
-                  Loading...
+                  {tCommon('loading')}
                 </TableCell>
               </TableRow>
             ) : users.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
-                  No users found.
+                  {t('noUsers')}
                 </TableCell>
               </TableRow>
             ) : (
               users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell className="font-medium">
-                    {user.name || 'No name'}
+                    {user.name || t('noName')}
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       {user.banned && (
-                        <Badge variant="destructive">Banned</Badge>
+                        <Badge variant="destructive">
+                          {t('status.banned')}
+                        </Badge>
                       )}
                       {user.emailVerified ? (
-                        <Badge variant="secondary">Verified</Badge>
+                        <Badge variant="secondary">
+                          {t('status.verified')}
+                        </Badge>
                       ) : (
-                        <Badge variant="outline">Unverified</Badge>
+                        <Badge variant="outline">
+                          {t('status.unverified')}
+                        </Badge>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
                     {user.role === 'admin' ? (
-                      <Badge>Admin</Badge>
+                      <Badge>{t('roles.admin')}</Badge>
                     ) : (
-                      <Badge variant="outline">User</Badge>
+                      <Badge variant="outline">{t('roles.user')}</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-muted-foreground font-mono text-xs">
@@ -432,13 +439,15 @@ export default function AdminUsersPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel>
+                          {tCommon('actions')}
+                        </DropdownMenuLabel>
                         <DropdownMenuSeparator />
 
                         {/* Edit User */}
                         <DropdownMenuItem onClick={() => openEditDialog(user)}>
                           <Pencil className="mr-2 h-4 w-4" />
-                          Edit User
+                          {t('actions.edit')}
                         </DropdownMenuItem>
 
                         {/* Reset Password */}
@@ -450,7 +459,7 @@ export default function AdminUsersPage() {
                           }}
                         >
                           <Key className="mr-2 h-4 w-4" />
-                          Reset Password
+                          {t('actions.resetPassword')}
                         </DropdownMenuItem>
 
                         {/* Set Role */}
@@ -459,14 +468,14 @@ export default function AdminUsersPage() {
                             onClick={() => handleSetRole(user.id, 'user')}
                           >
                             <User className="mr-2 h-4 w-4" />
-                            Make User
+                            {t('actions.makeUser')}
                           </DropdownMenuItem>
                         ) : (
                           <DropdownMenuItem
                             onClick={() => handleSetRole(user.id, 'admin')}
                           >
                             <Shield className="mr-2 h-4 w-4" />
-                            Make Admin
+                            {t('actions.makeAdmin')}
                           </DropdownMenuItem>
                         )}
 
@@ -477,7 +486,7 @@ export default function AdminUsersPage() {
                           onClick={() => handleImpersonate(user.id)}
                         >
                           <Eye className="mr-2 h-4 w-4" />
-                          Impersonate
+                          {t('actions.impersonate')}
                         </DropdownMenuItem>
 
                         {/* View Sessions */}
@@ -487,7 +496,7 @@ export default function AdminUsersPage() {
                           }
                         >
                           <Activity className="mr-2 h-4 w-4" />
-                          View Sessions
+                          {t('actions.viewSessions')}
                         </DropdownMenuItem>
 
                         <DropdownMenuSeparator />
@@ -498,14 +507,14 @@ export default function AdminUsersPage() {
                             onClick={() => handleUnbanUser(user.id)}
                           >
                             <Check className="mr-2 h-4 w-4" />
-                            Unban User
+                            {t('actions.unban')}
                           </DropdownMenuItem>
                         ) : (
                           <DropdownMenuItem
                             onClick={() => handleBanUser(user.id)}
                           >
                             <Ban className="mr-2 h-4 w-4" />
-                            Ban User
+                            {t('actions.ban')}
                           </DropdownMenuItem>
                         )}
 
@@ -518,7 +527,7 @@ export default function AdminUsersPage() {
                           }}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete User
+                          {t('actions.delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -533,7 +542,7 @@ export default function AdminUsersPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Page {page + 1} of {totalPages}
+            {tCommon('page', { current: page + 1, total: totalPages })}
           </p>
           <div className="flex gap-2">
             <Button
@@ -542,7 +551,7 @@ export default function AdminUsersPage() {
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
             >
-              Previous
+              {tCommon('previous')}
             </Button>
             <Button
               variant="outline"
@@ -550,7 +559,7 @@ export default function AdminUsersPage() {
               onClick={() => setPage((p) => p + 1)}
               disabled={page >= totalPages - 1}
             >
-              Next
+              {tCommon('next')}
             </Button>
           </div>
         </div>
@@ -560,15 +569,14 @@ export default function AdminUsersPage() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
+            <DialogTitle>{t('deleteDialog.title')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this user? This action cannot be
-              undone.
+              {t('deleteDialog.description')}
             </DialogDescription>
           </DialogHeader>
           {selectedUser && (
             <div className="py-4">
-              <p className="font-medium">{selectedUser.name || 'No name'}</p>
+              <p className="font-medium">{selectedUser.name || t('noName')}</p>
               <p className="text-sm text-muted-foreground">
                 {selectedUser.email}
               </p>
@@ -579,10 +587,10 @@ export default function AdminUsersPage() {
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button variant="destructive" onClick={handleDeleteUser}>
-              Delete
+              {tCommon('delete')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -595,18 +603,22 @@ export default function AdminUsersPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset Password</DialogTitle>
+            <DialogTitle>{t('resetPasswordDialog.title')}</DialogTitle>
             <DialogDescription>
-              Set a new password for {selectedUser?.email}
+              {t('resetPasswordDialog.description', {
+                email: selectedUser?.email ?? '',
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
+              <Label htmlFor="newPassword">
+                {t('resetPasswordDialog.newPassword')}
+              </Label>
               <Input
                 id="newPassword"
                 type="password"
-                placeholder="Min 8 characters"
+                placeholder={t('createUser.passwordPlaceholder')}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
@@ -620,10 +632,10 @@ export default function AdminUsersPage() {
                 setNewPassword('')
               }}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button onClick={handleResetPassword} disabled={!newPassword}>
-              Reset Password
+              {t('resetPasswordDialog.title')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -633,33 +645,35 @@ export default function AdminUsersPage() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
+            <DialogTitle>{t('editDialog.title')}</DialogTitle>
             <DialogDescription>
-              Update user information for {selectedUser?.email}
+              {t('editDialog.description', {
+                email: selectedUser?.email ?? '',
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="editName">Name</Label>
+              <Label htmlFor="editName">{t('editDialog.name')}</Label>
               <Input
                 id="editName"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                placeholder="John Doe"
+                placeholder={t('createUser.namePlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editEmail">Email</Label>
+              <Label htmlFor="editEmail">{t('editDialog.email')}</Label>
               <Input
                 id="editEmail"
                 type="email"
                 value={editEmail}
                 onChange={(e) => setEditEmail(e.target.value)}
-                placeholder="john@example.com"
+                placeholder={t('createUser.emailPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editPhone">Phone Number</Label>
+              <Label htmlFor="editPhone">{t('editDialog.phone')}</Label>
               <Input
                 id="editPhone"
                 type="tel"
@@ -669,28 +683,30 @@ export default function AdminUsersPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editRole">Role</Label>
+              <Label htmlFor="editRole">{t('editDialog.role')}</Label>
               <Select
                 value={editRole}
                 onValueChange={(v) => setEditRole(v as 'user' | 'admin')}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
+                  <SelectValue placeholder={t('editDialog.selectRole')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="user">{t('roles.user')}</SelectItem>
+                  <SelectItem value="admin">{t('roles.admin')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editStripeCustomerId">Stripe Customer ID</Label>
+              <Label htmlFor="editStripeCustomerId">
+                {t('editDialog.stripeId')}
+              </Label>
               <div className="flex gap-2">
                 <Input
                   id="editStripeCustomerId"
                   value={editStripeCustomerId}
                   onChange={(e) => setEditStripeCustomerId(e.target.value)}
-                  placeholder="cus_xxx"
+                  placeholder={t('editDialog.stripeIdPlaceholder')}
                   className="font-mono text-sm"
                 />
                 <Button
@@ -700,19 +716,19 @@ export default function AdminUsersPage() {
                   onClick={() => setEditStripeCustomerId('')}
                   disabled={!editStripeCustomerId}
                 >
-                  Clear
+                  {tCommon('clear')}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Clear to remove Stripe association from this user
+                {t('editDialog.clearStripe')}
               </p>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
-            <Button onClick={handleUpdateUser}>Save Changes</Button>
+            <Button onClick={handleUpdateUser}>{tCommon('saveChanges')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
