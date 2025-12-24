@@ -195,6 +195,15 @@
   "profile": {
     "title": "Profilo",
     "description": "Gestisci le impostazioni del tuo account e la sicurezza",
+    "avatar": {
+      "change": "Cambia Avatar",
+      "uploading": "Caricamento...",
+      "hint": "JPG, PNG. Max 2MB.",
+      "selectImage": "Seleziona un file immagine",
+      "maxSize": "L'immagine deve essere inferiore a 2MB",
+      "updated": "Avatar aggiornato!",
+      "uploadFailed": "Caricamento fallito"
+    },
     "tabs": {
       "profile": "Profilo",
       "security": "Sicurezza",

@@ -260,6 +260,91 @@ import { motion } from 'motion/react'
 - Do not hardcode secrets - use environment variables
 - Do not use Resend - project uses Nodemailer (SMTP)
 
+## Internationalization (i18n) - IMPORTANT
+
+Il progetto usa **next-intl** per l'internazionalizzazione. Lingue supportate: `en`, `it`, `cz`.
+
+### Linee guida OBBLIGATORIE per scrivere codice:
+
+1. **MAI stringhe hardcoded in UI** - Tutte le stringhe visibili all'utente DEVONO usare le traduzioni:
+
+```typescript
+// ❌ SBAGLIATO
+<Button>Save Changes</Button>
+toast.error('Upload failed')
+
+// ✅ CORRETTO
+const t = useTranslations('profile')
+<Button>{t('saveChanges')}</Button>
+toast.error(t('uploadFailed'))
+```
+
+2. **Usare useTranslations nei componenti client**:
+
+```typescript
+'use client'
+import { useTranslations } from 'next-intl'
+
+export function MyComponent() {
+  const t = useTranslations('namespace')
+  const tCommon = useTranslations('common')
+  // ...
+}
+```
+
+3. **Link e Router DEVONO usare i18n/navigation**:
+
+```typescript
+// ❌ SBAGLIATO
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
+// ✅ CORRETTO
+import { Link } from '@/i18n/navigation'
+import { useRouter } from '@/i18n/navigation'
+```
+
+4. **Aggiungere traduzioni in TUTTI i file JSON** (`messages/en.json`, `it.json`, `cz.json`):
+
+```json
+{
+  "namespace": {
+    "key": "English text",
+    "nested": {
+      "key": "Nested text"
+    }
+  }
+}
+```
+
+5. **Namespace comuni già esistenti**:
+   - `common` - bottoni generici (save, cancel, delete, etc.)
+   - `nav` - navigazione sidebar
+   - `theme` - opzioni tema (light, dark, system)
+   - `profile` - pagina profilo
+   - `dashboard` - dashboard principale
+   - `organizations` - gestione organizzazioni
+   - `pricing` - piani e abbonamenti
+   - `admin` - pannello admin
+
+### File di configurazione i18n:
+
+- `i18n/config.ts` - Configurazione lingue
+- `i18n/request.ts` - Request handler
+- `i18n/navigation.ts` - Link e router localizzati
+- `messages/*.json` - File traduzioni
+
+## DO NOT
+
+- Do not use `middleware.ts` - Next.js 16 uses `proxy.ts`
+- Do not use deprecated `getServerSession` - use `auth.api.getSession`
+- Do not use `pages/` directory - use App Router only
+- Do not use `ports:` in docker-compose.yaml for Coolify (proxy conflicts)
+- Do not hardcode secrets - use environment variables
+- Do not use Resend - project uses Nodemailer (SMTP)
+- **Do not hardcode UI strings** - use `useTranslations()` from next-intl
+- **Do not use `next/link` or `next/navigation`** - use `@/i18n/navigation`
+
 ## Documentation References
 
 - `.claude/docs/COOLIFY.md` - Coolify deployment patterns

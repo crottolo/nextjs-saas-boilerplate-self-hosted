@@ -193,8 +193,17 @@
     }
   },
   "profile": {
-    "title": "Profile",
-    "description": "Manage your account settings and security",
+    "title": "Profil",
+    "description": "Spravujte nastavení účtu a zabezpečení",
+    "avatar": {
+      "change": "Změnit Avatar",
+      "uploading": "Nahrávání...",
+      "hint": "JPG, PNG. Max 2MB.",
+      "selectImage": "Vyberte obrázek",
+      "maxSize": "Obrázek musí být menší než 2MB",
+      "updated": "Avatar aktualizován!",
+      "uploadFailed": "Nahrávání selhalo"
+    },
     "tabs": {
       "profile": "Profile",
       "security": "Security",

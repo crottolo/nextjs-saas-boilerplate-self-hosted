@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Camera, Loader2 } from 'lucide-react'
@@ -17,6 +18,7 @@ export function AvatarUpload({
   name,
   onUploadComplete,
 }: AvatarUploadProps) {
+  const t = useTranslations('profile.avatar')
   const [uploading, setUploading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -33,12 +35,12 @@ export function AvatarUpload({
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file')
+      toast.error(t('selectImage'))
       return
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast.error('Image must be less than 2MB')
+      toast.error(t('maxSize'))
       return
     }
 
@@ -57,14 +59,14 @@ export function AvatarUpload({
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Upload failed')
+        throw new Error(data.error || t('uploadFailed'))
       }
 
       const { url } = await res.json()
-      toast.success('Avatar updated!')
+      toast.success(t('updated'))
       onUploadComplete?.(url)
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Upload failed')
+      toast.error(error instanceof Error ? error.message : t('uploadFailed'))
       setPreviewUrl(null)
     } finally {
       setUploading(false)
@@ -96,9 +98,9 @@ export function AvatarUpload({
           disabled={uploading}
         >
           <Camera className="mr-2 h-4 w-4" />
-          {uploading ? 'Uploading...' : 'Change Avatar'}
+          {uploading ? t('uploading') : t('change')}
         </Button>
-        <p className="text-xs text-muted-foreground">JPG, PNG. Max 2MB.</p>
+        <p className="text-xs text-muted-foreground">{t('hint')}</p>
       </div>
       <input
         ref={inputRef}
