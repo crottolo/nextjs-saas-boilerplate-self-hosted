@@ -69,28 +69,55 @@ export async function POST(request: NextRequest) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const subAny = existingSub as any
 
-      const portalSession = await stripe.billingPortal.sessions.create({
-        customer: customerId,
-        return_url:
-          successUrl ||
-          `${process.env.NEXT_PUBLIC_APP_URL}/pricing?updated=true`,
-        flow_data: {
-          type: 'subscription_update_confirm',
-          subscription_update_confirm: {
-            subscription: subAny.id,
-            items: [{ id: subAny.items.data[0].id, price: priceId }],
-          },
-          after_completion: {
-            type: 'redirect',
-            redirect: {
-              return_url:
-                successUrl ||
-                `${process.env.NEXT_PUBLIC_APP_URL}/pricing?updated=true`,
+      // Check if user is already on the same price
+      const currentPriceId = subAny.items.data[0]?.price?.id
+      if (currentPriceId === priceId) {
+        return NextResponse.json(
+          { error: 'You are already on this plan' },
+          { status: 400 }
+        )
+      }
+
+      const returnUrl =
+        successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/pricing?updated=true`
+
+      try {
+        // Try with flow_data for direct plan change
+        const portalSession = await stripe.billingPortal.sessions.create({
+          customer: customerId,
+          return_url: returnUrl,
+          flow_data: {
+            type: 'subscription_update_confirm',
+            subscription_update_confirm: {
+              subscription: subAny.id,
+              items: [{ id: subAny.items.data[0].id, price: priceId }],
+            },
+            after_completion: {
+              type: 'redirect',
+              redirect: {
+                return_url: returnUrl,
+              },
             },
           },
-        },
-      })
-      return NextResponse.json({ url: portalSession.url, type: 'portal' })
+        })
+        return NextResponse.json({ url: portalSession.url, type: 'portal' })
+      } catch (flowError) {
+        // Fallback: redirect to billing portal without flow_data
+        // This happens when the price is not configured in the portal
+        console.warn(
+          'Flow data failed, falling back to standard portal:',
+          flowError
+        )
+        const portalSession = await stripe.billingPortal.sessions.create({
+          customer: customerId,
+          return_url: returnUrl,
+        })
+        return NextResponse.json({
+          url: portalSession.url,
+          type: 'portal',
+          note: 'Please select your new plan from the portal',
+        })
+      }
     }
 
     // Create checkout session for new subscription
