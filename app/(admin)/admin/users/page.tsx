@@ -64,6 +64,7 @@ interface UserType {
   emailVerified?: boolean
   role?: string
   createdAt: string
+  stripeCustomerId?: string | null
 }
 
 export default function AdminUsersPage() {
@@ -89,6 +90,7 @@ export default function AdminUsersPage() {
   const [editEmail, setEditEmail] = useState('')
   const [editPhone, setEditPhone] = useState('')
   const [editRole, setEditRole] = useState<'user' | 'admin' | ''>('')
+  const [editStripeCustomerId, setEditStripeCustomerId] = useState('')
 
   useEffect(() => {
     let ignore = false
@@ -217,13 +219,14 @@ export default function AdminUsersPage() {
   async function handleUpdateUser() {
     if (!selectedUser) return
 
-    // Update user data (name, email, phone)
+    // Update user data (name, email, phone, stripeCustomerId)
     const { error: updateError } = await authClient.admin.updateUser({
       userId: selectedUser.id,
       data: {
         name: editName || undefined,
         email: editEmail || undefined,
         phoneNumber: editPhone || undefined,
+        stripeCustomerId: editStripeCustomerId || null,
       },
     })
 
@@ -269,6 +272,7 @@ export default function AdminUsersPage() {
     setEditEmail(user.email)
     setEditPhone(user.phoneNumber || '')
     setEditRole((user.role as 'user' | 'admin') || 'user')
+    setEditStripeCustomerId(user.stripeCustomerId || '')
     setEditDialogOpen(true)
   }
 
@@ -368,6 +372,7 @@ export default function AdminUsersPage() {
               <TableHead>Email</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead>Stripe ID</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="w-[70px]"></TableHead>
             </TableRow>
@@ -375,13 +380,13 @@ export default function AdminUsersPage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   No users found.
                 </TableCell>
               </TableRow>
@@ -410,6 +415,11 @@ export default function AdminUsersPage() {
                     ) : (
                       <Badge variant="outline">User</Badge>
                     )}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground font-mono text-xs">
+                    {user.stripeCustomerId
+                      ? `${user.stripeCustomerId.slice(0, 12)}...`
+                      : '-'}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {new Date(user.createdAt).toLocaleDateString()}
@@ -672,6 +682,30 @@ export default function AdminUsersPage() {
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editStripeCustomerId">Stripe Customer ID</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="editStripeCustomerId"
+                  value={editStripeCustomerId}
+                  onChange={(e) => setEditStripeCustomerId(e.target.value)}
+                  placeholder="cus_xxx"
+                  className="font-mono text-sm"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEditStripeCustomerId('')}
+                  disabled={!editStripeCustomerId}
+                >
+                  Clear
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Clear to remove Stripe association from this user
+              </p>
             </div>
           </div>
           <DialogFooter>
