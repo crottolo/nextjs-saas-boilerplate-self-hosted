@@ -22,6 +22,13 @@
       "when": 1766562741205,
       "tag": "0002_outgoing_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766572760973,
+      "tag": "0003_milky_microchip",
+      "breakpoints": true
     }
   ]
 }

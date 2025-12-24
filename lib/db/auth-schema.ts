@@ -27,6 +27,8 @@ export const user = pgTable('user', {
   banReason: text('ban_reason'),
   banExpires: timestamp('ban_expires'),
   stripeCustomerId: text('stripe_customer_id'),
+  theme: text('theme').default('system'),
+  onboardingCompleted: boolean('onboarding_completed').default(false),
 })
 
 export const session = pgTable(
@@ -196,6 +198,47 @@ export const invitation = pgTable(
   ]
 )
 
+// Activity log table
+export const activityLog = pgTable(
+  'activity_log',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    action: text('action').notNull(),
+    details: text('details'),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('activityLog_userId_idx').on(table.userId),
+    index('activityLog_createdAt_idx').on(table.createdAt),
+  ]
+)
+
+// Notification table
+export const notification = pgTable(
+  'notification',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    type: text('type').notNull(),
+    title: text('title').notNull(),
+    message: text('message'),
+    link: text('link'),
+    read: boolean('read').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('notification_userId_idx').on(table.userId),
+    index('notification_read_idx').on(table.read),
+  ]
+)
+
 // Stripe subscription table
 export const subscription = pgTable(
   'subscription',
@@ -234,6 +277,8 @@ export const userRelations = relations(user, ({ many }) => ({
   members: many(member),
   invitations: many(invitation),
   subscriptions: many(subscription),
+  activityLogs: many(activityLog),
+  notifications: many(notification),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -307,6 +352,20 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
 export const subscriptionRelations = relations(subscription, ({ one }) => ({
   user: one(user, {
     fields: [subscription.referenceId],
+    references: [user.id],
+  }),
+}))
+
+export const activityLogRelations = relations(activityLog, ({ one }) => ({
+  user: one(user, {
+    fields: [activityLog.userId],
+    references: [user.id],
+  }),
+}))
+
+export const notificationRelations = relations(notification, ({ one }) => ({
+  user: one(user, {
+    fields: [notification.userId],
     references: [user.id],
   }),
 }))

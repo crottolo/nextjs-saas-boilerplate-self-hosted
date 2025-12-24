@@ -27,6 +27,14 @@ export const authClient = createAuthClient({
           type: 'string',
           required: false,
         },
+        theme: {
+          type: 'string',
+          required: false,
+        },
+        onboardingCompleted: {
+          type: 'boolean',
+          required: false,
+        },
       },
     }),
     stripeClient({

@@ -37,6 +37,16 @@ export const auth = betterAuth({
         required: false,
         fieldName: 'phoneNumber',
       },
+      theme: {
+        type: 'string',
+        required: false,
+        defaultValue: 'system',
+      },
+      onboardingCompleted: {
+        type: 'boolean',
+        required: false,
+        defaultValue: false,
+      },
     },
   },
 

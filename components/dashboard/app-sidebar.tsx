@@ -5,6 +5,8 @@ import {
   Building2,
   User,
   CreditCard,
+  HelpCircle,
+  Activity,
   Sun,
   Moon,
   Monitor,
@@ -58,6 +60,16 @@ const mainNavItems = [
     title: 'Pricing',
     url: '/pricing',
     icon: CreditCard,
+  },
+  {
+    title: 'Activity',
+    url: '/activity',
+    icon: Activity,
+  },
+  {
+    title: 'Help',
+    url: '/help',
+    icon: HelpCircle,
   },
 ]
 

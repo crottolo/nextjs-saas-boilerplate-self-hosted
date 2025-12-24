@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
+import { AvatarUpload } from '@/components/profile/avatar-upload'
 
 interface Session {
   id: string
@@ -231,7 +232,11 @@ export default function ProfilePage() {
               <CardTitle>Personal Information</CardTitle>
               <CardDescription>Update your profile information</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
+              <AvatarUpload
+                currentImage={session?.user.image}
+                name={session?.user.name}
+              />
               <form
                 onSubmit={handleUpdateProfile}
                 className="space-y-4 max-w-md"

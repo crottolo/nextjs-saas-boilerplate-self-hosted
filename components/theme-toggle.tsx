@@ -11,9 +11,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { authClient, useSession } from '@/lib/auth-client'
 
 export function ThemeToggle() {
   const { setTheme } = useTheme()
+  const { data: session } = useSession()
+
+  const handleThemeChange = async (theme: 'light' | 'dark' | 'system') => {
+    setTheme(theme)
+    if (session?.user) {
+      await authClient.updateUser({ theme })
+    }
+  }
 
   return (
     <DropdownMenu>
@@ -25,15 +34,15 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>
+        <DropdownMenuItem onClick={() => handleThemeChange('light')}>
           <Sun className="mr-2 h-4 w-4" />
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
+        <DropdownMenuItem onClick={() => handleThemeChange('dark')}>
           <Moon className="mr-2 h-4 w-4" />
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
+        <DropdownMenuItem onClick={() => handleThemeChange('system')}>
           <Monitor className="mr-2 h-4 w-4" />
           System
         </DropdownMenuItem>
