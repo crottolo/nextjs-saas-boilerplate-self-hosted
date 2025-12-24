@@ -1,0 +1,572 @@
+{
+  "common": {
+    "appName": "AuthApp",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "error": "Error",
+    "success": "Success",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "notSet": "Not set",
+    "unknown": "Unknown",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "actions": "Actions",
+    "previous": "Previous",
+    "page": "Page {current} of {total}",
+    "saveChanges": "Save changes",
+    "saving": "Saving...",
+    "clear": "Clear"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "organizations": "Organizations",
+    "pricing": "Pricing",
+    "activity": "Activity",
+    "help": "Help",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "admin": "Admin Panel",
+    "backToApp": "Back to App"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "sidebar": {
+    "platform": "Platform",
+    "administration": "Administration",
+    "navigation": "Navigation",
+    "stripe": "Stripe"
+  },
+  "login": {
+    "title": "Login to your account",
+    "subtitle": "Enter your email below to login to your account",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "submit": "Login",
+    "submitting": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "orContinueWith": "Or continue with",
+    "github": "Login with GitHub",
+    "google": "Login with Google",
+    "welcomeBack": "Welcome back",
+    "signInToAccount": "Sign in to your account"
+  },
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Fill in the form below to create your account",
+    "name": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number (optional)",
+    "phonePlaceholder": "+39 333 1234567",
+    "password": "Password",
+    "passwordHint": "Must be at least 8 characters long.",
+    "passwordPlaceholder": "At least 8 characters",
+    "confirmPassword": "Confirm Password",
+    "submit": "Create Account",
+    "submitting": "Creating account...",
+    "hasAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "success": {
+      "title": "Check your email",
+      "message": "We sent you a verification link. Please check your email to verify your account."
+    },
+    "backToLogin": "Back to login"
+  },
+  "magicLink": {
+    "tab": "Magic Link",
+    "submit": "Send magic link",
+    "submitting": "Sending...",
+    "success": "Check your email for the magic link!"
+  },
+  "twoFactor": {
+    "title": "Two-Factor Authentication",
+    "subtitle": "Enter the code from your authenticator app",
+    "code": "Verification Code",
+    "codePlaceholder": "000000",
+    "verify": "Verify",
+    "verifying": "Verifying...",
+    "invalidCode": "Invalid code",
+    "setup": {
+      "title": "Enable Two-Factor Authentication",
+      "passwordPrompt": "Enter your password to continue",
+      "continue": "Continue",
+      "enabling": "Enabling...",
+      "scanQR": "Scan QR Code",
+      "scanQRDescription": "Scan this code with your authenticator app",
+      "manualEntry": "Manual Entry Code",
+      "backupCodes": "Backup Codes",
+      "backupCodesDescription": "Save these codes in a safe place. You can use them to access your account if you lose your device.",
+      "savedBackupCodes": "I've saved my backup codes",
+      "verifySetup": "Verify Setup",
+      "verifySetupDescription": "Enter a code from your authenticator app to complete setup",
+      "completeSetup": "Complete Setup"
+    },
+    "disable": {
+      "title": "Disable Two-Factor Authentication",
+      "description": "Enter your password to disable two-factor authentication.",
+      "submit": "Disable 2FA",
+      "submitting": "Disabling..."
+    }
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "subtitle": "Enter your email and we'll send you a reset link",
+    "email": "Email",
+    "submit": "Send reset link",
+    "submitting": "Sending...",
+    "success": {
+      "title": "Check your email",
+      "message": "If an account exists with that email, we've sent a password reset link."
+    },
+    "backToLogin": "Back to login",
+    "newPassword": {
+      "title": "Set new password",
+      "password": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "submit": "Reset password",
+      "submitting": "Resetting..."
+    },
+    "complete": {
+      "title": "Password reset!",
+      "message": "Your password has been successfully reset."
+    }
+  },
+  "verify": {
+    "title": "Check your email",
+    "message": "We've sent you a verification link. Please check your email to verify your account.",
+    "hint": "Didn't receive the email? Check your spam folder or try signing in again to resend.",
+    "backToLogin": "Back to login"
+  },
+  "errors": {
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "loginFailed": "Login failed",
+    "registrationFailed": "Registration failed",
+    "generic": "Something went wrong",
+    "network": "Network error"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {name}!",
+    "account": {
+      "title": "Account",
+      "description": "Your account information",
+      "email": "Email",
+      "name": "Name",
+      "twoFactor": "2FA"
+    },
+    "session": {
+      "title": "Session",
+      "description": "Current session details",
+      "sessionId": "Session ID",
+      "created": "Created"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Common tasks",
+      "updateProfile": "Update profile",
+      "securitySettings": "Security settings",
+      "manageOrgs": "Manage organizations"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "description": "Manage your account settings and security",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "sessions": "Sessions"
+    },
+    "personal": {
+      "title": "Personal Information",
+      "description": "Update your profile information",
+      "email": "Email",
+      "emailHint": "Email cannot be changed",
+      "name": "Name",
+      "phone": "Phone Number",
+      "success": "Profile updated successfully!"
+    },
+    "security": {
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account",
+        "status": "Status",
+        "enabled": "Two-factor authentication is enabled",
+        "disabled": "Two-factor authentication is not enabled",
+        "enable": "Enable 2FA",
+        "disable": "Disable 2FA"
+      },
+      "setPassword": {
+        "title": "Set Password",
+        "description": "Add a password to your account to sign in with email and password",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "submit": "Set password",
+        "submitting": "Setting..."
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "description": "Update your password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "submit": "Change password",
+        "submitting": "Changing..."
+      }
+    },
+    "sessions": {
+      "title": "Active Sessions",
+      "description": "Manage your active sessions across devices",
+      "signOutOthers": "Sign out other sessions",
+      "current": "Current",
+      "revoke": "Revoke"
+    }
+  },
+  "activity": {
+    "title": "Activity",
+    "description": "Your recent account activity and security events.",
+    "recent": "Recent Activity",
+    "empty": "No activity recorded yet.",
+    "loadMore": "Load More",
+    "actions": {
+      "login": "Signed in",
+      "logout": "Signed out",
+      "password_change": "Changed password",
+      "password_reset": "Reset password",
+      "2fa_enabled": "Enabled two-factor authentication",
+      "2fa_disabled": "Disabled two-factor authentication",
+      "profile_updated": "Updated profile",
+      "email_verified": "Verified email address",
+      "subscription_upgraded": "Upgraded subscription",
+      "subscription_cancelled": "Cancelled subscription",
+      "organization_created": "Created organization",
+      "organization_joined": "Joined organization",
+      "member_invited": "Invited team member"
+    }
+  },
+  "organizations": {
+    "title": "Organizations",
+    "description": "Manage your organizations and teams",
+    "create": "Create Organization",
+    "empty": "You don't have any organizations yet.",
+    "createFirst": "Create your first organization",
+    "active": "Active",
+    "role": "Role: {role}",
+    "manage": "Manage",
+    "createPage": {
+      "title": "Create Organization",
+      "description": "Create a new organization to collaborate with your team",
+      "name": "Organization Name",
+      "namePlaceholder": "Acme Inc.",
+      "slug": "URL Slug",
+      "slugPlaceholder": "acme-inc",
+      "submit": "Create Organization",
+      "submitting": "Creating...",
+      "cancel": "Cancel"
+    },
+    "detail": {
+      "title": "Organization",
+      "members": "Members",
+      "settings": "Settings",
+      "backToOrgs": "Back to Organizations"
+    }
+  },
+  "invite": {
+    "title": "Organization Invitation",
+    "subtitle": "You have been invited to join an organization",
+    "forEmail": "This invitation is for {email}",
+    "clickToReceive": "Click below to receive a sign-in link at your email.",
+    "pleaseSignIn": "Please sign in to view and accept this invitation.",
+    "sendMagicLink": "Send Magic Link to {email}",
+    "signInWithPassword": "Sign in with password instead",
+    "checkEmail": {
+      "title": "Check your email",
+      "message": "We sent a magic link to {email}",
+      "hint": "Click the link in your email to sign in and accept this invitation."
+    },
+    "useDifferentMethod": "Use a different method",
+    "youreInvited": "You're Invited!",
+    "invitedBy": "{email} has invited you to join {organization}",
+    "organization": "Organization",
+    "role": "Role",
+    "member": "Member",
+    "invitedByLabel": "Invited by",
+    "pleaseSignInToAccept": "Please sign in to accept or decline this invitation.",
+    "decline": "Decline",
+    "accept": "Accept",
+    "signInToAccept": "Sign in to Accept",
+    "invalid": "Invalid Invitation",
+    "expired": {
+      "title": "Invitation Expired",
+      "message": "This invitation has expired. Please request a new one."
+    },
+    "handled": {
+      "title": "Invitation Already Handled",
+      "message": "This invitation has already been {status}."
+    },
+    "goToDashboard": "Go to Dashboard"
+  },
+  "members": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "joined": "Joined",
+    "you": "(you)",
+    "remove": "Remove",
+    "removeTitle": "Remove Member",
+    "removeDescription": "Are you sure you want to remove {email} from this organization?",
+    "removeFailed": "Failed to remove member"
+  },
+  "inviteDialog": {
+    "trigger": "Invite Member",
+    "title": "Invite Member",
+    "description": "Send an invitation to add a new member to your organization.",
+    "email": "Email",
+    "emailPlaceholder": "user@example.com",
+    "role": "Role",
+    "selectRole": "Select role",
+    "roleAdmin": "Can manage members and settings",
+    "roleMember": "Read-only access",
+    "submit": "Send Invitation",
+    "submitting": "Sending...",
+    "failed": "Failed to send invitation"
+  },
+  "orgSwitcher": {
+    "loading": "Loading...",
+    "select": "Select Organization",
+    "noOrg": "No organization",
+    "organizations": "Organizations",
+    "create": "Create Organization",
+    "manage": "Manage Organizations"
+  },
+  "pricing": {
+    "title": "Choose your plan",
+    "description": "Start free and upgrade as you grow",
+    "noPlans": {
+      "title": "No plans available",
+      "description": "Pricing plans have not been configured yet.",
+      "configure": "Configure Stripe products"
+    },
+    "currentPlan": "Current plan: {name}",
+    "trial": "Trial",
+    "active": "Active",
+    "cancelsOn": "Cancels on",
+    "renewsOn": "Renews on",
+    "manageSubscription": "Manage Subscription",
+    "currentPlanBadge": "Current Plan",
+    "mostPopular": "Most Popular",
+    "perInterval": "/{interval}",
+    "trialDays": "{days}-day free trial",
+    "getStarted": "Get Started",
+    "switchPlan": "Switch Plan",
+    "footer": {
+      "guarantee": "All plans include a 14-day money-back guarantee",
+      "custom": "Need something custom?",
+      "contactUs": "Contact us"
+    },
+    "toast": {
+      "activated": "Subscription activated successfully!",
+      "updated": "Plan updated successfully!",
+      "paymentSuccess": "Payment successful! Subscription activated."
+    }
+  },
+  "help": {
+    "title": "Help & FAQ",
+    "description": "Find answers to common questions or contact our support team.",
+    "faqTitle": "Frequently Asked Questions",
+    "stillNeedHelp": "Still need help?",
+    "emailSupport": "Email Support",
+    "privacyPolicy": "Privacy Policy",
+    "faq": {
+      "q1": "How do I enable two-factor authentication?",
+      "a1": "Go to Profile > Security tab and click on \"Enable Two-Factor Authentication\". You'll need an authenticator app like Google Authenticator or Authy to scan the QR code.",
+      "q2": "How do I change my password?",
+      "a2": "Navigate to Profile > Security tab. If you have a password set, you'll see a \"Change Password\" section. If you signed up with a social provider, you can set a password in the \"Set Password\" section.",
+      "q3": "How do I create an organization?",
+      "a3": "Go to the Organizations page and click \"Create Organization\". Fill in your organization name and URL slug, then invite team members.",
+      "q4": "How do I invite team members?",
+      "a4": "From the Organizations page, select your organization and click \"Invite Member\". Enter their email address and select a role.",
+      "q5": "How do I upgrade my subscription?",
+      "a5": "Visit the Pricing page to see available plans. Click on the plan you want to upgrade to and complete the checkout process.",
+      "q6": "How do I manage my billing?",
+      "a6": "Go to Pricing and click \"Manage Subscription\" to access the Stripe billing portal where you can update payment methods, view invoices, and cancel your subscription.",
+      "q7": "How do I sign out from all devices?",
+      "a7": "Go to Profile > Sessions tab. You'll see all your active sessions. Click \"Sign out other sessions\" to terminate all sessions except your current one.",
+      "q8": "What happens if I forget my password?",
+      "a8": "On the login page, click \"Forgot Password\" and enter your email. You'll receive a password reset link. Alternatively, you can use the Magic Link option to sign in without a password.",
+      "q9": "How do I delete my account?",
+      "a9": "Account deletion is currently handled through support. Please contact support@authapp.com to request account deletion.",
+      "q10": "Is my data secure?",
+      "a10": "Yes, we use industry-standard encryption and security practices. Your passwords are hashed, sessions are encrypted, and we support two-factor authentication for additional security."
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "welcome": "Welcome",
+      "workspace": "Workspace",
+      "preferences": "Preferences",
+      "complete": "Complete"
+    },
+    "welcome": {
+      "title": "Welcome to AuthApp!",
+      "description": "Let's get you set up. This will only take a minute.",
+      "name": "Your name",
+      "namePlaceholder": "Enter your name"
+    },
+    "workspace": {
+      "title": "Set up your workspace",
+      "hasWorkspace": "You already have a workspace. You can continue or create a new one.",
+      "noWorkspace": "Create your first workspace to get started.",
+      "name": "Workspace name",
+      "namePlaceholder": "My Workspace",
+      "yourWorkspaces": "Your workspaces:"
+    },
+    "preferences": {
+      "title": "Your preferences",
+      "description": "Customize your experience.",
+      "theme": "Theme"
+    },
+    "complete": {
+      "title": "You're all set!",
+      "description": "Your account is ready. Let's get started!"
+    },
+    "skip": "Skip",
+    "continue": "Continue",
+    "goToDashboard": "Go to Dashboard"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "description": "Overview of your application",
+    "totalUsers": "Total Users",
+    "viewAllUsers": "View all users",
+    "quickActions": "Quick Actions",
+    "manageUsers": "Manage users",
+    "viewSessions": "View sessions",
+    "users": {
+      "title": "Users",
+      "description": "Manage all users in your application ({total} total)",
+      "addUser": "Add User",
+      "createUser": {
+        "title": "Create User",
+        "description": "Create a new user account manually.",
+        "name": "Name",
+        "namePlaceholder": "John Doe",
+        "email": "Email",
+        "emailPlaceholder": "john@example.com",
+        "password": "Password",
+        "passwordPlaceholder": "Min 8 characters",
+        "submit": "Create"
+      },
+      "search": "Search by email...",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "status": "Status",
+        "role": "Role",
+        "stripeId": "Stripe ID",
+        "created": "Created"
+      },
+      "noName": "No name",
+      "status": {
+        "banned": "Banned",
+        "verified": "Verified",
+        "unverified": "Unverified"
+      },
+      "roles": {
+        "admin": "Admin",
+        "user": "User"
+      },
+      "actions": {
+        "edit": "Edit User",
+        "resetPassword": "Reset Password",
+        "makeUser": "Make User",
+        "makeAdmin": "Make Admin",
+        "impersonate": "Impersonate",
+        "viewSessions": "View Sessions",
+        "ban": "Ban User",
+        "unban": "Unban User",
+        "delete": "Delete User"
+      },
+      "deleteDialog": {
+        "title": "Delete User",
+        "description": "Are you sure you want to delete this user? This action cannot be undone."
+      },
+      "resetPasswordDialog": {
+        "title": "Reset Password",
+        "description": "Set a new password for {email}",
+        "newPassword": "New Password"
+      },
+      "editDialog": {
+        "title": "Edit User",
+        "description": "Update user information for {email}",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "role": "Role",
+        "selectRole": "Select role",
+        "stripeId": "Stripe Customer ID",
+        "stripeIdPlaceholder": "cus_xxx",
+        "clearStripe": "Clear to remove Stripe association from this user"
+      }
+    },
+    "sessions": {
+      "title": "Sessions",
+      "description": "View and manage all active sessions"
+    },
+    "organizations": {
+      "title": "Organizations",
+      "description": "Manage all organizations"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Send notifications to users"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Application settings"
+    },
+    "stripe": {
+      "products": {
+        "title": "Products",
+        "description": "Manage Stripe products"
+      },
+      "subscriptions": {
+        "title": "Subscriptions",
+        "description": "View all subscriptions"
+      }
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications"
+  },
+  "impersonation": {
+    "message": "You are currently impersonating this user",
+    "stop": "Stop Impersonating"
+  },
+  "privacy": {
+    "title": "Privacy Policy"
+  },
+  "terms": {
+    "title": "Terms of Service"
+  }
+}

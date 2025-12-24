@@ -1,0 +1,572 @@
+{
+  "common": {
+    "appName": "AuthApp",
+    "loading": "Caricamento...",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "back": "Indietro",
+    "next": "Avanti",
+    "confirm": "Conferma",
+    "error": "Errore",
+    "success": "Successo",
+    "submit": "Invia",
+    "close": "Chiudi",
+    "yes": "Sì",
+    "no": "No",
+    "or": "o",
+    "and": "e",
+    "notSet": "Non impostato",
+    "unknown": "Sconosciuto",
+    "enabled": "Abilitato",
+    "disabled": "Disabilitato",
+    "actions": "Azioni",
+    "previous": "Precedente",
+    "page": "Pagina {current} di {total}",
+    "saveChanges": "Salva modifiche",
+    "saving": "Salvataggio...",
+    "clear": "Cancella"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profilo",
+    "organizations": "Organizzazioni",
+    "pricing": "Prezzi",
+    "activity": "Attività",
+    "help": "Aiuto",
+    "settings": "Impostazioni",
+    "signOut": "Esci",
+    "admin": "Pannello Admin",
+    "backToApp": "Torna all'App"
+  },
+  "theme": {
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema",
+    "toggle": "Cambia tema"
+  },
+  "sidebar": {
+    "platform": "Piattaforma",
+    "administration": "Amministrazione",
+    "navigation": "Navigazione",
+    "stripe": "Stripe"
+  },
+  "login": {
+    "title": "Accedi al tuo account",
+    "subtitle": "Inserisci la tua email per accedere",
+    "email": "Email",
+    "emailPlaceholder": "tu@esempio.com",
+    "password": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "submit": "Accedi",
+    "submitting": "Accesso in corso...",
+    "noAccount": "Non hai un account?",
+    "signUp": "Registrati",
+    "orContinueWith": "Oppure continua con",
+    "github": "Accedi con GitHub",
+    "google": "Accedi con Google",
+    "welcomeBack": "Bentornato",
+    "signInToAccount": "Accedi al tuo account"
+  },
+  "register": {
+    "title": "Crea il tuo account",
+    "subtitle": "Compila il modulo per creare il tuo account",
+    "name": "Nome completo",
+    "email": "Email",
+    "phone": "Numero di telefono (opzionale)",
+    "phonePlaceholder": "+39 333 1234567",
+    "password": "Password",
+    "passwordHint": "Deve contenere almeno 8 caratteri.",
+    "passwordPlaceholder": "Almeno 8 caratteri",
+    "confirmPassword": "Conferma password",
+    "submit": "Crea Account",
+    "submitting": "Creazione in corso...",
+    "hasAccount": "Hai già un account?",
+    "signIn": "Accedi",
+    "success": {
+      "title": "Controlla la tua email",
+      "message": "Ti abbiamo inviato un link di verifica. Controlla la tua email per verificare il tuo account."
+    },
+    "backToLogin": "Torna al login"
+  },
+  "magicLink": {
+    "tab": "Magic Link",
+    "submit": "Invia magic link",
+    "submitting": "Invio in corso...",
+    "success": "Controlla la tua email per il magic link!"
+  },
+  "twoFactor": {
+    "title": "Autenticazione a due fattori",
+    "subtitle": "Inserisci il codice dalla tua app di autenticazione",
+    "code": "Codice di verifica",
+    "codePlaceholder": "000000",
+    "verify": "Verifica",
+    "verifying": "Verifica in corso...",
+    "invalidCode": "Codice non valido",
+    "setup": {
+      "title": "Abilita autenticazione a due fattori",
+      "passwordPrompt": "Inserisci la tua password per continuare",
+      "continue": "Continua",
+      "enabling": "Abilitazione...",
+      "scanQR": "Scansiona il codice QR",
+      "scanQRDescription": "Scansiona questo codice con la tua app di autenticazione",
+      "manualEntry": "Codice manuale",
+      "backupCodes": "Codici di backup",
+      "backupCodesDescription": "Salva questi codici in un posto sicuro. Puoi usarli per accedere al tuo account se perdi il tuo dispositivo.",
+      "savedBackupCodes": "Ho salvato i codici di backup",
+      "verifySetup": "Verifica configurazione",
+      "verifySetupDescription": "Inserisci un codice dalla tua app di autenticazione per completare la configurazione",
+      "completeSetup": "Completa configurazione"
+    },
+    "disable": {
+      "title": "Disabilita autenticazione a due fattori",
+      "description": "Inserisci la tua password per disabilitare l'autenticazione a due fattori.",
+      "submit": "Disabilita 2FA",
+      "submitting": "Disabilitazione..."
+    }
+  },
+  "resetPassword": {
+    "title": "Reimposta password",
+    "subtitle": "Inserisci la tua email e ti invieremo un link per reimpostare la password",
+    "email": "Email",
+    "submit": "Invia link di reset",
+    "submitting": "Invio in corso...",
+    "success": {
+      "title": "Controlla la tua email",
+      "message": "Se esiste un account con quella email, ti abbiamo inviato un link per reimpostare la password."
+    },
+    "backToLogin": "Torna al login",
+    "newPassword": {
+      "title": "Imposta nuova password",
+      "password": "Nuova password",
+      "confirmPassword": "Conferma nuova password",
+      "submit": "Reimposta password",
+      "submitting": "Reimpostazione..."
+    },
+    "complete": {
+      "title": "Password reimpostata!",
+      "message": "La tua password è stata reimpostata con successo."
+    }
+  },
+  "verify": {
+    "title": "Controlla la tua email",
+    "message": "Ti abbiamo inviato un link di verifica. Controlla la tua email per verificare il tuo account.",
+    "hint": "Non hai ricevuto l'email? Controlla la cartella spam o prova ad accedere di nuovo per reinviarla.",
+    "backToLogin": "Torna al login"
+  },
+  "errors": {
+    "passwordMismatch": "Le password non corrispondono",
+    "passwordTooShort": "La password deve contenere almeno 8 caratteri",
+    "loginFailed": "Accesso fallito",
+    "registrationFailed": "Registrazione fallita",
+    "generic": "Qualcosa è andato storto",
+    "network": "Errore di rete"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bentornato, {name}!",
+    "account": {
+      "title": "Account",
+      "description": "Informazioni del tuo account",
+      "email": "Email",
+      "name": "Nome",
+      "twoFactor": "2FA"
+    },
+    "session": {
+      "title": "Sessione",
+      "description": "Dettagli sessione corrente",
+      "sessionId": "ID Sessione",
+      "created": "Creata"
+    },
+    "quickActions": {
+      "title": "Azioni rapide",
+      "description": "Attività comuni",
+      "updateProfile": "Aggiorna profilo",
+      "securitySettings": "Impostazioni sicurezza",
+      "manageOrgs": "Gestisci organizzazioni"
+    }
+  },
+  "profile": {
+    "title": "Profilo",
+    "description": "Gestisci le impostazioni del tuo account e la sicurezza",
+    "tabs": {
+      "profile": "Profilo",
+      "security": "Sicurezza",
+      "sessions": "Sessioni"
+    },
+    "personal": {
+      "title": "Informazioni personali",
+      "description": "Aggiorna le tue informazioni",
+      "email": "Email",
+      "emailHint": "L'email non può essere modificata",
+      "name": "Nome",
+      "phone": "Numero di telefono",
+      "success": "Profilo aggiornato con successo!"
+    },
+    "security": {
+      "twoFactor": {
+        "title": "Autenticazione a due fattori",
+        "description": "Aggiungi un ulteriore livello di sicurezza al tuo account",
+        "status": "Stato",
+        "enabled": "L'autenticazione a due fattori è abilitata",
+        "disabled": "L'autenticazione a due fattori non è abilitata",
+        "enable": "Abilita 2FA",
+        "disable": "Disabilita 2FA"
+      },
+      "setPassword": {
+        "title": "Imposta password",
+        "description": "Aggiungi una password al tuo account per accedere con email e password",
+        "password": "Password",
+        "confirmPassword": "Conferma password",
+        "submit": "Imposta password",
+        "submitting": "Impostazione..."
+      },
+      "changePassword": {
+        "title": "Cambia password",
+        "description": "Aggiorna la tua password",
+        "currentPassword": "Password attuale",
+        "newPassword": "Nuova password",
+        "confirmPassword": "Conferma nuova password",
+        "submit": "Cambia password",
+        "submitting": "Modifica in corso..."
+      }
+    },
+    "sessions": {
+      "title": "Sessioni attive",
+      "description": "Gestisci le tue sessioni attive su tutti i dispositivi",
+      "signOutOthers": "Disconnetti altre sessioni",
+      "current": "Corrente",
+      "revoke": "Revoca"
+    }
+  },
+  "activity": {
+    "title": "Attività",
+    "description": "Le tue attività recenti e gli eventi di sicurezza.",
+    "recent": "Attività recente",
+    "empty": "Nessuna attività registrata.",
+    "loadMore": "Carica altro",
+    "actions": {
+      "login": "Accesso effettuato",
+      "logout": "Disconnessione effettuata",
+      "password_change": "Password modificata",
+      "password_reset": "Password reimpostata",
+      "2fa_enabled": "Autenticazione a due fattori abilitata",
+      "2fa_disabled": "Autenticazione a due fattori disabilitata",
+      "profile_updated": "Profilo aggiornato",
+      "email_verified": "Email verificata",
+      "subscription_upgraded": "Abbonamento aggiornato",
+      "subscription_cancelled": "Abbonamento cancellato",
+      "organization_created": "Organizzazione creata",
+      "organization_joined": "Entrato nell'organizzazione",
+      "member_invited": "Membro del team invitato"
+    }
+  },
+  "organizations": {
+    "title": "Organizzazioni",
+    "description": "Gestisci le tue organizzazioni e i team",
+    "create": "Crea organizzazione",
+    "empty": "Non hai ancora nessuna organizzazione.",
+    "createFirst": "Crea la tua prima organizzazione",
+    "active": "Attiva",
+    "role": "Ruolo: {role}",
+    "manage": "Gestisci",
+    "createPage": {
+      "title": "Crea organizzazione",
+      "description": "Crea una nuova organizzazione per collaborare con il tuo team",
+      "name": "Nome organizzazione",
+      "namePlaceholder": "Acme Srl",
+      "slug": "Slug URL",
+      "slugPlaceholder": "acme-srl",
+      "submit": "Crea organizzazione",
+      "submitting": "Creazione...",
+      "cancel": "Annulla"
+    },
+    "detail": {
+      "title": "Organizzazione",
+      "members": "Membri",
+      "settings": "Impostazioni",
+      "backToOrgs": "Torna alle organizzazioni"
+    }
+  },
+  "invite": {
+    "title": "Invito organizzazione",
+    "subtitle": "Sei stato invitato a unirti a un'organizzazione",
+    "forEmail": "Questo invito è per {email}",
+    "clickToReceive": "Clicca qui sotto per ricevere un link di accesso alla tua email.",
+    "pleaseSignIn": "Accedi per visualizzare e accettare questo invito.",
+    "sendMagicLink": "Invia Magic Link a {email}",
+    "signInWithPassword": "Accedi con password invece",
+    "checkEmail": {
+      "title": "Controlla la tua email",
+      "message": "Abbiamo inviato un magic link a {email}",
+      "hint": "Clicca il link nella tua email per accedere e accettare questo invito."
+    },
+    "useDifferentMethod": "Usa un metodo diverso",
+    "youreInvited": "Sei stato invitato!",
+    "invitedBy": "{email} ti ha invitato a unirti a {organization}",
+    "organization": "Organizzazione",
+    "role": "Ruolo",
+    "member": "Membro",
+    "invitedByLabel": "Invitato da",
+    "pleaseSignInToAccept": "Accedi per accettare o rifiutare questo invito.",
+    "decline": "Rifiuta",
+    "accept": "Accetta",
+    "signInToAccept": "Accedi per accettare",
+    "invalid": "Invito non valido",
+    "expired": {
+      "title": "Invito scaduto",
+      "message": "Questo invito è scaduto. Richiedi un nuovo invito."
+    },
+    "handled": {
+      "title": "Invito già gestito",
+      "message": "Questo invito è già stato {status}."
+    },
+    "goToDashboard": "Vai alla Dashboard"
+  },
+  "members": {
+    "name": "Nome",
+    "email": "Email",
+    "role": "Ruolo",
+    "joined": "Iscritto",
+    "you": "(tu)",
+    "remove": "Rimuovi",
+    "removeTitle": "Rimuovi membro",
+    "removeDescription": "Sei sicuro di voler rimuovere {email} da questa organizzazione?",
+    "removeFailed": "Impossibile rimuovere il membro"
+  },
+  "inviteDialog": {
+    "trigger": "Invita membro",
+    "title": "Invita membro",
+    "description": "Invia un invito per aggiungere un nuovo membro alla tua organizzazione.",
+    "email": "Email",
+    "emailPlaceholder": "utente@esempio.com",
+    "role": "Ruolo",
+    "selectRole": "Seleziona ruolo",
+    "roleAdmin": "Può gestire membri e impostazioni",
+    "roleMember": "Accesso in sola lettura",
+    "submit": "Invia invito",
+    "submitting": "Invio in corso...",
+    "failed": "Impossibile inviare l'invito"
+  },
+  "orgSwitcher": {
+    "loading": "Caricamento...",
+    "select": "Seleziona organizzazione",
+    "noOrg": "Nessuna organizzazione",
+    "organizations": "Organizzazioni",
+    "create": "Crea organizzazione",
+    "manage": "Gestisci organizzazioni"
+  },
+  "pricing": {
+    "title": "Scegli il tuo piano",
+    "description": "Inizia gratis e aggiorna man mano che cresci",
+    "noPlans": {
+      "title": "Nessun piano disponibile",
+      "description": "I piani tariffari non sono ancora stati configurati.",
+      "configure": "Configura prodotti Stripe"
+    },
+    "currentPlan": "Piano attuale: {name}",
+    "trial": "Prova",
+    "active": "Attivo",
+    "cancelsOn": "Scade il",
+    "renewsOn": "Rinnova il",
+    "manageSubscription": "Gestisci abbonamento",
+    "currentPlanBadge": "Piano attuale",
+    "mostPopular": "Più popolare",
+    "perInterval": "/{interval}",
+    "trialDays": "{days} giorni di prova gratuita",
+    "getStarted": "Inizia",
+    "switchPlan": "Cambia piano",
+    "footer": {
+      "guarantee": "Tutti i piani includono una garanzia di rimborso di 14 giorni",
+      "custom": "Hai bisogno di qualcosa di personalizzato?",
+      "contactUs": "Contattaci"
+    },
+    "toast": {
+      "activated": "Abbonamento attivato con successo!",
+      "updated": "Piano aggiornato con successo!",
+      "paymentSuccess": "Pagamento riuscito! Abbonamento attivato."
+    }
+  },
+  "help": {
+    "title": "Aiuto e FAQ",
+    "description": "Trova risposte alle domande frequenti o contatta il nostro team di supporto.",
+    "faqTitle": "Domande frequenti",
+    "stillNeedHelp": "Hai ancora bisogno di aiuto?",
+    "emailSupport": "Supporto email",
+    "privacyPolicy": "Informativa sulla privacy",
+    "faq": {
+      "q1": "Come abilito l'autenticazione a due fattori?",
+      "a1": "Vai su Profilo > scheda Sicurezza e clicca su \"Abilita autenticazione a due fattori\". Avrai bisogno di un'app di autenticazione come Google Authenticator o Authy per scansionare il codice QR.",
+      "q2": "Come cambio la mia password?",
+      "a2": "Vai su Profilo > scheda Sicurezza. Se hai una password impostata, vedrai una sezione \"Cambia password\". Se ti sei registrato con un provider social, puoi impostare una password nella sezione \"Imposta password\".",
+      "q3": "Come creo un'organizzazione?",
+      "a3": "Vai alla pagina Organizzazioni e clicca \"Crea organizzazione\". Inserisci il nome della tua organizzazione e lo slug URL, poi invita i membri del team.",
+      "q4": "Come invito i membri del team?",
+      "a4": "Dalla pagina Organizzazioni, seleziona la tua organizzazione e clicca \"Invita membro\". Inserisci il loro indirizzo email e seleziona un ruolo.",
+      "q5": "Come aggiorno il mio abbonamento?",
+      "a5": "Visita la pagina Prezzi per vedere i piani disponibili. Clicca sul piano a cui vuoi passare e completa il processo di pagamento.",
+      "q6": "Come gestisco la mia fatturazione?",
+      "a6": "Vai su Prezzi e clicca \"Gestisci abbonamento\" per accedere al portale di fatturazione Stripe dove puoi aggiornare i metodi di pagamento, visualizzare le fatture e cancellare il tuo abbonamento.",
+      "q7": "Come mi disconnetto da tutti i dispositivi?",
+      "a7": "Vai su Profilo > scheda Sessioni. Vedrai tutte le tue sessioni attive. Clicca \"Disconnetti altre sessioni\" per terminare tutte le sessioni tranne quella corrente.",
+      "q8": "Cosa succede se dimentico la password?",
+      "a8": "Nella pagina di login, clicca \"Password dimenticata\" e inserisci la tua email. Riceverai un link per reimpostare la password. In alternativa, puoi usare l'opzione Magic Link per accedere senza password.",
+      "q9": "Come elimino il mio account?",
+      "a9": "L'eliminazione dell'account è attualmente gestita tramite il supporto. Contatta support@authapp.com per richiedere l'eliminazione dell'account.",
+      "q10": "I miei dati sono al sicuro?",
+      "a10": "Sì, utilizziamo crittografia e pratiche di sicurezza standard del settore. Le tue password sono hashate, le sessioni sono crittografate e supportiamo l'autenticazione a due fattori per una sicurezza aggiuntiva."
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "welcome": "Benvenuto",
+      "workspace": "Workspace",
+      "preferences": "Preferenze",
+      "complete": "Completato"
+    },
+    "welcome": {
+      "title": "Benvenuto in AuthApp!",
+      "description": "Configuriamo il tuo account. Ci vorrà solo un minuto.",
+      "name": "Il tuo nome",
+      "namePlaceholder": "Inserisci il tuo nome"
+    },
+    "workspace": {
+      "title": "Configura il tuo workspace",
+      "hasWorkspace": "Hai già un workspace. Puoi continuare o crearne uno nuovo.",
+      "noWorkspace": "Crea il tuo primo workspace per iniziare.",
+      "name": "Nome workspace",
+      "namePlaceholder": "Il mio Workspace",
+      "yourWorkspaces": "I tuoi workspace:"
+    },
+    "preferences": {
+      "title": "Le tue preferenze",
+      "description": "Personalizza la tua esperienza.",
+      "theme": "Tema"
+    },
+    "complete": {
+      "title": "Tutto pronto!",
+      "description": "Il tuo account è pronto. Iniziamo!"
+    },
+    "skip": "Salta",
+    "continue": "Continua",
+    "goToDashboard": "Vai alla Dashboard"
+  },
+  "admin": {
+    "title": "Pannello Admin",
+    "description": "Panoramica della tua applicazione",
+    "totalUsers": "Utenti totali",
+    "viewAllUsers": "Visualizza tutti gli utenti",
+    "quickActions": "Azioni rapide",
+    "manageUsers": "Gestisci utenti",
+    "viewSessions": "Visualizza sessioni",
+    "users": {
+      "title": "Utenti",
+      "description": "Gestisci tutti gli utenti nella tua applicazione ({total} totali)",
+      "addUser": "Aggiungi utente",
+      "createUser": {
+        "title": "Crea utente",
+        "description": "Crea un nuovo account utente manualmente.",
+        "name": "Nome",
+        "namePlaceholder": "Mario Rossi",
+        "email": "Email",
+        "emailPlaceholder": "mario@esempio.com",
+        "password": "Password",
+        "passwordPlaceholder": "Min 8 caratteri",
+        "submit": "Crea"
+      },
+      "search": "Cerca per email...",
+      "columns": {
+        "name": "Nome",
+        "email": "Email",
+        "status": "Stato",
+        "role": "Ruolo",
+        "stripeId": "ID Stripe",
+        "created": "Creato"
+      },
+      "noName": "Nessun nome",
+      "status": {
+        "banned": "Bannato",
+        "verified": "Verificato",
+        "unverified": "Non verificato"
+      },
+      "roles": {
+        "admin": "Admin",
+        "user": "Utente"
+      },
+      "actions": {
+        "edit": "Modifica utente",
+        "resetPassword": "Reimposta password",
+        "makeUser": "Rendi utente",
+        "makeAdmin": "Rendi admin",
+        "impersonate": "Impersona",
+        "viewSessions": "Visualizza sessioni",
+        "ban": "Banna utente",
+        "unban": "Sbanna utente",
+        "delete": "Elimina utente"
+      },
+      "deleteDialog": {
+        "title": "Elimina utente",
+        "description": "Sei sicuro di voler eliminare questo utente? Questa azione non può essere annullata."
+      },
+      "resetPasswordDialog": {
+        "title": "Reimposta password",
+        "description": "Imposta una nuova password per {email}",
+        "newPassword": "Nuova password"
+      },
+      "editDialog": {
+        "title": "Modifica utente",
+        "description": "Aggiorna le informazioni per {email}",
+        "name": "Nome",
+        "email": "Email",
+        "phone": "Numero di telefono",
+        "role": "Ruolo",
+        "selectRole": "Seleziona ruolo",
+        "stripeId": "ID Cliente Stripe",
+        "stripeIdPlaceholder": "cus_xxx",
+        "clearStripe": "Cancella per rimuovere l'associazione Stripe da questo utente"
+      }
+    },
+    "sessions": {
+      "title": "Sessioni",
+      "description": "Visualizza e gestisci tutte le sessioni attive"
+    },
+    "organizations": {
+      "title": "Organizzazioni",
+      "description": "Gestisci tutte le organizzazioni"
+    },
+    "notifications": {
+      "title": "Notifiche",
+      "description": "Invia notifiche agli utenti"
+    },
+    "settings": {
+      "title": "Impostazioni",
+      "description": "Impostazioni applicazione"
+    },
+    "stripe": {
+      "products": {
+        "title": "Prodotti",
+        "description": "Gestisci prodotti Stripe"
+      },
+      "subscriptions": {
+        "title": "Abbonamenti",
+        "description": "Visualizza tutti gli abbonamenti"
+      }
+    }
+  },
+  "notifications": {
+    "title": "Notifiche",
+    "markAllRead": "Segna tutto come letto",
+    "empty": "Nessuna notifica"
+  },
+  "impersonation": {
+    "message": "Stai attualmente impersonando questo utente",
+    "stop": "Smetti di impersonare"
+  },
+  "privacy": {
+    "title": "Informativa sulla Privacy"
+  },
+  "terms": {
+    "title": "Termini di Servizio"
+  }
+}
