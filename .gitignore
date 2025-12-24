@@ -49,3 +49,6 @@ docker-compose.local.yml
 .env.docker
 /pgadmin/
 *.code-workspace
+
+# user uploads
+/public/uploads/

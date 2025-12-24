@@ -42,6 +42,8 @@ services:
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
       - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-pk_test_placeholder}
+    volumes:
+      - uploads-data:/app/public/uploads
     depends_on:
       postgresql:
         condition: service_healthy
@@ -94,3 +96,4 @@ services:
 volumes:
   postgres-data:
   pgadmin-data:
+  uploads-data:
