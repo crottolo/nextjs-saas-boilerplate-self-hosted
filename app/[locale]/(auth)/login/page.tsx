@@ -1,8 +1,10 @@
 'use client'
 
 import { Suspense, useState } from 'react'
-import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +20,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 function LoginForm() {
+  const t = useTranslations('login')
+  const tMagic = useTranslations('magicLink')
+  const tErrors = useTranslations('errors')
   const router = useRouter()
   const searchParams = useSearchParams()
   const [error, setError] = useState('')
@@ -50,7 +55,7 @@ function LoginForm() {
 
     if (error) {
       console.log('[Login] Error:', error)
-      setError(error.message || 'Login failed')
+      setError(error.message || tErrors('loginFailed'))
       setLoading(false)
     } else if (data) {
       console.log('[Login] Success, redirecting to dashboard...')
@@ -73,7 +78,7 @@ function LoginForm() {
     })
 
     if (error) {
-      setError(error.message || 'Failed to send magic link')
+      setError(error.message || tMagic('failed'))
     } else {
       setMagicLinkSent(true)
     }
@@ -83,37 +88,37 @@ function LoginForm() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
+        <CardTitle className="text-2xl">{t('welcomeBack')}</CardTitle>
+        <CardDescription>{t('signInToAccount')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="password" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="password">Password</TabsTrigger>
-            <TabsTrigger value="magic">Magic Link</TabsTrigger>
+            <TabsTrigger value="password">{t('password')}</TabsTrigger>
+            <TabsTrigger value="magic">{tMagic('tab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="password">
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('email')}</Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t('emailPlaceholder')}
                   defaultValue={prefillEmail}
                   required
                 />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('password')}</Label>
                   <Link
                     href="/reset-password"
                     className="text-sm text-muted-foreground hover:underline"
                   >
-                    Forgot password?
+                    {t('forgotPassword')}
                   </Link>
                 </div>
                 <Input id="password" name="password" type="password" required />
@@ -122,7 +127,7 @@ function LoginForm() {
               {error && <p className="text-sm text-destructive">{error}</p>}
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? t('submitting') : t('submit')}
               </Button>
             </form>
           </TabsContent>
@@ -131,18 +136,18 @@ function LoginForm() {
             {magicLinkSent ? (
               <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">
-                  Check your email for the magic link!
+                  {tMagic('success')}
                 </p>
               </div>
             ) : (
               <form onSubmit={handleMagicLink} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="magic-email">Email</Label>
+                  <Label htmlFor="magic-email">{t('email')}</Label>
                   <Input
                     id="magic-email"
                     name="magic-email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder={t('emailPlaceholder')}
                     defaultValue={prefillEmail}
                     required
                   />
@@ -151,7 +156,7 @@ function LoginForm() {
                 {error && <p className="text-sm text-destructive">{error}</p>}
 
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Sending...' : 'Send magic link'}
+                  {loading ? tMagic('submitting') : tMagic('submit')}
                 </Button>
               </form>
             )}
@@ -160,9 +165,9 @@ function LoginForm() {
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
+          {t('noAccount')}{' '}
           <Link href="/register" className="text-primary hover:underline">
-            Sign up
+            {t('signUp')}
           </Link>
         </p>
       </CardFooter>

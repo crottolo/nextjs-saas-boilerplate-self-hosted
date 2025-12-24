@@ -94,7 +94,8 @@
     "tab": "Magic Link",
     "submit": "Invia magic link",
     "submitting": "Invio in corso...",
-    "success": "Controlla la tua email per il magic link!"
+    "success": "Controlla la tua email per il magic link!",
+    "failed": "Invio magic link fallito"
   },
   "twoFactor": {
     "title": "Autenticazione a due fattori",
@@ -107,6 +108,7 @@
     "setup": {
       "title": "Abilita autenticazione a due fattori",
       "passwordPrompt": "Inserisci la tua password per continuare",
+      "password": "Password",
       "continue": "Continua",
       "enabling": "Abilitazione...",
       "scanQR": "Scansiona il codice QR",
@@ -139,7 +141,9 @@
     "backToLogin": "Torna al login",
     "newPassword": {
       "title": "Imposta nuova password",
+      "subtitle": "Inserisci la tua nuova password",
       "password": "Nuova password",
+      "placeholder": "Almeno 8 caratteri",
       "confirmPassword": "Conferma nuova password",
       "submit": "Reimposta password",
       "submitting": "Reimpostazione..."

@@ -94,7 +94,8 @@
     "tab": "Magic Link",
     "submit": "Send magic link",
     "submitting": "Sending...",
-    "success": "Check your email for the magic link!"
+    "success": "Check your email for the magic link!",
+    "failed": "Failed to send magic link"
   },
   "twoFactor": {
     "title": "Two-Factor Authentication",
@@ -107,6 +108,7 @@
     "setup": {
       "title": "Enable Two-Factor Authentication",
       "passwordPrompt": "Enter your password to continue",
+      "password": "Password",
       "continue": "Continue",
       "enabling": "Enabling...",
       "scanQR": "Scan QR Code",
@@ -139,7 +141,9 @@
     "backToLogin": "Back to login",
     "newPassword": {
       "title": "Set new password",
+      "subtitle": "Enter your new password below",
       "password": "New Password",
+      "placeholder": "At least 8 characters",
       "confirmPassword": "Confirm New Password",
       "submit": "Reset password",
       "submitting": "Resetting..."

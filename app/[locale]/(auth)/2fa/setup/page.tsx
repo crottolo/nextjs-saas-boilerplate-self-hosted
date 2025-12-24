@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,6 +18,8 @@ import {
 import { logActivityClient } from '@/lib/activity-client'
 
 export default function TwoFactorSetupPage() {
+  const t = useTranslations('twoFactor')
+  const tErrors = useTranslations('errors')
   const router = useRouter()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -37,7 +40,7 @@ export default function TwoFactorSetupPage() {
     })
 
     if (error) {
-      setError(error.message || 'Failed to enable 2FA')
+      setError(error.message || tErrors('generic'))
       setLoading(false)
     } else if (data) {
       setTotpUri(data.totpURI)
@@ -60,7 +63,7 @@ export default function TwoFactorSetupPage() {
     })
 
     if (error) {
-      setError(error.message || 'Invalid code')
+      setError(error.message || t('invalidCode'))
       setLoading(false)
     } else {
       logActivityClient('2fa_enabled')
@@ -72,22 +75,20 @@ export default function TwoFactorSetupPage() {
     return (
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">
-            Enable Two-Factor Authentication
-          </CardTitle>
-          <CardDescription>Enter your password to continue</CardDescription>
+          <CardTitle className="text-2xl">{t('setup.title')}</CardTitle>
+          <CardDescription>{t('setup.passwordPrompt')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleEnableTwoFactor} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('setup.password')}</Label>
               <Input id="password" name="password" type="password" required />
             </div>
 
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Enabling...' : 'Continue'}
+              {loading ? t('setup.enabling') : t('setup.continue')}
             </Button>
           </form>
         </CardContent>
@@ -99,10 +100,8 @@ export default function TwoFactorSetupPage() {
     return (
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Scan QR Code</CardTitle>
-          <CardDescription>
-            Scan this code with your authenticator app
-          </CardDescription>
+          <CardTitle className="text-2xl">{t('setup.scanQR')}</CardTitle>
+          <CardDescription>{t('setup.scanQRDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex justify-center p-4 bg-white rounded-lg">
@@ -116,17 +115,16 @@ export default function TwoFactorSetupPage() {
           </div>
 
           <div className="space-y-2">
-            <Label>Manual Entry Code</Label>
+            <Label>{t('setup.manualEntry')}</Label>
             <p className="text-xs font-mono bg-muted p-2 rounded break-all">
               {totpUri.split('secret=')[1]?.split('&')[0] || ''}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label>Backup Codes</Label>
+            <Label>{t('setup.backupCodes')}</Label>
             <p className="text-xs text-muted-foreground">
-              Save these codes in a safe place. You can use them to access your
-              account if you lose your device.
+              {t('setup.backupCodesDescription')}
             </p>
             <div className="grid grid-cols-2 gap-2 bg-muted p-3 rounded font-mono text-xs">
               {backupCodes.map((code, i) => (
@@ -136,7 +134,7 @@ export default function TwoFactorSetupPage() {
           </div>
 
           <Button className="w-full" onClick={() => setStep('verify')}>
-            I&apos;ve saved my backup codes
+            {t('setup.savedBackupCodes')}
           </Button>
         </CardContent>
       </Card>
@@ -146,20 +144,18 @@ export default function TwoFactorSetupPage() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Verify Setup</CardTitle>
-        <CardDescription>
-          Enter a code from your authenticator app to complete setup
-        </CardDescription>
+        <CardTitle className="text-2xl">{t('setup.verifySetup')}</CardTitle>
+        <CardDescription>{t('setup.verifySetupDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleVerifyCode} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="code">Verification Code</Label>
+            <Label htmlFor="code">{t('code')}</Label>
             <Input
               id="code"
               name="code"
               type="text"
-              placeholder="000000"
+              placeholder={t('codePlaceholder')}
               maxLength={6}
               pattern="[0-9]{6}"
               className="text-center text-2xl tracking-widest"
@@ -170,7 +166,7 @@ export default function TwoFactorSetupPage() {
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Verifying...' : 'Complete Setup'}
+            {loading ? t('verifying') : t('setup.completeSetup')}
           </Button>
         </form>
       </CardContent>

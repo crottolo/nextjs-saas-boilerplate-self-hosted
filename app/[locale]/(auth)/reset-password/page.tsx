@@ -1,8 +1,9 @@
 'use client'
 
 import { Suspense, useState } from 'react'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,6 +18,9 @@ import {
 } from '@/components/ui/card'
 
 function ResetPasswordContent() {
+  const t = useTranslations('resetPassword')
+  const tErrors = useTranslations('errors')
+  const tLogin = useTranslations('login')
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
@@ -38,7 +42,7 @@ function ResetPasswordContent() {
     })
 
     if (error) {
-      setError(error.message || 'Failed to send reset email')
+      setError(error.message || tErrors('generic'))
     } else {
       setSuccess(true)
     }
@@ -55,13 +59,13 @@ function ResetPasswordContent() {
     const confirmPassword = formData.get('confirmPassword') as string
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(tErrors('passwordMismatch'))
       setLoading(false)
       return
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters')
+      setError(tErrors('passwordTooShort'))
       setLoading(false)
       return
     }
@@ -72,7 +76,7 @@ function ResetPasswordContent() {
     })
 
     if (error) {
-      setError(error.message || 'Failed to reset password')
+      setError(error.message || tErrors('generic'))
     } else {
       setSuccess(true)
     }
@@ -83,15 +87,12 @@ function ResetPasswordContent() {
     return (
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Check your email</CardTitle>
-          <CardDescription>
-            If an account exists with that email, we&apos;ve sent a password
-            reset link.
-          </CardDescription>
+          <CardTitle className="text-2xl">{t('success.title')}</CardTitle>
+          <CardDescription>{t('success.message')}</CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
           <Link href="/login">
-            <Button variant="outline">Back to login</Button>
+            <Button variant="outline">{t('backToLogin')}</Button>
           </Link>
         </CardFooter>
       </Card>
@@ -102,14 +103,12 @@ function ResetPasswordContent() {
     return (
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Password reset!</CardTitle>
-          <CardDescription>
-            Your password has been successfully reset.
-          </CardDescription>
+          <CardTitle className="text-2xl">{t('complete.title')}</CardTitle>
+          <CardDescription>{t('complete.message')}</CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
           <Link href="/login">
-            <Button>Sign in</Button>
+            <Button>{tLogin('submit')}</Button>
           </Link>
         </CardFooter>
       </Card>
@@ -120,23 +119,25 @@ function ResetPasswordContent() {
     return (
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Set new password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
+          <CardTitle className="text-2xl">{t('newPassword.title')}</CardTitle>
+          <CardDescription>{t('newPassword.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleResetPassword} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">{t('newPassword.password')}</Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
-                placeholder="At least 8 characters"
+                placeholder={t('newPassword.placeholder')}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">
+                {t('newPassword.confirmPassword')}
+              </Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -148,7 +149,7 @@ function ResetPasswordContent() {
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Resetting...' : 'Reset password'}
+              {loading ? t('newPassword.submitting') : t('newPassword.submit')}
             </Button>
           </form>
         </CardContent>
@@ -159,20 +160,18 @@ function ResetPasswordContent() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Reset password</CardTitle>
-        <CardDescription>
-          Enter your email and we&apos;ll send you a reset link
-        </CardDescription>
+        <CardTitle className="text-2xl">{t('title')}</CardTitle>
+        <CardDescription>{t('subtitle')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleRequestReset} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={tLogin('emailPlaceholder')}
               required
             />
           </div>
@@ -180,7 +179,7 @@ function ResetPasswordContent() {
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Sending...' : 'Send reset link'}
+            {loading ? t('submitting') : t('submit')}
           </Button>
         </form>
       </CardContent>
@@ -189,7 +188,7 @@ function ResetPasswordContent() {
           href="/login"
           className="text-sm text-muted-foreground hover:underline"
         >
-          Back to login
+          {t('backToLogin')}
         </Link>
       </CardFooter>
     </Card>

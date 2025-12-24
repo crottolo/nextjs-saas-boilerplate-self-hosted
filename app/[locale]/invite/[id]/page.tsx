@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { Building2, Check, X, Loader2, Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import { authClient, useSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -29,6 +31,9 @@ interface Invitation {
 }
 
 export default function InvitePage() {
+  const t = useTranslations('invite')
+  const tErrors = useTranslations('errors')
+  const tMagic = useTranslations('magicLink')
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -46,10 +51,8 @@ export default function InvitePage() {
 
   useEffect(() => {
     async function fetchInvitation() {
-      // Wait for session check to complete
       if (sessionLoading) return
 
-      // If not logged in, don't try to fetch (API requires auth)
       if (!session) {
         setLoading(false)
         return
@@ -60,22 +63,21 @@ export default function InvitePage() {
           query: { id: invitationId },
         })
         if (error) {
-          setError('Invitation not found or expired')
+          setError(tErrors('generic'))
         } else if (data) {
           setInvitation(data as unknown as Invitation)
         }
       } catch {
-        setError('Failed to load invitation')
+        setError(tErrors('generic'))
       } finally {
         setLoading(false)
       }
     }
     fetchInvitation()
-  }, [invitationId, session, sessionLoading])
+  }, [invitationId, session, sessionLoading, tErrors])
 
   async function handleAccept() {
     if (!session) {
-      // Redirect to login with callback and pre-filled email
       const params = new URLSearchParams({
         callbackUrl: `/invite/${invitationId}`,
         email: invitation?.email || '',
@@ -94,9 +96,7 @@ export default function InvitePage() {
       logActivityClient('organization_joined', invitation?.organizationName)
       router.push('/organizations')
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to accept invitation'
-      )
+      setError(err instanceof Error ? err.message : tErrors('generic'))
       setAccepting(false)
     }
   }
@@ -114,12 +114,12 @@ export default function InvitePage() {
       })
 
       if (magicLinkError) {
-        setError(magicLinkError.message || 'Failed to send magic link')
+        setError(magicLinkError.message || tMagic('failed'))
       } else {
         setMagicLinkSent(true)
       }
     } catch {
-      setError('Failed to send magic link')
+      setError(tMagic('failed'))
     } finally {
       setSendingMagicLink(false)
     }
@@ -144,9 +144,7 @@ export default function InvitePage() {
       })
       router.push('/dashboard')
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to reject invitation'
-      )
+      setError(err instanceof Error ? err.message : tErrors('generic'))
       setRejecting(false)
     }
   }
@@ -159,9 +157,7 @@ export default function InvitePage() {
     )
   }
 
-  // Show magic link flow if not authenticated
   if (!session && !invitation) {
-    // Magic link sent - show success message
     if (magicLinkSent) {
       return (
         <div className="flex min-h-screen items-center justify-center p-4">
@@ -170,20 +166,19 @@ export default function InvitePage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                 <Mail className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
-              <CardTitle>Check your email</CardTitle>
+              <CardTitle>{t('checkEmail.title')}</CardTitle>
               <CardDescription>
-                We sent a magic link to <strong>{invitedEmail}</strong>
+                {t('checkEmail.message', { email: invitedEmail })}
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-sm text-muted-foreground">
-                Click the link in your email to sign in and accept this
-                invitation.
+                {t('checkEmail.hint')}
               </p>
             </CardContent>
             <CardFooter className="justify-center">
               <Button variant="outline" onClick={() => setMagicLinkSent(false)}>
-                Use a different method
+                {t('useDifferentMethod')}
               </Button>
             </CardFooter>
           </Card>
@@ -191,7 +186,6 @@ export default function InvitePage() {
       )
     }
 
-    // Show magic link form
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
@@ -199,24 +193,18 @@ export default function InvitePage() {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <Building2 className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle>Organization Invitation</CardTitle>
+            <CardTitle>{t('title')}</CardTitle>
             <CardDescription>
               {invitedEmail
-                ? `This invitation is for ${invitedEmail}`
-                : 'You have been invited to join an organization'}
+                ? t('forEmail', { email: invitedEmail })
+                : t('subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             {error && <p className="text-sm text-destructive">{error}</p>}
-            {invitedEmail ? (
-              <p className="text-sm text-muted-foreground">
-                Click below to receive a sign-in link at your email.
-              </p>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Please sign in to view and accept this invitation.
-              </p>
-            )}
+            <p className="text-sm text-muted-foreground">
+              {invitedEmail ? t('clickToReceive') : t('pleaseSignIn')}
+            </p>
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
             {invitedEmail && (
@@ -230,7 +218,7 @@ export default function InvitePage() {
                 ) : (
                   <Mail className="mr-2 h-4 w-4" />
                 )}
-                Send Magic Link to {invitedEmail}
+                {t('sendMagicLink', { email: invitedEmail })}
               </Button>
             )}
             <Button
@@ -244,7 +232,7 @@ export default function InvitePage() {
                 router.push(`/?${loginParams.toString()}`)
               }}
             >
-              Sign in with password instead
+              {t('signInWithPassword')}
             </Button>
           </CardFooter>
         </Card>
@@ -260,12 +248,12 @@ export default function InvitePage() {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
               <X className="h-6 w-6 text-destructive" />
             </div>
-            <CardTitle>Invalid Invitation</CardTitle>
+            <CardTitle>{t('invalid')}</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardFooter className="justify-center">
             <Button onClick={() => router.push('/dashboard')}>
-              Go to Dashboard
+              {t('goToDashboard')}
             </Button>
           </CardFooter>
         </Card>
@@ -287,17 +275,17 @@ export default function InvitePage() {
               <Building2 className="h-6 w-6 text-muted-foreground" />
             </div>
             <CardTitle>
-              {isExpired ? 'Invitation Expired' : 'Invitation Already Handled'}
+              {isExpired ? t('expired.title') : t('handled.title')}
             </CardTitle>
             <CardDescription>
               {isExpired
-                ? 'This invitation has expired. Please request a new one.'
-                : `This invitation has already been ${invitation.status}.`}
+                ? t('expired.message')
+                : t('handled.message', { status: invitation.status })}
             </CardDescription>
           </CardHeader>
           <CardFooter className="justify-center">
             <Button onClick={() => router.push('/dashboard')}>
-              Go to Dashboard
+              {t('goToDashboard')}
             </Button>
           </CardFooter>
         </Card>
@@ -312,26 +300,30 @@ export default function InvitePage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <Building2 className="h-6 w-6 text-primary" />
           </div>
-          <CardTitle>You&apos;re Invited!</CardTitle>
+          <CardTitle>{t('youreInvited')}</CardTitle>
           <CardDescription>
-            <strong>{invitation.inviterEmail}</strong> has invited you to join{' '}
-            <strong>{invitation.organizationName}</strong>
+            {t('invitedBy', {
+              email: invitation.inviterEmail,
+              organization: invitation.organizationName,
+            })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg border p-4 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Organization</span>
+              <span className="text-muted-foreground">{t('organization')}</span>
               <span className="font-medium">{invitation.organizationName}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Role</span>
+              <span className="text-muted-foreground">{t('role')}</span>
               <span className="font-medium capitalize">
-                {invitation.role || 'Member'}
+                {invitation.role || t('member')}
               </span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Invited by</span>
+              <span className="text-muted-foreground">
+                {t('invitedByLabel')}
+              </span>
               <span className="font-medium">{invitation.inviterEmail}</span>
             </div>
           </div>
@@ -342,7 +334,7 @@ export default function InvitePage() {
 
           {!session && (
             <p className="text-sm text-muted-foreground text-center">
-              Please sign in to accept or decline this invitation.
+              {t('pleaseSignInToAccept')}
             </p>
           )}
         </CardContent>
@@ -358,7 +350,7 @@ export default function InvitePage() {
             ) : (
               <X className="mr-2 h-4 w-4" />
             )}
-            Decline
+            {t('decline')}
           </Button>
           <Button
             className="flex-1"
@@ -370,7 +362,7 @@ export default function InvitePage() {
             ) : (
               <Check className="mr-2 h-4 w-4" />
             )}
-            {session ? 'Accept' : 'Sign in to Accept'}
+            {session ? t('accept') : t('signInToAccept')}
           </Button>
         </CardFooter>
       </Card>

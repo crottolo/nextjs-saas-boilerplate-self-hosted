@@ -92,9 +92,10 @@
   },
   "magicLink": {
     "tab": "Magic Link",
-    "submit": "Send magic link",
-    "submitting": "Sending...",
-    "success": "Check your email for the magic link!"
+    "submit": "Poslat magic link",
+    "submitting": "Odesílání...",
+    "success": "Zkontrolujte email pro magic link!",
+    "failed": "Odeslání magic linku selhalo"
   },
   "twoFactor": {
     "title": "Two-Factor Authentication",
@@ -105,9 +106,10 @@
     "verifying": "Verifying...",
     "invalidCode": "Invalid code",
     "setup": {
-      "title": "Enable Two-Factor Authentication",
-      "passwordPrompt": "Enter your password to continue",
-      "continue": "Continue",
+      "title": "Povolit dvoufaktorové ověření",
+      "passwordPrompt": "Zadejte heslo pro pokračování",
+      "password": "Heslo",
+      "continue": "Pokračovat",
       "enabling": "Enabling...",
       "scanQR": "Scan QR Code",
       "scanQRDescription": "Scan this code with your authenticator app",
@@ -138,11 +140,13 @@
     },
     "backToLogin": "Back to login",
     "newPassword": {
-      "title": "Set new password",
-      "password": "New Password",
-      "confirmPassword": "Confirm New Password",
-      "submit": "Reset password",
-      "submitting": "Resetting..."
+      "title": "Nastavit nové heslo",
+      "subtitle": "Zadejte nové heslo níže",
+      "password": "Nové heslo",
+      "placeholder": "Alespoň 8 znaků",
+      "confirmPassword": "Potvrdit nové heslo",
+      "submit": "Resetovat heslo",
+      "submitting": "Resetování..."
     },
     "complete": {
       "title": "Password reset!",

@@ -1,4 +1,5 @@
-import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,25 +10,21 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-export default function VerifyPage() {
+export default async function VerifyPage() {
+  const t = await getTranslations('verify')
+
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Check your email</CardTitle>
-        <CardDescription>
-          We&apos;ve sent you a verification link. Please check your email to
-          verify your account.
-        </CardDescription>
+        <CardTitle className="text-2xl">{t('title')}</CardTitle>
+        <CardDescription>{t('message')}</CardDescription>
       </CardHeader>
       <CardContent className="text-center text-sm text-muted-foreground">
-        <p>
-          Didn&apos;t receive the email? Check your spam folder or try signing
-          in again to resend.
-        </p>
+        <p>{t('hint')}</p>
       </CardContent>
       <CardFooter className="justify-center">
         <Link href="/login">
-          <Button variant="outline">Back to login</Button>
+          <Button variant="outline">{t('backToLogin')}</Button>
         </Link>
       </CardFooter>
     </Card>
