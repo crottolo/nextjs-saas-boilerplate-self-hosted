@@ -1,6 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import {
   BadgeCheck,
   ChevronsUpDown,
@@ -39,6 +40,8 @@ interface NavUserProps {
 }
 
 export function NavUser({ user }: NavUserProps) {
+  const tNav = useTranslations('nav')
+  const tTheme = useTranslations('theme')
   const router = useRouter()
   const { isMobile } = useSidebar()
   const { setTheme } = useTheme()
@@ -99,12 +102,12 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push('/profile')}>
                 <User className="mr-2 h-4 w-4" />
-                Profile
+                {tNav('profile')}
               </DropdownMenuItem>
               {user.role === 'admin' && (
                 <DropdownMenuItem onClick={() => router.push('/admin')}>
                   <BadgeCheck className="mr-2 h-4 w-4" />
-                  Admin Panel
+                  {tNav('admin')}
                 </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
@@ -112,21 +115,21 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => setTheme('light')}>
                 <Sun className="mr-2 h-4 w-4" />
-                Light
+                {tTheme('light')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('dark')}>
                 <Moon className="mr-2 h-4 w-4" />
-                Dark
+                {tTheme('dark')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('system')}>
                 <Monitor className="mr-2 h-4 w-4" />
-                System
+                {tTheme('system')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
-              Sign out
+              {tNav('signOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

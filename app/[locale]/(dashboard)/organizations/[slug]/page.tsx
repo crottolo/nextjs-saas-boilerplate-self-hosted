@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import { ArrowLeft, Building2, Mail, Clock, Trash2 } from 'lucide-react'
 import { authClient, useSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
@@ -56,6 +58,8 @@ interface FullOrganization {
 }
 
 export default function OrganizationDetailPage() {
+  const t = useTranslations('organizations')
+  const tCommon = useTranslations('common')
   const params = useParams()
   const router = useRouter()
   const { data: session } = useSession()
@@ -111,7 +115,7 @@ export default function OrganizationDetailPage() {
       setCancelInvitationId(null)
     } catch (error) {
       console.error('Failed to cancel invitation:', error)
-      toast.error('Failed to cancel invitation')
+      toast.error(t('invitations.cancelFailed'))
     }
   }
 
@@ -124,10 +128,10 @@ export default function OrganizationDetailPage() {
         organizationId: org.id,
         resend: true,
       })
-      toast.success('Invitation resent successfully!')
+      toast.success(t('invitations.resendSuccess'))
     } catch (error) {
       console.error('Failed to resend invitation:', error)
-      toast.error('Failed to resend invitation')
+      toast.error(t('invitations.resendFailed'))
     }
   }
 
@@ -138,7 +142,7 @@ export default function OrganizationDetailPage() {
       router.push('/organizations')
     } catch (error) {
       console.error('Failed to delete organization:', error)
-      toast.error('Failed to delete organization')
+      toast.error(t('dangerZone.deleteFailed'))
     }
   }
 
@@ -165,12 +169,12 @@ export default function OrganizationDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-xl font-semibold">Organization not found</h2>
+        <h2 className="text-xl font-semibold">{t('detail.notFound')}</h2>
         <p className="text-muted-foreground">
-          The organization you&apos;re looking for doesn&apos;t exist.
+          {t('detail.notFoundDescription')}
         </p>
         <Button className="mt-4" onClick={() => router.push('/organizations')}>
-          Back to Organizations
+          {t('detail.backToOrgs')}
         </Button>
       </div>
     )
@@ -201,22 +205,24 @@ export default function OrganizationDetailPage() {
       <Tabs defaultValue="members">
         <TabsList>
           <TabsTrigger value="members">
-            Members ({org.members.length})
+            {t('detail.members')} ({org.members.length})
           </TabsTrigger>
           {canInvite && (
             <TabsTrigger value="invitations">
-              Invitations ({pendingInvitations.length})
+              {t('invitations.title')} ({pendingInvitations.length})
             </TabsTrigger>
           )}
-          {isOwner && <TabsTrigger value="settings">Settings</TabsTrigger>}
+          {isOwner && (
+            <TabsTrigger value="settings">{t('detail.settings')}</TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="members" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>Members</CardTitle>
+              <CardTitle>{t('detail.members')}</CardTitle>
               <CardDescription>
-                People who have access to this organization
+                {t('detail.membersDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -235,9 +241,9 @@ export default function OrganizationDetailPage() {
           <TabsContent value="invitations" className="mt-4">
             <Card>
               <CardHeader>
-                <CardTitle>Pending Invitations</CardTitle>
+                <CardTitle>{t('invitations.pendingTitle')}</CardTitle>
                 <CardDescription>
-                  Invitations that haven&apos;t been accepted yet
+                  {t('invitations.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -245,7 +251,7 @@ export default function OrganizationDetailPage() {
                   <div className="flex flex-col items-center justify-center py-8 text-center">
                     <Mail className="h-8 w-8 text-muted-foreground mb-2" />
                     <p className="text-muted-foreground">
-                      No pending invitations
+                      {t('invitations.empty')}
                     </p>
                   </div>
                 ) : (
@@ -263,7 +269,7 @@ export default function OrganizationDetailPage() {
                               <RoleBadge role={inv.role || 'member'} />
                               <span className="flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
-                                Expires{' '}
+                                {t('invitations.expires')}{' '}
                                 {new Date(inv.expiresAt).toLocaleDateString()}
                               </span>
                             </div>
@@ -277,14 +283,14 @@ export default function OrganizationDetailPage() {
                               handleResendInvitation(inv.email, inv.role)
                             }
                           >
-                            Resend
+                            {t('invitations.resend')}
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => setCancelInvitationId(inv.id)}
                           >
-                            Cancel
+                            {t('invitations.cancel')}
                           </Button>
                         </div>
                       </div>
@@ -300,17 +306,17 @@ export default function OrganizationDetailPage() {
           <TabsContent value="settings" className="mt-4">
             <Card className="border-destructive">
               <CardHeader>
-                <CardTitle className="text-destructive">Danger Zone</CardTitle>
-                <CardDescription>
-                  Irreversible actions for this organization
-                </CardDescription>
+                <CardTitle className="text-destructive">
+                  {t('dangerZone.title')}
+                </CardTitle>
+                <CardDescription>{t('dangerZone.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Delete Organization</p>
+                    <p className="font-medium">{t('dangerZone.deleteTitle')}</p>
                     <p className="text-sm text-muted-foreground">
-                      Permanently delete this organization and all its data
+                      {t('dangerZone.deleteDescription')}
                     </p>
                   </div>
                   <Button
@@ -318,7 +324,7 @@ export default function OrganizationDetailPage() {
                     onClick={() => setDeleteDialogOpen(true)}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                    {tCommon('delete')}
                   </Button>
                 </div>
               </CardContent>
@@ -334,16 +340,19 @@ export default function OrganizationDetailPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Invitation</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t('invitations.cancelDialog.title')}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to cancel this invitation? The invited user
-              will no longer be able to join.
+              {t('invitations.cancelDialog.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep Invitation</AlertDialogCancel>
+            <AlertDialogCancel>
+              {t('invitations.cancelDialog.keep')}
+            </AlertDialogCancel>
             <AlertDialogAction onClick={handleCancelInvitation}>
-              Cancel Invitation
+              {t('invitations.cancelDialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -353,19 +362,18 @@ export default function OrganizationDetailPage() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Organization</AlertDialogTitle>
+            <AlertDialogTitle>{t('dangerZone.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{org.name}&quot;? This
-              action cannot be undone.
+              {t('dangerZone.deleteConfirm', { name: org.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteOrganization}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {tCommon('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

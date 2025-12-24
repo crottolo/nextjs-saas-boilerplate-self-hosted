@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -42,23 +43,8 @@ const actionIcons: Record<string, React.ReactNode> = {
   member_invited: <Users className="h-4 w-4" />,
 }
 
-const actionLabels: Record<string, string> = {
-  login: 'Signed in',
-  logout: 'Signed out',
-  password_change: 'Changed password',
-  password_reset: 'Reset password',
-  '2fa_enabled': 'Enabled two-factor authentication',
-  '2fa_disabled': 'Disabled two-factor authentication',
-  profile_updated: 'Updated profile',
-  email_verified: 'Verified email address',
-  subscription_upgraded: 'Upgraded subscription',
-  subscription_cancelled: 'Cancelled subscription',
-  organization_created: 'Created organization',
-  organization_joined: 'Joined organization',
-  member_invited: 'Invited team member',
-}
-
 export default function ActivityPage() {
+  const t = useTranslations('activity')
   const [logs, setLogs] = useState<ActivityLog[]>([])
   const [loading, setLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
@@ -95,20 +81,27 @@ export default function ActivityPage() {
     fetchLogs()
   }
 
+  // Get translated action label
+  const getActionLabel = (action: string) => {
+    try {
+      return t(`actions.${action}`)
+    } catch {
+      return action
+    }
+  }
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Activity</h1>
-        <p className="text-muted-foreground mt-2">
-          Your recent account activity and security events.
-        </p>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground mt-2">{t('description')}</p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Recent Activity
+            {t('recent')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -126,7 +119,7 @@ export default function ActivityPage() {
             </div>
           ) : logs.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
-              No activity recorded yet.
+              {t('empty')}
             </p>
           ) : (
             <div className="space-y-4">
@@ -142,7 +135,7 @@ export default function ActivityPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">
-                      {actionLabels[log.action] || log.action}
+                      {getActionLabel(log.action)}
                     </p>
                     {log.details && (
                       <p className="text-xs text-muted-foreground truncate">
@@ -171,7 +164,7 @@ export default function ActivityPage() {
               {hasMore && (
                 <div className="pt-4 text-center">
                   <Button variant="outline" onClick={loadMore}>
-                    Load More
+                    {t('loadMore')}
                   </Button>
                 </div>
               )}

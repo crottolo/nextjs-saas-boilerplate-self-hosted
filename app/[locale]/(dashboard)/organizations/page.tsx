@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,6 +24,8 @@ interface Organization {
 }
 
 export default function OrganizationsPage() {
+  const t = useTranslations('organizations')
+  const tCommon = useTranslations('common')
   const router = useRouter()
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,31 +54,27 @@ export default function OrganizationsPage() {
   }
 
   if (loading) {
-    return <p>Loading...</p>
+    return <p>{tCommon('loading')}</p>
   }
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Organizations</h1>
-          <p className="text-muted-foreground">
-            Manage your organizations and teams
-          </p>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('description')}</p>
         </div>
         <Link href="/organizations/create">
-          <Button>Create Organization</Button>
+          <Button>{t('create')}</Button>
         </Link>
       </div>
 
       {organizations.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center">
-            <p className="text-muted-foreground">
-              You don&apos;t have any organizations yet.
-            </p>
+            <p className="text-muted-foreground">{t('empty')}</p>
             <Link href="/organizations/create">
-              <Button className="mt-4">Create your first organization</Button>
+              <Button className="mt-4">{t('createFirst')}</Button>
             </Link>
           </CardContent>
         </Card>
@@ -90,7 +89,7 @@ export default function OrganizationsPage() {
                     <CardTitle className="text-lg">{org.name}</CardTitle>
                     <div className="flex items-center gap-2">
                       <Label htmlFor={`active-${org.id}`} className="text-xs">
-                        Active
+                        {t('active')}
                       </Label>
                       <Switch
                         id={`active-${org.id}`}
@@ -102,16 +101,18 @@ export default function OrganizationsPage() {
                     </div>
                   </div>
                   <CardDescription>
-                    {org.members?.length || 0} member(s)
+                    {t('detail.membersCount', {
+                      count: org.members?.length || 0,
+                    })}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    Role: {org.role || 'Member'}
+                    {t('role', { role: org.role || 'Member' })}
                   </p>
                   <Link href={`/organizations/${org.id}`}>
                     <Button variant="ghost" size="sm">
-                      Manage →
+                      {t('manage')} →
                     </Button>
                   </Link>
                 </CardContent>

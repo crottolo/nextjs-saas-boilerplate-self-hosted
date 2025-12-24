@@ -290,9 +290,40 @@
     "detail": {
       "title": "Organizzazione",
       "members": "Membri",
+      "membersDescription": "Persone che hanno accesso a questa organizzazione",
       "settings": "Impostazioni",
-      "backToOrgs": "Torna alle organizzazioni"
-    }
+      "backToOrgs": "Torna alle organizzazioni",
+      "notFound": "Organizzazione non trovata",
+      "notFoundDescription": "L'organizzazione che stai cercando non esiste.",
+      "membersCount": "{count} membro/i"
+    },
+    "invitations": {
+      "title": "Inviti",
+      "pendingTitle": "Inviti in sospeso",
+      "description": "Inviti che non sono ancora stati accettati",
+      "empty": "Nessun invito in sospeso",
+      "expires": "Scade",
+      "resend": "Reinvia",
+      "cancel": "Annulla",
+      "resendSuccess": "Invito reinviato con successo!",
+      "resendFailed": "Impossibile reinviare l'invito",
+      "cancelFailed": "Impossibile annullare l'invito",
+      "cancelDialog": {
+        "title": "Annulla invito",
+        "description": "Sei sicuro di voler annullare questo invito? L'utente invitato non potrà più unirsi.",
+        "keep": "Mantieni invito",
+        "confirm": "Annulla invito"
+      }
+    },
+    "dangerZone": {
+      "title": "Zona pericolosa",
+      "description": "Azioni irreversibili per questa organizzazione",
+      "deleteTitle": "Elimina organizzazione",
+      "deleteDescription": "Elimina definitivamente questa organizzazione e tutti i suoi dati",
+      "deleteConfirm": "Sei sicuro di voler eliminare \"{name}\"? Questa azione non può essere annullata.",
+      "deleteFailed": "Impossibile eliminare l'organizzazione"
+    },
+    "slugHint": "Identificatore URL-friendly. Lascia vuoto per generarlo automaticamente."
   },
   "invite": {
     "title": "Invito organizzazione",

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import {
   Card,
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/card'
 
 export default function AdminDashboardPage() {
+  const t = useTranslations('admin')
   const [stats, setStats] = useState({
     totalUsers: 0,
     activeSessions: 0,
@@ -46,14 +48,14 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Overview of your application</p>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total Users</CardDescription>
+            <CardDescription>{t('totalUsers')}</CardDescription>
             <CardTitle className="text-4xl">
               {loading ? '...' : stats.totalUsers}
             </CardTitle>
@@ -63,27 +65,27 @@ export default function AdminDashboardPage() {
               href="/admin/users"
               className="text-xs text-muted-foreground hover:text-primary"
             >
-              View all users →
+              {t('viewAllUsers')} →
             </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Quick Actions</CardDescription>
+            <CardDescription>{t('quickActions')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <Link
               href="/admin/users"
               className="block text-sm text-primary hover:underline"
             >
-              Manage users
+              {t('manageUsers')}
             </Link>
             <Link
               href="/admin/sessions"
               className="block text-sm text-primary hover:underline"
             >
-              View sessions
+              {t('viewSessions')}
             </Link>
           </CardContent>
         </Card>

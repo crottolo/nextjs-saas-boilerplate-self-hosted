@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,6 +17,8 @@ import {
 import { logActivityClient } from '@/lib/activity-client'
 
 export default function CreateOrganizationPage() {
+  const t = useTranslations('organizations.createPage')
+  const tOrg = useTranslations('organizations')
   const router = useRouter()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -47,33 +50,31 @@ export default function CreateOrganizationPage() {
     <div className="max-w-md mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Create Organization</CardTitle>
-          <CardDescription>
-            Create a new organization to collaborate with your team
-          </CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Organization Name</Label>
+              <Label htmlFor="name">{t('name')}</Label>
               <Input
                 id="name"
                 name="name"
                 type="text"
-                placeholder="My Organization"
+                placeholder={t('namePlaceholder')}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="slug">Slug (optional)</Label>
+              <Label htmlFor="slug">{t('slug')}</Label>
               <Input
                 id="slug"
                 name="slug"
                 type="text"
-                placeholder="my-organization"
+                placeholder={t('slugPlaceholder')}
               />
               <p className="text-xs text-muted-foreground">
-                URL-friendly identifier. Leave empty to auto-generate.
+                {tOrg('slugHint')}
               </p>
             </div>
 
@@ -81,14 +82,14 @@ export default function CreateOrganizationPage() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={loading}>
-                {loading ? 'Creating...' : 'Create Organization'}
+                {loading ? t('submitting') : t('submit')}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
               >
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </form>

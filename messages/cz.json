@@ -290,9 +290,40 @@
     "detail": {
       "title": "Organization",
       "members": "Members",
+      "membersDescription": "People who have access to this organization",
       "settings": "Settings",
-      "backToOrgs": "Back to Organizations"
-    }
+      "backToOrgs": "Back to Organizations",
+      "notFound": "Organization not found",
+      "notFoundDescription": "The organization you're looking for doesn't exist.",
+      "membersCount": "{count} member(s)"
+    },
+    "invitations": {
+      "title": "Invitations",
+      "pendingTitle": "Pending Invitations",
+      "description": "Invitations that haven't been accepted yet",
+      "empty": "No pending invitations",
+      "expires": "Expires",
+      "resend": "Resend",
+      "cancel": "Cancel",
+      "resendSuccess": "Invitation resent successfully!",
+      "resendFailed": "Failed to resend invitation",
+      "cancelFailed": "Failed to cancel invitation",
+      "cancelDialog": {
+        "title": "Cancel Invitation",
+        "description": "Are you sure you want to cancel this invitation? The invited user will no longer be able to join.",
+        "keep": "Keep Invitation",
+        "confirm": "Cancel Invitation"
+      }
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "description": "Irreversible actions for this organization",
+      "deleteTitle": "Delete Organization",
+      "deleteDescription": "Permanently delete this organization and all its data",
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "deleteFailed": "Failed to delete organization"
+    },
+    "slugHint": "URL-friendly identifier. Leave empty to auto-generate."
   },
   "invite": {
     "title": "Organization Invitation",

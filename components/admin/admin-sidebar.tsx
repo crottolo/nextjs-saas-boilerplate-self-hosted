@@ -1,6 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 import {
   ShieldCheck,
   Users,
@@ -14,7 +15,6 @@ import {
   Monitor,
   Building2,
   Bell,
-  CreditCard,
   Package,
   Receipt,
 } from 'lucide-react'
@@ -32,6 +32,7 @@ import {
   SidebarSeparator,
 } from '@/components/ui/sidebar'
 import { NavMain } from '@/components/dashboard/nav-main'
+import { Link } from '@/i18n/navigation'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -52,64 +53,33 @@ interface AdminSidebarProps {
   }
 }
 
-const adminNavItems = [
-  {
-    title: 'Overview',
-    url: '/admin',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Users',
-    url: '/admin/users',
-    icon: Users,
-  },
-  {
-    title: 'Organizations',
-    url: '/admin/organizations',
-    icon: Building2,
-  },
-  {
-    title: 'Notifications',
-    url: '/admin/notifications',
-    icon: Bell,
-  },
-  {
-    title: 'Sessions',
-    url: '/admin/sessions',
-    icon: Activity,
-  },
-  {
-    title: 'Account',
-    url: '/admin/settings',
-    icon: Settings,
-  },
-]
-
-const stripeNavItems = [
-  {
-    title: 'Products',
-    url: '/admin/stripe/products',
-    icon: Package,
-  },
-  {
-    title: 'Subscriptions',
-    url: '/admin/stripe/subscriptions',
-    icon: Receipt,
-  },
-]
-
-const appNavItems = [
-  {
-    title: 'Back to App',
-    url: '/dashboard',
-    icon: Home,
-  },
-]
-
 export function AdminSidebar({ user }: AdminSidebarProps) {
+  const t = useTranslations('nav')
+  const tTheme = useTranslations('theme')
+  const tSidebar = useTranslations('sidebar')
   const router = useRouter()
   const { isMobile } = useSidebar()
   const { setTheme } = useTheme()
+
+  const adminNavItems = [
+    { title: 'Overview', url: '/admin', icon: ShieldCheck },
+    { title: 'Users', url: '/admin/users', icon: Users },
+    { title: t('organizations'), url: '/admin/organizations', icon: Building2 },
+    { title: 'Notifications', url: '/admin/notifications', icon: Bell },
+    { title: 'Sessions', url: '/admin/sessions', icon: Activity },
+    { title: t('settings'), url: '/admin/settings', icon: Settings },
+  ]
+
+  const stripeNavItems = [
+    { title: 'Products', url: '/admin/stripe/products', icon: Package },
+    {
+      title: 'Subscriptions',
+      url: '/admin/stripe/subscriptions',
+      icon: Receipt,
+    },
+  ]
+
+  const appNavItems = [{ title: t('backToApp'), url: '/dashboard', icon: Home }]
 
   const initials =
     user.name
@@ -129,25 +99,25 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/admin">
+              <Link href="/admin">
                 <div className="bg-destructive text-destructive-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <ShieldCheck className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Admin Panel</span>
+                  <span className="truncate font-semibold">{t('admin')}</span>
                   <span className="truncate text-xs">AuthApp</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={adminNavItems} label="Administration" />
+        <NavMain items={adminNavItems} label={tSidebar('administration')} />
         <SidebarSeparator />
-        <NavMain items={stripeNavItems} label="Stripe" />
+        <NavMain items={stripeNavItems} label={tSidebar('stripe')} />
         <SidebarSeparator />
-        <NavMain items={appNavItems} label="Navigation" />
+        <NavMain items={appNavItems} label={tSidebar('navigation')} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
@@ -194,25 +164,25 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => router.push('/dashboard')}>
                   <Home className="mr-2 h-4 w-4" />
-                  Back to App
+                  {t('backToApp')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setTheme('light')}>
                   <Sun className="mr-2 h-4 w-4" />
-                  Light
+                  {tTheme('light')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme('dark')}>
                   <Moon className="mr-2 h-4 w-4" />
-                  Dark
+                  {tTheme('dark')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme('system')}>
                   <Monitor className="mr-2 h-4 w-4" />
-                  System
+                  {tTheme('system')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
+                  {t('signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

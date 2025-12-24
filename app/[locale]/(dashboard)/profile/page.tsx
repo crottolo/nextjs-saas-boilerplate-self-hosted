@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { authClient, useSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,6 +36,9 @@ interface Session {
 }
 
 export default function ProfilePage() {
+  const t = useTranslations('profile')
+  const tCommon = useTranslations('common')
+  const t2FA = useTranslations('twoFactor')
   const { data: session } = useSession()
   const [loading, setLoading] = useState(false)
   const [profileMessage, setProfileMessage] = useState('')
@@ -216,25 +220,23 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Profile</h1>
-        <p className="text-muted-foreground">
-          Manage your account settings and security
-        </p>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
         <TabsList className="grid w-fit grid-cols-3">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="sessions">Sessions</TabsTrigger>
+          <TabsTrigger value="profile">{t('tabs.profile')}</TabsTrigger>
+          <TabsTrigger value="security">{t('tabs.security')}</TabsTrigger>
+          <TabsTrigger value="sessions">{t('tabs.sessions')}</TabsTrigger>
         </TabsList>
 
         {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-4 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <CardDescription>Update your profile information</CardDescription>
+              <CardTitle>{t('personal.title')}</CardTitle>
+              <CardDescription>{t('personal.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <AvatarUpload
@@ -246,7 +248,7 @@ export default function ProfilePage() {
                 className="space-y-4 max-w-md"
               >
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('personal.email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -254,11 +256,11 @@ export default function ProfilePage() {
                     disabled
                   />
                   <p className="text-xs text-muted-foreground">
-                    Email cannot be changed
+                    {t('personal.emailHint')}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">{t('personal.name')}</Label>
                   <Input
                     id="name"
                     name="name"
@@ -267,7 +269,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Label htmlFor="phoneNumber">{t('personal.phone')}</Label>
                   <Input
                     id="phoneNumber"
                     name="phoneNumber"
@@ -289,7 +291,7 @@ export default function ProfilePage() {
                 )}
 
                 <Button type="submit" disabled={loading}>
-                  {loading ? 'Saving...' : 'Save changes'}
+                  {loading ? tCommon('saving') : tCommon('saveChanges')}
                 </Button>
               </form>
             </CardContent>
@@ -300,19 +302,21 @@ export default function ProfilePage() {
         <TabsContent value="security" className="space-y-4 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Two-Factor Authentication</CardTitle>
+              <CardTitle>{t('security.twoFactor.title')}</CardTitle>
               <CardDescription>
-                Add an extra layer of security to your account
+                {t('security.twoFactor.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Status</p>
+                  <p className="font-medium">
+                    {t('security.twoFactor.status')}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {session?.user.twoFactorEnabled
-                      ? 'Two-factor authentication is enabled'
-                      : 'Two-factor authentication is not enabled'}
+                      ? t('security.twoFactor.enabled')
+                      : t('security.twoFactor.disabled')}
                   </p>
                 </div>
                 {session?.user.twoFactorEnabled ? (
@@ -321,11 +325,11 @@ export default function ProfilePage() {
                     onClick={() => setDisable2FAOpen(true)}
                     disabled={loading}
                   >
-                    Disable 2FA
+                    {t('security.twoFactor.disable')}
                   </Button>
                 ) : (
                   <Link href="/2fa/setup">
-                    <Button>Enable 2FA</Button>
+                    <Button>{t('security.twoFactor.enable')}</Button>
                   </Link>
                 )}
               </div>
@@ -335,26 +339,28 @@ export default function ProfilePage() {
           {hasCredential === false && (
             <Card>
               <CardHeader>
-                <CardTitle>Set Password</CardTitle>
+                <CardTitle>{t('security.setPassword.title')}</CardTitle>
                 <CardDescription>
-                  Add a password to your account to sign in with email and
-                  password
+                  {t('security.setPassword.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSetPassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="setPassword">Password</Label>
+                    <Label htmlFor="setPassword">
+                      {t('security.setPassword.password')}
+                    </Label>
                     <Input
                       id="setPassword"
                       name="setPassword"
                       type="password"
-                      placeholder="At least 8 characters"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="setConfirmPassword">Confirm Password</Label>
+                    <Label htmlFor="setConfirmPassword">
+                      {t('security.setPassword.confirmPassword')}
+                    </Label>
                     <Input
                       id="setConfirmPassword"
                       name="setConfirmPassword"
@@ -372,7 +378,9 @@ export default function ProfilePage() {
                   )}
 
                   <Button type="submit" disabled={loading}>
-                    {loading ? 'Setting...' : 'Set password'}
+                    {loading
+                      ? t('security.setPassword.submitting')
+                      : t('security.setPassword.submit')}
                   </Button>
                 </form>
               </CardContent>
@@ -382,13 +390,17 @@ export default function ProfilePage() {
           {hasCredential === true && (
             <Card>
               <CardHeader>
-                <CardTitle>Change Password</CardTitle>
-                <CardDescription>Update your password</CardDescription>
+                <CardTitle>{t('security.changePassword.title')}</CardTitle>
+                <CardDescription>
+                  {t('security.changePassword.description')}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleChangePassword} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="currentPassword">Current Password</Label>
+                    <Label htmlFor="currentPassword">
+                      {t('security.changePassword.currentPassword')}
+                    </Label>
                     <Input
                       id="currentPassword"
                       name="currentPassword"
@@ -397,18 +409,19 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="newPassword">New Password</Label>
+                    <Label htmlFor="newPassword">
+                      {t('security.changePassword.newPassword')}
+                    </Label>
                     <Input
                       id="newPassword"
                       name="newPassword"
                       type="password"
-                      placeholder="At least 8 characters"
                       required
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">
-                      Confirm New Password
+                      {t('security.changePassword.confirmPassword')}
                     </Label>
                     <Input
                       id="confirmPassword"
@@ -427,7 +440,9 @@ export default function ProfilePage() {
                   )}
 
                   <Button type="submit" disabled={loading}>
-                    {loading ? 'Changing...' : 'Change password'}
+                    {loading
+                      ? t('security.changePassword.submitting')
+                      : t('security.changePassword.submit')}
                   </Button>
                 </form>
               </CardContent>
@@ -441,13 +456,11 @@ export default function ProfilePage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Active Sessions</CardTitle>
-                  <CardDescription>
-                    Manage your active sessions across devices
-                  </CardDescription>
+                  <CardTitle>{t('sessions.title')}</CardTitle>
+                  <CardDescription>{t('sessions.description')}</CardDescription>
                 </div>
                 <Button variant="outline" onClick={handleRevokeOtherSessions}>
-                  Sign out other sessions
+                  {t('sessions.signOutOthers')}
                 </Button>
               </div>
             </CardHeader>
@@ -467,14 +480,16 @@ export default function ProfilePage() {
                               ? 'Firefox'
                               : s.userAgent?.includes('Safari')
                                 ? 'Safari'
-                                : 'Unknown browser'}
+                                : tCommon('unknown')}
                         </p>
                         {s.id === session?.session.id && (
-                          <Badge variant="secondary">Current</Badge>
+                          <Badge variant="secondary">
+                            {t('sessions.current')}
+                          </Badge>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Created: {new Date(s.createdAt).toLocaleDateString()}
+                        {new Date(s.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     {s.token !== session?.session.token && (
@@ -483,7 +498,7 @@ export default function ProfilePage() {
                         size="sm"
                         onClick={() => handleRevokeSession(s.token)}
                       >
-                        Revoke
+                        {t('sessions.revoke')}
                       </Button>
                     )}
                   </div>
@@ -504,33 +519,32 @@ export default function ProfilePage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Disable Two-Factor Authentication</DialogTitle>
-            <DialogDescription>
-              Enter your password to disable two-factor authentication.
-            </DialogDescription>
+            <DialogTitle>{t2FA('disable.title')}</DialogTitle>
+            <DialogDescription>{t2FA('disable.description')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="disable2fa-password">Password</Label>
+              <Label htmlFor="disable2fa-password">
+                {t('security.changePassword.currentPassword')}
+              </Label>
               <Input
                 id="disable2fa-password"
                 type="password"
                 value={disable2FAPassword}
                 onChange={(e) => setDisable2FAPassword(e.target.value)}
-                placeholder="Enter your password"
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDisable2FAOpen(false)}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDisable2FA}
               disabled={loading || !disable2FAPassword}
             >
-              {loading ? 'Disabling...' : 'Disable 2FA'}
+              {loading ? t2FA('disable.submitting') : t2FA('disable.submit')}
             </Button>
           </DialogFooter>
         </DialogContent>

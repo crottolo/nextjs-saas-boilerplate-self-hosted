@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { Check, Crown, Loader2, AlertCircle } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,6 +34,9 @@ interface Plan {
 }
 
 export default function PricingPage() {
+  const t = useTranslations('pricing')
+  const tCommon = useTranslations('common')
+  const locale = useLocale()
   const [plans, setPlans] = useState<Plan[]>([])
   const [loadingPlans, setLoadingPlans] = useState(true)
   const [loading, setLoading] = useState<string | null>(null)
@@ -79,20 +83,20 @@ export default function PricingPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('upgraded') === 'true') {
-      toast.success('Subscription activated successfully!', { duration: 6000 })
-      window.history.replaceState({}, '', '/pricing')
+      toast.success(t('toast.activated'), { duration: 6000 })
+      window.history.replaceState({}, '', `/${locale}/pricing`)
     }
     if (params.get('updated') === 'true') {
-      toast.success('Plan updated successfully!', { duration: 6000 })
-      window.history.replaceState({}, '', '/pricing')
+      toast.success(t('toast.updated'), { duration: 6000 })
+      window.history.replaceState({}, '', `/${locale}/pricing`)
     }
     if (params.get('session_id')) {
-      toast.success('Payment successful! Subscription activated.', {
+      toast.success(t('toast.paymentSuccess'), {
         duration: 6000,
       })
-      window.history.replaceState({}, '', '/pricing')
+      window.history.replaceState({}, '', `/${locale}/pricing`)
     }
-  }, [])
+  }, [t, locale])
 
   useEffect(() => {
     async function fetchSubscription() {
@@ -199,22 +203,20 @@ export default function PricingPage() {
     return (
       <div className="container max-w-5xl py-8 mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold mb-2">Choose your plan</h1>
-          <p className="text-muted-foreground">
-            Start free and upgrade as you grow
-          </p>
+          <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('description')}</p>
         </div>
         <Alert className="max-w-md mx-auto">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>No plans available</AlertTitle>
+          <AlertTitle>{t('noPlans.title')}</AlertTitle>
           <AlertDescription>
-            Pricing plans have not been configured yet.
+            {t('noPlans.description')}
             {isAdmin && (
               <Link
                 href="/admin/stripe/products"
                 className="block mt-2 underline hover:no-underline"
               >
-                Configure Stripe products
+                {t('noPlans.configure')}
               </Link>
             )}
           </AlertDescription>
@@ -226,10 +228,8 @@ export default function PricingPage() {
   return (
     <div className="container max-w-5xl py-8 mx-auto">
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-bold mb-2">Choose your plan</h1>
-        <p className="text-muted-foreground">
-          Start free and upgrade as you grow
-        </p>
+        <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       {subscription && (
@@ -241,14 +241,13 @@ export default function PricingPage() {
               </div>
               <div>
                 <p className="font-semibold">
-                  Current plan:{' '}
-                  <span className="capitalize text-primary">{currentPlan}</span>
+                  {t('currentPlan', { name: currentPlan || '' })}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {subscription.status === 'trialing' && 'Trial · '}
-                  {subscription.status === 'active' && 'Active · '}
-                  {subscription.cancelAtPeriodEnd && 'Cancels on '}
-                  {!subscription.cancelAtPeriodEnd && 'Renews on '}
+                  {subscription.status === 'trialing' && `${t('trial')} · `}
+                  {subscription.status === 'active' && `${t('active')} · `}
+                  {subscription.cancelAtPeriodEnd && `${t('cancelsOn')} `}
+                  {!subscription.cancelAtPeriodEnd && `${t('renewsOn')} `}
                   {subscription.periodEnd}
                 </p>
               </div>
@@ -258,7 +257,9 @@ export default function PricingPage() {
               onClick={handleManageBilling}
               disabled={loading === 'billing'}
             >
-              {loading === 'billing' ? 'Loading...' : 'Manage Subscription'}
+              {loading === 'billing'
+                ? tCommon('loading')
+                : t('manageSubscription')}
             </Button>
           </CardContent>
         </Card>
@@ -281,7 +282,7 @@ export default function PricingPage() {
             >
               {isCurrentPlan && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  Current Plan
+                  {t('currentPlanBadge')}
                 </Badge>
               )}
               {plan.popular && !isCurrentPlan && (
@@ -289,7 +290,7 @@ export default function PricingPage() {
                   variant="secondary"
                   className="absolute -top-3 left-1/2 -translate-x-1/2"
                 >
-                  Most Popular
+                  {t('mostPopular')}
                 </Badge>
               )}
 
@@ -304,7 +305,7 @@ export default function PricingPage() {
                     {formatPrice(plan.price, plan.currency)}
                   </span>
                   <span className="text-muted-foreground">
-                    /{plan.interval === 'year' ? 'anno' : 'mese'}
+                    {t('perInterval', { interval: plan.interval || 'month' })}
                   </span>
                 </div>
               </CardHeader>
@@ -321,7 +322,7 @@ export default function PricingPage() {
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-500 shrink-0" />
                       <span className="text-sm">
-                        {plan.trialDays}-day free trial
+                        {t('trialDays', { days: plan.trialDays })}
                       </span>
                     </li>
                   )}
@@ -332,7 +333,7 @@ export default function PricingPage() {
                 {isCurrentPlan ? (
                   <Button className="w-full" variant="secondary" disabled>
                     <Check className="mr-2 h-4 w-4" />
-                    Current Plan
+                    {t('currentPlanBadge')}
                   </Button>
                 ) : (
                   <Button
@@ -342,10 +343,10 @@ export default function PricingPage() {
                     disabled={loading === plan.name}
                   >
                     {loading === plan.name
-                      ? 'Loading...'
+                      ? tCommon('loading')
                       : currentPlan
-                        ? 'Switch Plan'
-                        : 'Get Started'}
+                        ? t('switchPlan')
+                        : t('getStarted')}
                   </Button>
                 )}
               </CardFooter>
@@ -355,12 +356,12 @@ export default function PricingPage() {
       </div>
 
       <div className="mt-12 text-center text-sm text-muted-foreground">
-        <p>All plans include a 14-day money-back guarantee</p>
+        <p>{t('footer.guarantee')}</p>
         <p className="mt-2">
-          Need something custom?{' '}
-          <a href="/contact" className="underline hover:text-foreground">
-            Contact us
-          </a>
+          {t('footer.custom')}{' '}
+          <Link href="/help" className="underline hover:text-foreground">
+            {t('footer.contactUs')}
+          </Link>
         </p>
       </div>
     </div>
