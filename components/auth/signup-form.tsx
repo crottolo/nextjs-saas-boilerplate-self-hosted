@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -65,6 +65,9 @@ export function SignupForm({
   ...props
 }: SignupFormProps) {
   const locale = useLocale()
+  const t = useTranslations('register')
+  const tErrors = useTranslations('errors')
+  const tLogin = useTranslations('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -87,13 +90,13 @@ export function SignupForm({
     const confirmPassword = formData.get('confirm-password') as string
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters')
+      setError(tErrors('passwordTooShort'))
       setLoading(false)
       return
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(tErrors('passwordMismatch'))
       setLoading(false)
       return
     }
@@ -106,7 +109,7 @@ export function SignupForm({
     })
 
     if (signUpError) {
-      setError(signUpError.message || 'Registration failed')
+      setError(signUpError.message || tErrors('registrationFailed'))
       setLoading(false)
     } else {
       setSuccess(true)
@@ -141,13 +144,10 @@ export function SignupForm({
             />
           </svg>
         </div>
-        <h2 className="text-xl font-semibold">Check your email</h2>
-        <p className="text-muted-foreground text-sm">
-          We sent you a verification link. Please check your email to verify
-          your account.
-        </p>
+        <h2 className="text-xl font-semibold">{t('success.title')}</h2>
+        <p className="text-muted-foreground text-sm">{t('success.message')}</p>
         <Link href="/" className="text-sm underline underline-offset-4">
-          Back to login
+          {t('backToLogin')}
         </Link>
       </div>
     )
@@ -160,9 +160,9 @@ export function SignupForm({
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Create your account</h1>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Fill in the form below to create your account
+          {t('subtitle')}
         </p>
       </div>
 
@@ -174,7 +174,7 @@ export function SignupForm({
 
       <div className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name">{t('name')}</Label>
           <Input
             id="name"
             name="name"
@@ -185,29 +185,29 @@ export function SignupForm({
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t('email')}</Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder={tLogin('emailPlaceholder')}
             defaultValue={defaultEmail}
             required
             disabled={loading}
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="phoneNumber">Phone Number (optional)</Label>
+          <Label htmlFor="phoneNumber">{t('phone')}</Label>
           <Input
             id="phoneNumber"
             name="phoneNumber"
             type="tel"
-            placeholder="+39 333 1234567"
+            placeholder={t('phonePlaceholder')}
             disabled={loading}
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t('password')}</Label>
           <Input
             id="password"
             name="password"
@@ -215,12 +215,10 @@ export function SignupForm({
             required
             disabled={loading}
           />
-          <p className="text-xs text-muted-foreground">
-            Must be at least 8 characters long.
-          </p>
+          <p className="text-xs text-muted-foreground">{t('passwordHint')}</p>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="confirm-password">Confirm Password</Label>
+          <Label htmlFor="confirm-password">{t('confirmPassword')}</Label>
           <Input
             id="confirm-password"
             name="confirm-password"
@@ -230,13 +228,13 @@ export function SignupForm({
           />
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Creating account...' : 'Create Account'}
+          {loading ? t('submitting') : t('submit')}
         </Button>
       </div>
 
       <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
         <span className="relative z-10 bg-background px-2 text-muted-foreground">
-          Or continue with
+          {tLogin('orContinueWith')}
         </span>
       </div>
 
@@ -249,7 +247,7 @@ export function SignupForm({
           onClick={() => handleOAuth('github')}
         >
           <GitHubIcon />
-          Sign up with GitHub
+          {tLogin('github')}
         </Button>
         <Button
           variant="outline"
@@ -259,17 +257,17 @@ export function SignupForm({
           onClick={() => handleOAuth('google')}
         >
           <GoogleIcon />
-          Sign up with Google
+          {tLogin('google')}
         </Button>
       </div>
 
       <div className="text-center text-sm">
-        Already have an account?{' '}
+        {t('hasAccount')}{' '}
         <Link
           href={`/${defaultEmail || callbackUrl !== '/dashboard' ? `?${new URLSearchParams({ ...(defaultEmail && { email: defaultEmail }), ...(callbackUrl !== '/dashboard' && { callbackUrl }) }).toString()}` : ''}`}
           className="underline underline-offset-4"
         >
-          Sign in
+          {t('signIn')}
         </Link>
       </div>
     </form>

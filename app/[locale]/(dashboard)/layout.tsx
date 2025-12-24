@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { useRouter as useNextRouter } from 'next/navigation'
+import { Link, usePathname } from '@/i18n/navigation'
 import { authClient, useSession } from '@/lib/auth-client'
 import {
   SidebarProvider,
@@ -15,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Eye } from 'lucide-react'
 import { NotificationBell } from '@/components/notifications/notification-bell'
+import { LocaleSwitcher } from '@/components/locale-switcher'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,26 +26,31 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 
-const pathLabels: Record<string, string> = {
-  dashboard: 'Dashboard',
-  profile: 'Profile',
-  organizations: 'Organizations',
-  create: 'Create',
-  pricing: 'Pricing',
-  billing: 'Billing',
-}
-
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const t = useTranslations('nav')
+  const tImpersonation = useTranslations('impersonation')
   const { data: session, isPending } = useSession()
   const { data: organizations } = authClient.useListOrganizations()
-  const router = useRouter()
+  const router = useNextRouter()
   const pathname = usePathname()
 
-  // Generate breadcrumb items from pathname
+  // Translated path labels
+  const pathLabels: Record<string, string> = {
+    dashboard: t('dashboard'),
+    profile: t('profile'),
+    organizations: t('organizations'),
+    create: 'Create',
+    pricing: t('pricing'),
+    billing: 'Billing',
+    activity: t('activity'),
+    help: t('help'),
+  }
+
+  // Generate breadcrumb items from pathname (already without locale from next-intl)
   const segments = pathname.split('/').filter(Boolean)
   const breadcrumbs = segments.map((segment, index) => {
     const path = '/' + segments.slice(0, index + 1).join('/')
@@ -116,7 +123,8 @@ export default function DashboardLayout({
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="px-4">
+          <div className="flex items-center gap-2 px-4">
+            <LocaleSwitcher />
             <NotificationBell />
           </div>
         </header>
@@ -126,7 +134,7 @@ export default function DashboardLayout({
               <Eye className="h-4 w-4 text-amber-600" />
               <AlertDescription className="flex items-center justify-between">
                 <span className="text-amber-800 dark:text-amber-200">
-                  You are currently impersonating this user
+                  {tImpersonation('message')}
                 </span>
                 <Button
                   size="sm"
@@ -134,7 +142,7 @@ export default function DashboardLayout({
                   onClick={handleStopImpersonating}
                   className="ml-4"
                 >
-                  Stop Impersonating
+                  {tImpersonation('stop')}
                 </Button>
               </AlertDescription>
             </Alert>

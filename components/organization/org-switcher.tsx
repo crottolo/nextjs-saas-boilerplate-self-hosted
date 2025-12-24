@@ -1,8 +1,9 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { ChevronsUpDown, Plus, Building2, Check, Settings } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
+import { useRouter } from '@/i18n/navigation'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
 import { SidebarMenuButton } from '@/components/ui/sidebar'
 
 export function OrgSwitcher() {
+  const t = useTranslations('orgSwitcher')
   const router = useRouter()
   const { data: organizations, isPending: orgsLoading } =
     authClient.useListOrganizations()
@@ -24,7 +26,7 @@ export function OrgSwitcher() {
 
   async function handleSwitchOrg(orgId: string) {
     await authClient.organization.setActive({ organizationId: orgId })
-    router.refresh()
+    window.location.reload()
   }
 
   if (isLoading) {
@@ -34,7 +36,7 @@ export function OrgSwitcher() {
           <Building2 className="size-4" />
         </div>
         <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-semibold">Loading...</span>
+          <span className="truncate font-semibold">{t('loading')}</span>
         </div>
       </SidebarMenuButton>
     )
@@ -54,10 +56,10 @@ export function OrgSwitcher() {
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">
-              {currentOrg?.name || 'Select Organization'}
+              {currentOrg?.name || t('select')}
             </span>
             <span className="truncate text-xs text-muted-foreground">
-              {currentOrg?.slug || 'No organization'}
+              {currentOrg?.slug || t('noOrg')}
             </span>
           </div>
           <ChevronsUpDown className="ml-auto size-4" />
@@ -70,7 +72,7 @@ export function OrgSwitcher() {
         sideOffset={4}
       >
         <DropdownMenuLabel className="text-xs text-muted-foreground">
-          Organizations
+          {t('organizations')}
         </DropdownMenuLabel>
         {organizations?.map((org) => (
           <DropdownMenuItem
@@ -96,7 +98,7 @@ export function OrgSwitcher() {
             <Plus className="size-4" />
           </div>
           <span className="font-medium text-muted-foreground">
-            Create Organization
+            {t('create')}
           </span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -107,7 +109,7 @@ export function OrgSwitcher() {
             <Settings className="size-4" />
           </div>
           <span className="font-medium text-muted-foreground">
-            Manage Organizations
+            {t('manage')}
           </span>
         </DropdownMenuItem>
       </DropdownMenuContent>

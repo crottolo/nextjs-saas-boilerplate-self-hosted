@@ -11,7 +11,7 @@ const locales = ['en', 'it', 'cz']
 
 // Public paths (without locale prefix)
 const publicPathsWithoutLocale = [
-  '', // root becomes /[locale]
+  '/', // root becomes /[locale]
   '/register',
   '/reset-password',
   '/verify',
@@ -20,7 +20,7 @@ const publicPathsWithoutLocale = [
 ]
 
 // Auth paths that redirect to dashboard when logged in
-const authPathsWithoutLocale = ['', '/register', '/reset-password']
+const authPathsWithoutLocale = ['/', '/register', '/reset-password']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -46,7 +46,7 @@ export async function proxy(request: NextRequest) {
 
   // Extract locale and path without locale
   const locale = pathname.split('/')[1]
-  const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/'
+  const pathWithoutLocale = pathname.slice(locale.length + 1) || '/'
 
   // Get session from Better Auth - check both possible cookie names
   // In HTTPS with useSecureCookies, the cookie name has __Secure- prefix
@@ -78,8 +78,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
   }
 
-  // Process with next-intl middleware for locale handling
-  return intlMiddleware(request)
+  // If we have a valid locale in path, just proceed without intl middleware redirect
+  // intlMiddleware is only needed for paths without locale to add the locale
+  return NextResponse.next()
 }
 
 export const config = {

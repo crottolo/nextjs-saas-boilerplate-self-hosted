@@ -165,26 +165,31 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Bentornato, {name}!",
+    "welcomeBack": "Bentornato, {name}!",
+    "user": "Utente",
     "account": {
       "title": "Account",
       "description": "Informazioni del tuo account",
       "email": "Email",
       "name": "Nome",
-      "twoFactor": "2FA"
+      "notSet": "Non impostato",
+      "twoFactor": "2FA",
+      "enabled": "Abilitata",
+      "disabled": "Disabilitata"
     },
     "session": {
       "title": "Sessione",
       "description": "Dettagli sessione corrente",
-      "sessionId": "ID Sessione",
-      "created": "Creata"
+      "id": "ID Sessione",
+      "created": "Creata",
+      "unknown": "Sconosciuto"
     },
     "quickActions": {
       "title": "Azioni rapide",
       "description": "Attività comuni",
       "updateProfile": "Aggiorna profilo",
       "securitySettings": "Impostazioni sicurezza",
-      "manageOrgs": "Gestisci organizzazioni"
+      "manageOrganizations": "Gestisci organizzazioni"
     }
   },
   "profile": {

@@ -1,6 +1,7 @@
 'use client'
 
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { useSession } from '@/lib/auth-client'
 import {
   Card,
@@ -11,39 +12,44 @@ import {
 } from '@/components/ui/card'
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard')
   const { data: session } = useSession()
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Welcome back, {session?.user.name || 'User'}!
+          {t('welcomeBack', { name: session?.user.name || t('user') })}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Account</CardTitle>
-            <CardDescription>Your account information</CardDescription>
+            <CardTitle>{t('account.title')}</CardTitle>
+            <CardDescription>{t('account.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <dl className="space-y-2 text-sm">
               <div>
-                <dt className="text-muted-foreground">Email</dt>
+                <dt className="text-muted-foreground">{t('account.email')}</dt>
                 <dd className="font-medium">{session?.user.email}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Name</dt>
+                <dt className="text-muted-foreground">{t('account.name')}</dt>
                 <dd className="font-medium">
-                  {session?.user.name || 'Not set'}
+                  {session?.user.name || t('account.notSet')}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">2FA</dt>
+                <dt className="text-muted-foreground">
+                  {t('account.twoFactor')}
+                </dt>
                 <dd className="font-medium">
-                  {session?.user.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                  {session?.user.twoFactorEnabled
+                    ? t('account.enabled')
+                    : t('account.disabled')}
                 </dd>
               </div>
             </dl>
@@ -52,23 +58,25 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Session</CardTitle>
-            <CardDescription>Current session details</CardDescription>
+            <CardTitle>{t('session.title')}</CardTitle>
+            <CardDescription>{t('session.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <dl className="space-y-2 text-sm">
               <div>
-                <dt className="text-muted-foreground">Session ID</dt>
+                <dt className="text-muted-foreground">{t('session.id')}</dt>
                 <dd className="font-medium font-mono text-xs truncate">
                   {session?.session.id}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Created</dt>
+                <dt className="text-muted-foreground">
+                  {t('session.created')}
+                </dt>
                 <dd className="font-medium">
                   {session?.session.createdAt
                     ? new Date(session.session.createdAt).toLocaleDateString()
-                    : 'Unknown'}
+                    : t('session.unknown')}
                 </dd>
               </div>
             </dl>
@@ -77,27 +85,27 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks</CardDescription>
+            <CardTitle>{t('quickActions.title')}</CardTitle>
+            <CardDescription>{t('quickActions.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <Link
-              href="/settings"
+              href="/profile"
               className="block text-sm text-primary hover:underline"
             >
-              Update profile →
+              {t('quickActions.updateProfile')} →
             </Link>
             <Link
-              href="/settings/security"
+              href="/profile"
               className="block text-sm text-primary hover:underline"
             >
-              Security settings →
+              {t('quickActions.securitySettings')} →
             </Link>
             <Link
               href="/organizations"
               className="block text-sm text-primary hover:underline"
             >
-              Manage organizations →
+              {t('quickActions.manageOrganizations')} →
             </Link>
           </CardContent>
         </Card>

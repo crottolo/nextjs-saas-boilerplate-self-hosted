@@ -1,6 +1,7 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { GalleryVerticalEnd } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LocaleSwitcher } from '@/components/locale-switcher'
 
 export default function AuthLayout({
   children,
@@ -16,7 +17,10 @@ export default function AuthLayout({
           </div>
           AuthApp
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+          <ThemeToggle />
+        </div>
       </div>
       <div className="flex flex-1 items-center justify-center p-6">
         <div className="w-full max-w-md">{children}</div>

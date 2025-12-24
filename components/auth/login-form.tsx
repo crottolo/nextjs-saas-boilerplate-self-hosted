@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -67,6 +67,9 @@ export function LoginForm({
 }: LoginFormProps) {
   const router = useRouter()
   const locale = useLocale()
+  const t = useTranslations('login')
+  const tMagic = useTranslations('magicLink')
+  const tErrors = useTranslations('errors')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [magicLinkSent, setMagicLinkSent] = useState(false)
@@ -92,7 +95,7 @@ export function LoginForm({
     })
 
     if (signInError) {
-      setError(signInError.message || 'Login failed')
+      setError(signInError.message || tErrors('loginFailed'))
       setLoading(false)
     } else {
       router.push(callbackUrl)
@@ -123,7 +126,7 @@ export function LoginForm({
     })
 
     if (error) {
-      setError(error.message || 'Failed to send magic link')
+      setError(error.message || tErrors('generic'))
     } else {
       setMagicLinkSent(true)
     }
@@ -133,9 +136,9 @@ export function LoginForm({
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
+          {t('subtitle')}
         </p>
       </div>
 
@@ -147,19 +150,19 @@ export function LoginForm({
 
       <Tabs defaultValue="password" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="password">Password</TabsTrigger>
-          <TabsTrigger value="magic">Magic Link</TabsTrigger>
+          <TabsTrigger value="password">{t('password')}</TabsTrigger>
+          <TabsTrigger value="magic">{tMagic('tab')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="password">
           <form onSubmit={handleSubmit} className="grid gap-4 mt-4">
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder={t('emailPlaceholder')}
                 defaultValue={defaultEmail}
                 required
                 disabled={loading}
@@ -167,12 +170,12 @@ export function LoginForm({
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('password')}</Label>
                 <Link
                   href="/reset-password"
                   className="ml-auto text-sm underline-offset-4 hover:underline"
                 >
-                  Forgot your password?
+                  {t('forgotPassword')}
                 </Link>
               </div>
               <Input
@@ -184,7 +187,7 @@ export function LoginForm({
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Signing in...' : 'Login'}
+              {loading ? t('submitting') : t('submit')}
             </Button>
           </form>
         </TabsContent>
@@ -208,25 +211,25 @@ export function LoginForm({
                 </svg>
               </div>
               <p className="text-sm text-muted-foreground">
-                Check your email for the magic link!
+                {tMagic('success')}
               </p>
             </div>
           ) : (
             <form onSubmit={handleMagicLink} className="grid gap-4 mt-4">
               <div className="grid gap-2">
-                <Label htmlFor="magic-email">Email</Label>
+                <Label htmlFor="magic-email">{t('email')}</Label>
                 <Input
                   id="magic-email"
                   name="magic-email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder={t('emailPlaceholder')}
                   defaultValue={defaultEmail}
                   required
                   disabled={loading}
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Sending...' : 'Send magic link'}
+                {loading ? tMagic('submitting') : tMagic('submit')}
               </Button>
             </form>
           )}
@@ -235,7 +238,7 @@ export function LoginForm({
 
       <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
         <span className="relative z-10 bg-background px-2 text-muted-foreground">
-          Or continue with
+          {t('orContinueWith')}
         </span>
       </div>
 
@@ -248,7 +251,7 @@ export function LoginForm({
           onClick={() => handleOAuth('github')}
         >
           <GitHubIcon />
-          Login with GitHub
+          {t('github')}
         </Button>
         <Button
           variant="outline"
@@ -258,17 +261,17 @@ export function LoginForm({
           onClick={() => handleOAuth('google')}
         >
           <GoogleIcon />
-          Login with Google
+          {t('google')}
         </Button>
       </div>
 
       <div className="text-center text-sm">
-        Don&apos;t have an account?{' '}
+        {t('noAccount')}{' '}
         <Link
           href={`/register${defaultEmail || callbackUrl !== '/dashboard' ? `?${new URLSearchParams({ ...(defaultEmail && { email: defaultEmail }), ...(callbackUrl !== '/dashboard' && { callbackUrl }) }).toString()}` : ''}`}
           className="underline underline-offset-4"
         >
-          Sign up
+          {t('signUp')}
         </Link>
       </div>
     </div>
