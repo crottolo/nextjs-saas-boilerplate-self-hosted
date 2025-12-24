@@ -36,13 +36,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify customer exists in Stripe
-    try {
-      await stripe.customers.retrieve(dbUser.stripeCustomerId)
-    } catch {
-      // Customer doesn't exist in Stripe - clear from DB
+    // Helper to clear invalid customer
+    const clearCustomerAndRedirect = async () => {
       console.warn(
-        `Customer ${dbUser.stripeCustomerId} not found in Stripe, clearing`
+        `Customer ${dbUser.stripeCustomerId} invalid in Stripe, clearing`
       )
       await db
         .update(user)
@@ -55,6 +52,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Verify customer exists in Stripe
+    try {
+      const customer = await stripe.customers.retrieve(dbUser.stripeCustomerId)
+      // Check if customer was deleted
+      if ('deleted' in customer && customer.deleted) {
+        return clearCustomerAndRedirect()
+      }
+    } catch {
+      return clearCustomerAndRedirect()
+    }
+
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: dbUser.stripeCustomerId,
       return_url: returnUrl || `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
@@ -62,6 +70,23 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: portalSession.url })
   } catch (error) {
+    // Handle Stripe errors for invalid customer
+    if (
+      error instanceof Stripe.errors.StripeInvalidRequestError &&
+      error.code === 'resource_missing'
+    ) {
+      console.warn('Stripe customer not found, clearing from DB')
+      await db
+        .update(user)
+        .set({ stripeCustomerId: null })
+        .where(eq(user.id, session.user.id))
+
+      return NextResponse.json(
+        { error: 'No subscription found', redirect: '/pricing' },
+        { status: 404 }
+      )
+    }
+
     console.error('Billing portal error:', error)
     return NextResponse.json(
       { error: 'Failed to create billing portal session' },
