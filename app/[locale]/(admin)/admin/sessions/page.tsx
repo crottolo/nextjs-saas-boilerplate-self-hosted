@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,6 +38,9 @@ interface SessionWithUser {
 }
 
 export default function AdminSessionsPage() {
+  const t = useTranslations('admin.sessions')
+  const tCommon = useTranslations('common')
+
   const [sessions, setSessions] = useState<SessionWithUser[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
@@ -99,21 +103,23 @@ export default function AdminSessionsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Sessions</h1>
-        <p className="text-muted-foreground">View and manage active sessions</p>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Active Sessions</CardTitle>
-          <CardDescription>{sessions.length} active session(s)</CardDescription>
+          <CardTitle>{t('activeSessions')}</CardTitle>
+          <CardDescription>
+            {t('activeSessionsCount', { count: sessions.length })}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p>Loading...</p>
+            <p>{t('loading')}</p>
           ) : sessions.length === 0 ? (
             <p className="text-center text-muted-foreground py-4">
-              No active sessions
+              {t('noSessions')}
             </p>
           ) : (
             <div className="space-y-4">
@@ -129,16 +135,18 @@ export default function AdminSessionsPage() {
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      {session.userAgent || 'Unknown device'}
+                      {session.userAgent || t('unknownDevice')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      IP: {session.ipAddress || 'Unknown'}
+                      IP: {session.ipAddress || t('unknownIP')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Created: {new Date(session.createdAt).toLocaleString()}
+                      {t('created')}:{' '}
+                      {new Date(session.createdAt).toLocaleString()}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Expires: {new Date(session.expiresAt).toLocaleString()}
+                      {t('expires')}:{' '}
+                      {new Date(session.expiresAt).toLocaleString()}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -147,14 +155,14 @@ export default function AdminSessionsPage() {
                       size="sm"
                       onClick={() => setRevokeUserSessionsId(session.userId)}
                     >
-                      Revoke All
+                      {t('revokeAll')}
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => setRevokeSessionToken(session.token)}
                     >
-                      Revoke
+                      {t('revoke')}
                     </Button>
                   </div>
                 </div>
@@ -171,19 +179,18 @@ export default function AdminSessionsPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Revoke Session</AlertDialogTitle>
+            <AlertDialogTitle>{t('revokeDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to revoke this session? The user will be
-              logged out.
+              {t('revokeDialog.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRevokeSession}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Revoke
+              {t('revoke')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -196,19 +203,18 @@ export default function AdminSessionsPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Revoke All Sessions</AlertDialogTitle>
+            <AlertDialogTitle>{t('revokeAllDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to revoke all sessions for this user? They
-              will be logged out from all devices.
+              {t('revokeAllDialog.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRevokeUserSessions}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Revoke All
+              {t('revokeAll')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

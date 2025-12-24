@@ -598,28 +598,278 @@
     },
     "sessions": {
       "title": "Sessions",
-      "description": "View and manage all active sessions"
+      "description": "View and manage all active sessions",
+      "activeSessions": "Active Sessions",
+      "activeSessionsCount": "{count} active session(s)",
+      "loading": "Loading...",
+      "noSessions": "No active sessions",
+      "unknownDevice": "Unknown device",
+      "unknownIP": "Unknown",
+      "created": "Created",
+      "expires": "Expires",
+      "revoke": "Revoke",
+      "revokeAll": "Revoke All",
+      "revokeDialog": {
+        "title": "Revoke Session",
+        "description": "Are you sure you want to revoke this session? The user will be logged out."
+      },
+      "revokeAllDialog": {
+        "title": "Revoke All Sessions",
+        "description": "Are you sure you want to revoke all sessions for this user? They will be logged out from all devices."
+      }
     },
     "organizations": {
       "title": "Organizations",
-      "description": "Manage all organizations"
+      "description": "Manage all organizations",
+      "descriptionWithTotal": "Manage all organizations ({total} total)",
+      "search": "Search by name or slug...",
+      "columns": {
+        "name": "Name",
+        "slug": "Slug",
+        "owner": "Owner",
+        "members": "Members",
+        "created": "Created"
+      },
+      "noOrgs": "No organizations found.",
+      "orphaned": "{count} orphaned organization(s) without members",
+      "orphanedBadge": "Orphaned",
+      "orphanedWarning": "These organizations have no members and should be deleted.",
+      "deleteAction": "Delete Organization",
+      "deleteDialog": {
+        "title": "Delete Organization",
+        "description": "Are you sure you want to delete this organization? This will also remove all members from the organization.",
+        "memberCount": "{count} member(s)"
+      },
+      "toast": {
+        "deleted": "Organization deleted ({count} members removed)",
+        "deleteFailed": "Failed to delete organization"
+      }
     },
     "notifications": {
       "title": "Notifications",
-      "description": "Send notifications to users"
+      "description": "Send notifications to users",
+      "pageTitle": "Send Notification",
+      "types": {
+        "info": "Info",
+        "success": "Success",
+        "warning": "Warning",
+        "system": "System",
+        "invite": "Invite"
+      },
+      "compose": {
+        "title": "Compose",
+        "description": "Create your notification",
+        "type": "Type",
+        "titleLabel": "Title",
+        "titlePlaceholder": "Notification title",
+        "message": "Message (optional)",
+        "messagePlaceholder": "Additional details...",
+        "link": "Link (optional)",
+        "linkPlaceholder": "/dashboard or https://...",
+        "preview": "Preview"
+      },
+      "recipients": {
+        "title": "Recipients",
+        "description": "Select who receives this notification",
+        "allUsers": "All Users",
+        "selectUsers": "Select Users",
+        "searchPlaceholder": "Search users...",
+        "selected": "{count} selected",
+        "selectAll": "Select all",
+        "moreCount": "+{count} more",
+        "noUsers": "No users found",
+        "noName": "No name",
+        "allUsersWarning": "This will send the notification to all {count} users (except yourself)."
+      },
+      "sendButton": {
+        "send": "Send Notification",
+        "sending": "Sending..."
+      },
+      "history": {
+        "title": "Sent Notifications",
+        "description": "Recent notifications ({count})",
+        "empty": "No notifications sent yet.",
+        "columns": {
+          "type": "Type",
+          "title": "Title",
+          "recipient": "Recipient",
+          "sent": "Sent"
+        }
+      },
+      "toast": {
+        "loadFailed": "Failed to load data",
+        "titleRequired": "Title is required",
+        "selectUser": "Select at least one user",
+        "sendFailed": "Failed to send notification",
+        "sent": "Notification sent to {count} user(s)"
+      }
     },
     "settings": {
       "title": "Settings",
-      "description": "Application settings"
+      "description": "Application settings",
+      "account": {
+        "title": "Account",
+        "description": "Manage your admin account settings"
+      },
+      "adminAlert": {
+        "title": "Admin Settings",
+        "description": "You are editing admin account settings. Changes here bypass normal verification flows."
+      },
+      "changeEmail": {
+        "title": "Change Email",
+        "description": "Update your admin email address (no verification required)",
+        "currentEmail": "Current Email",
+        "newEmail": "New Email",
+        "placeholder": "new@email.com",
+        "submit": "Change Email",
+        "changing": "Changing...",
+        "enterDifferent": "Enter a different email address",
+        "failed": "Failed to update email"
+      },
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account",
+        "status": "Status",
+        "enabled": "Two-factor authentication is enabled",
+        "notEnabled": "Two-factor authentication is not enabled",
+        "enable": "Enable 2FA",
+        "disable": "Disable 2FA",
+        "disabled": "Two-factor authentication disabled",
+        "disableDialog": {
+          "title": "Disable Two-Factor Authentication",
+          "description": "Enter your password to disable two-factor authentication.",
+          "password": "Password",
+          "passwordPlaceholder": "Enter your password",
+          "submit": "Disable 2FA",
+          "disabling": "Disabling..."
+        }
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "description": "Update your admin password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "placeholder": "At least 8 characters",
+        "submit": "Change Password",
+        "changing": "Changing...",
+        "passwordMismatch": "Passwords do not match",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "success": "Password changed successfully!"
+      }
     },
     "stripe": {
       "products": {
-        "title": "Products",
-        "description": "Manage Stripe products"
+        "title": "Stripe Products",
+        "subtitle": "Manage your subscription plans ({count} total)",
+        "description": "Manage Stripe products",
+        "showArchived": "Show Archived",
+        "hideArchived": "Hide Archived",
+        "sync": "Sync from Stripe",
+        "addProduct": "Add Product",
+        "archive": "Archive",
+        "createDialog": {
+          "title": "Create Product",
+          "description": "Create a new product in Stripe and save it locally.",
+          "submit": "Create"
+        },
+        "editDialog": {
+          "title": "Edit Product",
+          "description": "Update product details. Price cannot be changed (Stripe limitation).",
+          "priceReadonly": "Price (read-only)"
+        },
+        "deleteDialog": {
+          "titleDelete": "Delete Product",
+          "titleArchive": "Archive Product",
+          "descriptionDelete": "This will permanently delete the product from Stripe (only works if never used). If the product has subscriptions, it will be archived instead.",
+          "descriptionArchive": "This will archive the product in Stripe and remove it from your local database. Existing subscriptions will not be affected."
+        },
+        "form": {
+          "name": "Name",
+          "namePlaceholder": "Pro Plan",
+          "description": "Description",
+          "descriptionPlaceholder": "For professionals and small teams",
+          "price": "Price",
+          "pricePlaceholder": "19.00",
+          "currency": "Currency",
+          "interval": "Billing Interval",
+          "intervalMonthly": "Monthly",
+          "intervalYearly": "Yearly",
+          "trialDays": "Trial Days",
+          "features": "Features (one per line)",
+          "featuresPlaceholder": "20 projects\n50 GB storage\nPriority support",
+          "sortOrder": "Sort Order",
+          "popular": "Popular"
+        },
+        "table": {
+          "order": "Order",
+          "name": "Name",
+          "price": "Price",
+          "interval": "Interval",
+          "trial": "Trial",
+          "popular": "Popular",
+          "status": "Status",
+          "empty": "No products. Create one or sync from Stripe.",
+          "trialDays": "{days} days"
+        },
+        "archivedSection": {
+          "title": "Archived Products",
+          "stripeId": "Stripe ID",
+          "loading": "Loading archived products...",
+          "empty": "No archived products found."
+        },
+        "toast": {
+          "fetchFailed": "Failed to fetch products",
+          "fetchArchivedFailed": "Failed to fetch archived products",
+          "syncSuccess": "Products synced successfully",
+          "syncFailed": "Sync failed",
+          "created": "Product created",
+          "createFailed": "Failed to create product",
+          "updated": "Product updated",
+          "updateFailed": "Failed to update product",
+          "deleted": "Product deleted permanently",
+          "archivedWithSubs": "Product archived (has subscriptions)",
+          "deleteFailed": "Failed to delete product",
+          "enabled": "Product enabled",
+          "disabled": "Product disabled",
+          "toggleFailed": "Failed to toggle product"
+        }
       },
       "subscriptions": {
         "title": "Subscriptions",
-        "description": "View all subscriptions"
+        "subtitle": "View and manage user subscriptions",
+        "description": "View all subscriptions",
+        "stats": {
+          "total": "Total",
+          "active": "Active",
+          "trialing": "Trialing",
+          "pastDue": "Past Due"
+        },
+        "status": {
+          "active": "Active",
+          "trialing": "Trialing",
+          "canceled": "Canceled",
+          "pastDue": "Past Due",
+          "incomplete": "Incomplete"
+        },
+        "filters": {
+          "searchPlaceholder": "Search by name or email...",
+          "filterByStatus": "Filter by status",
+          "allStatuses": "All Statuses"
+        },
+        "table": {
+          "user": "User",
+          "plan": "Plan",
+          "status": "Status",
+          "periodEnd": "Period End",
+          "created": "Created",
+          "empty": "No subscriptions found.",
+          "noName": "No name",
+          "canceling": "(canceling)"
+        },
+        "toast": {
+          "fetchFailed": "Failed to fetch subscriptions"
+        }
       }
     }
   },

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -49,6 +50,8 @@ interface Organization {
 }
 
 export default function AdminOrganizationsPage() {
+  const t = useTranslations('admin.organizations')
+  const tCommon = useTranslations('common')
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -94,17 +97,15 @@ export default function AdminOrganizationsPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        toast.error(data.error || 'Failed to delete organization')
+        toast.error(data.error || t('toast.deleteFailed'))
       } else {
-        toast.success(
-          `Organization deleted (${data.membersRemoved} members removed)`
-        )
+        toast.success(t('toast.deleted', { count: data.membersRemoved }))
         setDeleteDialogOpen(false)
         setSelectedOrg(null)
         setRefreshKey((k) => k + 1)
       }
     } catch {
-      toast.error('Failed to delete organization')
+      toast.error(t('toast.deleteFailed'))
     }
   }
 
@@ -114,9 +115,9 @@ export default function AdminOrganizationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Organizations</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Manage all organizations ({total} total)
+            {t('descriptionWithTotal', { total })}
           </p>
         </div>
       </div>
@@ -126,11 +127,11 @@ export default function AdminOrganizationsPage() {
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-yellow-500" />
             <span className="font-medium">
-              {orphanedOrgs.length} orphaned organization(s) without members
+              {t('orphaned', { count: orphanedOrgs.length })}
             </span>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            These organizations have no members and should be deleted.
+            {t('orphanedWarning')}
           </p>
         </div>
       )}
@@ -139,7 +140,7 @@ export default function AdminOrganizationsPage() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or slug..."
+            placeholder={t('search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-8"
@@ -151,11 +152,11 @@ export default function AdminOrganizationsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Owner</TableHead>
-              <TableHead>Members</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>{t('columns.name')}</TableHead>
+              <TableHead>{t('columns.slug')}</TableHead>
+              <TableHead>{t('columns.owner')}</TableHead>
+              <TableHead>{t('columns.members')}</TableHead>
+              <TableHead>{t('columns.created')}</TableHead>
               <TableHead className="w-[70px]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -163,13 +164,13 @@ export default function AdminOrganizationsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  Loading...
+                  {tCommon('loading')}
                 </TableCell>
               </TableRow>
             ) : organizations.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  No organizations found.
+                  {t('noOrgs')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -196,7 +197,9 @@ export default function AdminOrganizationsPage() {
                       <Users className="h-4 w-4 text-muted-foreground" />
                       <span>{org.memberCount}</span>
                       {org.memberCount === 0 && (
-                        <Badge variant="destructive">Orphaned</Badge>
+                        <Badge variant="destructive">
+                          {t('orphanedBadge')}
+                        </Badge>
                       )}
                     </div>
                   </TableCell>
@@ -211,7 +214,9 @@ export default function AdminOrganizationsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel>
+                          {tCommon('actions')}
+                        </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive"
@@ -221,7 +226,7 @@ export default function AdminOrganizationsPage() {
                           }}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete Organization
+                          {t('deleteAction')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -236,17 +241,19 @@ export default function AdminOrganizationsPage() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Organization</DialogTitle>
+            <DialogTitle>{t('deleteDialog.title')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this organization? This will also
-              remove all members from the organization.
+              {t('deleteDialog.description')}
             </DialogDescription>
           </DialogHeader>
           {selectedOrg && (
             <div className="py-4">
               <p className="font-medium">{selectedOrg.name}</p>
               <p className="text-sm text-muted-foreground">
-                {selectedOrg.slug} - {selectedOrg.memberCount} member(s)
+                {selectedOrg.slug} -{' '}
+                {t('deleteDialog.memberCount', {
+                  count: selectedOrg.memberCount,
+                })}
               </p>
             </div>
           )}
@@ -255,10 +262,10 @@ export default function AdminOrganizationsPage() {
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button variant="destructive" onClick={handleDeleteOrganization}>
-              Delete
+              {tCommon('delete')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -598,28 +598,278 @@
     },
     "sessions": {
       "title": "Relace",
-      "description": "Zobrazit a spravovat všechny aktivní relace"
+      "description": "Zobrazit a spravovat všechny aktivní relace",
+      "activeSessions": "Aktivní Relace",
+      "activeSessionsCount": "{count} aktivní relace",
+      "loading": "Načítání...",
+      "noSessions": "Žádné aktivní relace",
+      "unknownDevice": "Neznámé zařízení",
+      "unknownIP": "Neznámý",
+      "created": "Vytvořeno",
+      "expires": "Platnost do",
+      "revoke": "Zrušit",
+      "revokeAll": "Zrušit Vše",
+      "revokeDialog": {
+        "title": "Zrušit Relaci",
+        "description": "Opravdu chcete zrušit tuto relaci? Uživatel bude odhlášen."
+      },
+      "revokeAllDialog": {
+        "title": "Zrušit Všechny Relace",
+        "description": "Opravdu chcete zrušit všechny relace tohoto uživatele? Budou odhlášeni ze všech zařízení."
+      }
     },
     "organizations": {
-      "title": "Organizations",
-      "description": "Manage all organizations"
+      "title": "Organizace",
+      "description": "Spravovat všechny organizace",
+      "descriptionWithTotal": "Spravovat všechny organizace ({total} celkem)",
+      "search": "Hledat podle jména nebo slugu...",
+      "columns": {
+        "name": "Jméno",
+        "slug": "Slug",
+        "owner": "Vlastník",
+        "members": "Členové",
+        "created": "Vytvořeno"
+      },
+      "noOrgs": "Nenalezeny žádné organizace.",
+      "orphaned": "{count} osiřelá/é organizace bez členů",
+      "orphanedBadge": "Osiřelá",
+      "orphanedWarning": "Tyto organizace nemají žádné členy a měly by být smazány.",
+      "deleteAction": "Smazat organizaci",
+      "deleteDialog": {
+        "title": "Smazat organizaci",
+        "description": "Opravdu chcete smazat tuto organizaci? Tím budou odstraněni i všichni členové z organizace.",
+        "memberCount": "{count} člen/ů"
+      },
+      "toast": {
+        "deleted": "Organizace smazána ({count} členů odstraněno)",
+        "deleteFailed": "Nepodařilo se smazat organizaci"
+      }
     },
     "notifications": {
-      "title": "Notifications",
-      "description": "Send notifications to users"
+      "title": "Oznámení",
+      "description": "Odeslat upozornění uživatelům",
+      "pageTitle": "Odeslat Oznámení",
+      "types": {
+        "info": "Info",
+        "success": "Úspěch",
+        "warning": "Varování",
+        "system": "Systém",
+        "invite": "Pozvánka"
+      },
+      "compose": {
+        "title": "Vytvořit",
+        "description": "Vytvořte své oznámení",
+        "type": "Typ",
+        "titleLabel": "Název",
+        "titlePlaceholder": "Název oznámení",
+        "message": "Zpráva (volitelné)",
+        "messagePlaceholder": "Další podrobnosti...",
+        "link": "Odkaz (volitelné)",
+        "linkPlaceholder": "/dashboard nebo https://...",
+        "preview": "Náhled"
+      },
+      "recipients": {
+        "title": "Příjemci",
+        "description": "Vyberte, kdo obdrží toto oznámení",
+        "allUsers": "Všichni uživatelé",
+        "selectUsers": "Vybrat uživatele",
+        "searchPlaceholder": "Hledat uživatele...",
+        "selected": "{count} vybráno",
+        "selectAll": "Vybrat vše",
+        "moreCount": "+{count} dalších",
+        "noUsers": "Nenalezeni žádní uživatelé",
+        "noName": "Bez jména",
+        "allUsersWarning": "Toto odešle oznámení všem {count} uživatelům (kromě vás)."
+      },
+      "sendButton": {
+        "send": "Odeslat oznámení",
+        "sending": "Odesílání..."
+      },
+      "history": {
+        "title": "Odeslaná oznámení",
+        "description": "Nedávná oznámení ({count})",
+        "empty": "Zatím nebyla odeslána žádná oznámení.",
+        "columns": {
+          "type": "Typ",
+          "title": "Název",
+          "recipient": "Příjemce",
+          "sent": "Odesláno"
+        }
+      },
+      "toast": {
+        "loadFailed": "Nepodařilo se načíst data",
+        "titleRequired": "Název je povinný",
+        "selectUser": "Vyberte alespoň jednoho uživatele",
+        "sendFailed": "Nepodařilo se odeslat oznámení",
+        "sent": "Oznámení odesláno {count} uživatelům"
+      }
     },
     "settings": {
       "title": "Settings",
-      "description": "Application settings"
+      "description": "Application settings",
+      "account": {
+        "title": "Účet",
+        "description": "Spravujte nastavení admin účtu"
+      },
+      "adminAlert": {
+        "title": "Nastavení Admin",
+        "description": "Upravujete nastavení admin účtu. Změny zde obcházejí běžné ověřovací toky."
+      },
+      "changeEmail": {
+        "title": "Změnit Email",
+        "description": "Aktualizovat admin emailovou adresu (není vyžadováno ověření)",
+        "currentEmail": "Současný Email",
+        "newEmail": "Nový Email",
+        "placeholder": "novy@email.cz",
+        "submit": "Změnit Email",
+        "changing": "Změna...",
+        "enterDifferent": "Zadejte jiný email",
+        "failed": "Nepodařilo se aktualizovat email"
+      },
+      "twoFactor": {
+        "title": "Dvoufaktorové Ověření",
+        "description": "Přidejte další vrstvu zabezpečení k vašemu účtu",
+        "status": "Stav",
+        "enabled": "Dvoufaktorové ověření je povoleno",
+        "notEnabled": "Dvoufaktorové ověření není povoleno",
+        "enable": "Povolit 2FA",
+        "disable": "Zakázat 2FA",
+        "disabled": "Dvoufaktorové ověření zakázáno",
+        "disableDialog": {
+          "title": "Zakázat Dvoufaktorové Ověření",
+          "description": "Zadejte heslo pro zakázání dvoufaktorového ověření.",
+          "password": "Heslo",
+          "passwordPlaceholder": "Zadejte heslo",
+          "submit": "Zakázat 2FA",
+          "disabling": "Zakazování..."
+        }
+      },
+      "changePassword": {
+        "title": "Změnit Heslo",
+        "description": "Aktualizovat admin heslo",
+        "currentPassword": "Současné Heslo",
+        "newPassword": "Nové Heslo",
+        "confirmPassword": "Potvrdit Nové Heslo",
+        "placeholder": "Alespoň 8 znaků",
+        "submit": "Změnit Heslo",
+        "changing": "Změna...",
+        "passwordMismatch": "Hesla se neshodují",
+        "passwordTooShort": "Heslo musí mít alespoň 8 znaků",
+        "success": "Heslo úspěšně změněno!"
+      }
     },
     "stripe": {
       "products": {
-        "title": "Products",
-        "description": "Manage Stripe products"
+        "title": "Stripe Produkty",
+        "subtitle": "Spravujte své předplatné plány ({count} celkem)",
+        "description": "Spravovat Stripe produkty",
+        "showArchived": "Zobrazit Archivované",
+        "hideArchived": "Skrýt Archivované",
+        "sync": "Synchronizovat ze Stripe",
+        "addProduct": "Přidat Produkt",
+        "archive": "Archivovat",
+        "createDialog": {
+          "title": "Vytvořit Produkt",
+          "description": "Vytvořte nový produkt ve Stripe a uložte jej lokálně.",
+          "submit": "Vytvořit"
+        },
+        "editDialog": {
+          "title": "Upravit Produkt",
+          "description": "Aktualizujte detaily produktu. Cenu nelze změnit (omezení Stripe).",
+          "priceReadonly": "Cena (pouze pro čtení)"
+        },
+        "deleteDialog": {
+          "titleDelete": "Smazat Produkt",
+          "titleArchive": "Archivovat Produkt",
+          "descriptionDelete": "Toto trvale smaže produkt ze Stripe (funguje pouze pokud nebyl nikdy použit). Pokud má produkt předplatná, bude archivován.",
+          "descriptionArchive": "Toto archivuje produkt ve Stripe a odebere jej z lokální databáze. Existující předplatná nebudou ovlivněna."
+        },
+        "form": {
+          "name": "Název",
+          "namePlaceholder": "Pro Plán",
+          "description": "Popis",
+          "descriptionPlaceholder": "Pro profesionály a malé týmy",
+          "price": "Cena",
+          "pricePlaceholder": "19.00",
+          "currency": "Měna",
+          "interval": "Fakturační Interval",
+          "intervalMonthly": "Měsíční",
+          "intervalYearly": "Roční",
+          "trialDays": "Zkušební Dny",
+          "features": "Funkce (jedna na řádek)",
+          "featuresPlaceholder": "20 projektů\n50 GB úložiště\nPrioritní podpora",
+          "sortOrder": "Pořadí",
+          "popular": "Populární"
+        },
+        "table": {
+          "order": "Pořadí",
+          "name": "Název",
+          "price": "Cena",
+          "interval": "Interval",
+          "trial": "Zkušební",
+          "popular": "Populární",
+          "status": "Stav",
+          "empty": "Žádné produkty. Vytvořte jeden nebo synchronizujte ze Stripe.",
+          "trialDays": "{days} dní"
+        },
+        "archivedSection": {
+          "title": "Archivované Produkty",
+          "stripeId": "Stripe ID",
+          "loading": "Načítání archivovaných produktů...",
+          "empty": "Nenalezeny žádné archivované produkty."
+        },
+        "toast": {
+          "fetchFailed": "Nepodařilo se načíst produkty",
+          "fetchArchivedFailed": "Nepodařilo se načíst archivované produkty",
+          "syncSuccess": "Produkty úspěšně synchronizovány",
+          "syncFailed": "Synchronizace selhala",
+          "created": "Produkt vytvořen",
+          "createFailed": "Nepodařilo se vytvořit produkt",
+          "updated": "Produkt aktualizován",
+          "updateFailed": "Nepodařilo se aktualizovat produkt",
+          "deleted": "Produkt trvale smazán",
+          "archivedWithSubs": "Produkt archivován (má předplatná)",
+          "deleteFailed": "Nepodařilo se smazat produkt",
+          "enabled": "Produkt povolen",
+          "disabled": "Produkt zakázán",
+          "toggleFailed": "Nepodařilo se přepnout produkt"
+        }
       },
       "subscriptions": {
-        "title": "Subscriptions",
-        "description": "View all subscriptions"
+        "title": "Předplatná",
+        "subtitle": "Zobrazit a spravovat předplatná uživatelů",
+        "description": "Zobrazit všechna předplatná",
+        "stats": {
+          "total": "Celkem",
+          "active": "Aktivní",
+          "trialing": "Zkušební",
+          "pastDue": "Po Splatnosti"
+        },
+        "status": {
+          "active": "Aktivní",
+          "trialing": "Zkušební",
+          "canceled": "Zrušeno",
+          "pastDue": "Po Splatnosti",
+          "incomplete": "Neúplné"
+        },
+        "filters": {
+          "searchPlaceholder": "Hledat podle jména nebo emailu...",
+          "filterByStatus": "Filtrovat podle stavu",
+          "allStatuses": "Všechny Stavy"
+        },
+        "table": {
+          "user": "Uživatel",
+          "plan": "Plán",
+          "status": "Stav",
+          "periodEnd": "Konec Období",
+          "created": "Vytvořeno",
+          "empty": "Nenalezena žádná předplatná.",
+          "noName": "Bez jména",
+          "canceling": "(rušení)"
+        },
+        "toast": {
+          "fetchFailed": "Nepodařilo se načíst předplatná"
+        }
       }
     }
   },

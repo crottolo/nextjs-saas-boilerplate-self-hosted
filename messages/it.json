@@ -598,28 +598,278 @@
     },
     "sessions": {
       "title": "Sessioni",
-      "description": "Visualizza e gestisci tutte le sessioni attive"
+      "description": "Visualizza e gestisci tutte le sessioni attive",
+      "activeSessions": "Sessioni Attive",
+      "activeSessionsCount": "{count} sessione/i attiva/e",
+      "loading": "Caricamento...",
+      "noSessions": "Nessuna sessione attiva",
+      "unknownDevice": "Dispositivo sconosciuto",
+      "unknownIP": "Sconosciuto",
+      "created": "Creata",
+      "expires": "Scade",
+      "revoke": "Revoca",
+      "revokeAll": "Revoca Tutte",
+      "revokeDialog": {
+        "title": "Revoca Sessione",
+        "description": "Sei sicuro di voler revocare questa sessione? L'utente verrà disconnesso."
+      },
+      "revokeAllDialog": {
+        "title": "Revoca Tutte le Sessioni",
+        "description": "Sei sicuro di voler revocare tutte le sessioni di questo utente? Verrà disconnesso da tutti i dispositivi."
+      }
     },
     "organizations": {
       "title": "Organizzazioni",
-      "description": "Gestisci tutte le organizzazioni"
+      "description": "Gestisci tutte le organizzazioni",
+      "descriptionWithTotal": "Gestisci tutte le organizzazioni ({total} totali)",
+      "search": "Cerca per nome o slug...",
+      "columns": {
+        "name": "Nome",
+        "slug": "Slug",
+        "owner": "Proprietario",
+        "members": "Membri",
+        "created": "Creata"
+      },
+      "noOrgs": "Nessuna organizzazione trovata.",
+      "orphaned": "{count} organizzazione/i orfana/e senza membri",
+      "orphanedBadge": "Orfana",
+      "orphanedWarning": "Queste organizzazioni non hanno membri e dovrebbero essere eliminate.",
+      "deleteAction": "Elimina organizzazione",
+      "deleteDialog": {
+        "title": "Elimina organizzazione",
+        "description": "Sei sicuro di voler eliminare questa organizzazione? Questo rimuoverà anche tutti i membri dall'organizzazione.",
+        "memberCount": "{count} membro/i"
+      },
+      "toast": {
+        "deleted": "Organizzazione eliminata ({count} membri rimossi)",
+        "deleteFailed": "Impossibile eliminare l'organizzazione"
+      }
     },
     "notifications": {
       "title": "Notifiche",
-      "description": "Invia notifiche agli utenti"
+      "description": "Invia notifiche agli utenti",
+      "pageTitle": "Invia Notifica",
+      "types": {
+        "info": "Info",
+        "success": "Successo",
+        "warning": "Avviso",
+        "system": "Sistema",
+        "invite": "Invito"
+      },
+      "compose": {
+        "title": "Componi",
+        "description": "Crea la tua notifica",
+        "type": "Tipo",
+        "titleLabel": "Titolo",
+        "titlePlaceholder": "Titolo notifica",
+        "message": "Messaggio (facoltativo)",
+        "messagePlaceholder": "Dettagli aggiuntivi...",
+        "link": "Link (facoltativo)",
+        "linkPlaceholder": "/dashboard o https://...",
+        "preview": "Anteprima"
+      },
+      "recipients": {
+        "title": "Destinatari",
+        "description": "Seleziona chi riceve questa notifica",
+        "allUsers": "Tutti gli utenti",
+        "selectUsers": "Seleziona utenti",
+        "searchPlaceholder": "Cerca utenti...",
+        "selected": "{count} selezionati",
+        "selectAll": "Seleziona tutti",
+        "moreCount": "+{count} altri",
+        "noUsers": "Nessun utente trovato",
+        "noName": "Nessun nome",
+        "allUsersWarning": "Questo invierà la notifica a tutti i {count} utenti (tranne te stesso)."
+      },
+      "sendButton": {
+        "send": "Invia notifica",
+        "sending": "Invio..."
+      },
+      "history": {
+        "title": "Notifiche inviate",
+        "description": "Notifiche recenti ({count})",
+        "empty": "Nessuna notifica inviata.",
+        "columns": {
+          "type": "Tipo",
+          "title": "Titolo",
+          "recipient": "Destinatario",
+          "sent": "Inviata"
+        }
+      },
+      "toast": {
+        "loadFailed": "Impossibile caricare i dati",
+        "titleRequired": "Il titolo è obbligatorio",
+        "selectUser": "Seleziona almeno un utente",
+        "sendFailed": "Impossibile inviare la notifica",
+        "sent": "Notifica inviata a {count} utente/i"
+      }
     },
     "settings": {
       "title": "Impostazioni",
-      "description": "Impostazioni applicazione"
+      "description": "Impostazioni applicazione",
+      "account": {
+        "title": "Account",
+        "description": "Gestisci le impostazioni del tuo account admin"
+      },
+      "adminAlert": {
+        "title": "Impostazioni Admin",
+        "description": "Stai modificando le impostazioni dell'account admin. Le modifiche qui bypassano i normali flussi di verifica."
+      },
+      "changeEmail": {
+        "title": "Cambia Email",
+        "description": "Aggiorna il tuo indirizzo email admin (nessuna verifica richiesta)",
+        "currentEmail": "Email Attuale",
+        "newEmail": "Nuova Email",
+        "placeholder": "nuova@email.com",
+        "submit": "Cambia Email",
+        "changing": "Modifica in corso...",
+        "enterDifferent": "Inserisci un indirizzo email diverso",
+        "failed": "Impossibile aggiornare l'email"
+      },
+      "twoFactor": {
+        "title": "Autenticazione a Due Fattori",
+        "description": "Aggiungi un ulteriore livello di sicurezza al tuo account",
+        "status": "Stato",
+        "enabled": "L'autenticazione a due fattori è abilitata",
+        "notEnabled": "L'autenticazione a due fattori non è abilitata",
+        "enable": "Abilita 2FA",
+        "disable": "Disabilita 2FA",
+        "disabled": "Autenticazione a due fattori disabilitata",
+        "disableDialog": {
+          "title": "Disabilita Autenticazione a Due Fattori",
+          "description": "Inserisci la tua password per disabilitare l'autenticazione a due fattori.",
+          "password": "Password",
+          "passwordPlaceholder": "Inserisci la tua password",
+          "submit": "Disabilita 2FA",
+          "disabling": "Disabilitazione..."
+        }
+      },
+      "changePassword": {
+        "title": "Cambia Password",
+        "description": "Aggiorna la tua password admin",
+        "currentPassword": "Password Attuale",
+        "newPassword": "Nuova Password",
+        "confirmPassword": "Conferma Nuova Password",
+        "placeholder": "Almeno 8 caratteri",
+        "submit": "Cambia Password",
+        "changing": "Modifica in corso...",
+        "passwordMismatch": "Le password non corrispondono",
+        "passwordTooShort": "La password deve contenere almeno 8 caratteri",
+        "success": "Password modificata con successo!"
+      }
     },
     "stripe": {
       "products": {
-        "title": "Prodotti",
-        "description": "Gestisci prodotti Stripe"
+        "title": "Prodotti Stripe",
+        "subtitle": "Gestisci i tuoi piani di abbonamento ({count} totali)",
+        "description": "Gestisci prodotti Stripe",
+        "showArchived": "Mostra Archiviati",
+        "hideArchived": "Nascondi Archiviati",
+        "sync": "Sincronizza da Stripe",
+        "addProduct": "Aggiungi Prodotto",
+        "archive": "Archivia",
+        "createDialog": {
+          "title": "Crea Prodotto",
+          "description": "Crea un nuovo prodotto in Stripe e salvalo localmente.",
+          "submit": "Crea"
+        },
+        "editDialog": {
+          "title": "Modifica Prodotto",
+          "description": "Aggiorna i dettagli del prodotto. Il prezzo non può essere modificato (limitazione di Stripe).",
+          "priceReadonly": "Prezzo (sola lettura)"
+        },
+        "deleteDialog": {
+          "titleDelete": "Elimina Prodotto",
+          "titleArchive": "Archivia Prodotto",
+          "descriptionDelete": "Questo eliminerà permanentemente il prodotto da Stripe (funziona solo se mai usato). Se il prodotto ha abbonamenti, verrà archiviato.",
+          "descriptionArchive": "Questo archivierà il prodotto in Stripe e lo rimuoverà dal database locale. Gli abbonamenti esistenti non saranno influenzati."
+        },
+        "form": {
+          "name": "Nome",
+          "namePlaceholder": "Piano Pro",
+          "description": "Descrizione",
+          "descriptionPlaceholder": "Per professionisti e piccoli team",
+          "price": "Prezzo",
+          "pricePlaceholder": "19.00",
+          "currency": "Valuta",
+          "interval": "Intervallo di Fatturazione",
+          "intervalMonthly": "Mensile",
+          "intervalYearly": "Annuale",
+          "trialDays": "Giorni di Prova",
+          "features": "Funzionalità (una per riga)",
+          "featuresPlaceholder": "20 progetti\n50 GB di spazio\nSupporto prioritario",
+          "sortOrder": "Ordine",
+          "popular": "Popolare"
+        },
+        "table": {
+          "order": "Ordine",
+          "name": "Nome",
+          "price": "Prezzo",
+          "interval": "Intervallo",
+          "trial": "Prova",
+          "popular": "Popolare",
+          "status": "Stato",
+          "empty": "Nessun prodotto. Creane uno o sincronizza da Stripe.",
+          "trialDays": "{days} giorni"
+        },
+        "archivedSection": {
+          "title": "Prodotti Archiviati",
+          "stripeId": "ID Stripe",
+          "loading": "Caricamento prodotti archiviati...",
+          "empty": "Nessun prodotto archiviato trovato."
+        },
+        "toast": {
+          "fetchFailed": "Impossibile recuperare i prodotti",
+          "fetchArchivedFailed": "Impossibile recuperare i prodotti archiviati",
+          "syncSuccess": "Prodotti sincronizzati con successo",
+          "syncFailed": "Sincronizzazione fallita",
+          "created": "Prodotto creato",
+          "createFailed": "Impossibile creare il prodotto",
+          "updated": "Prodotto aggiornato",
+          "updateFailed": "Impossibile aggiornare il prodotto",
+          "deleted": "Prodotto eliminato permanentemente",
+          "archivedWithSubs": "Prodotto archiviato (ha abbonamenti)",
+          "deleteFailed": "Impossibile eliminare il prodotto",
+          "enabled": "Prodotto abilitato",
+          "disabled": "Prodotto disabilitato",
+          "toggleFailed": "Impossibile attivare/disattivare il prodotto"
+        }
       },
       "subscriptions": {
         "title": "Abbonamenti",
-        "description": "Visualizza tutti gli abbonamenti"
+        "subtitle": "Visualizza e gestisci gli abbonamenti degli utenti",
+        "description": "Visualizza tutti gli abbonamenti",
+        "stats": {
+          "total": "Totale",
+          "active": "Attivi",
+          "trialing": "In Prova",
+          "pastDue": "Scaduti"
+        },
+        "status": {
+          "active": "Attivo",
+          "trialing": "In Prova",
+          "canceled": "Cancellato",
+          "pastDue": "Scaduto",
+          "incomplete": "Incompleto"
+        },
+        "filters": {
+          "searchPlaceholder": "Cerca per nome o email...",
+          "filterByStatus": "Filtra per stato",
+          "allStatuses": "Tutti gli Stati"
+        },
+        "table": {
+          "user": "Utente",
+          "plan": "Piano",
+          "status": "Stato",
+          "periodEnd": "Fine Periodo",
+          "created": "Creato",
+          "empty": "Nessun abbonamento trovato.",
+          "noName": "Nessun nome",
+          "canceling": "(in cancellazione)"
+        },
+        "toast": {
+          "fetchFailed": "Impossibile recuperare gli abbonamenti"
+        }
       }
     }
   },

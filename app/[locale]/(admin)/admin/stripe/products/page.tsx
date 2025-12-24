@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -82,6 +83,9 @@ interface ArchivedProduct {
 }
 
 export default function AdminStripeProductsPage() {
+  const t = useTranslations('admin.stripe.products')
+  const tCommon = useTranslations('common')
+
   const [products, setProducts] = useState<Product[]>([])
   const [archivedProducts, setArchivedProducts] = useState<ArchivedProduct[]>(
     []
@@ -124,7 +128,7 @@ export default function AdminStripeProductsPage() {
         setProducts(data.products)
       }
     } catch {
-      toast.error('Failed to fetch products')
+      toast.error(t('toast.fetchFailed'))
     } finally {
       setLoading(false)
     }
@@ -139,7 +143,7 @@ export default function AdminStripeProductsPage() {
         setArchivedProducts(data.products)
       }
     } catch {
-      toast.error('Failed to fetch archived products')
+      toast.error(t('toast.fetchArchivedFailed'))
     } finally {
       setLoadingArchived(false)
     }
@@ -160,13 +164,13 @@ export default function AdminStripeProductsPage() {
       })
       const data = await res.json()
       if (res.ok) {
-        toast.success(data.message)
+        toast.success(t('toast.syncSuccess'))
         setRefreshKey((k) => k + 1)
       } else {
         toast.error(data.error)
       }
     } catch {
-      toast.error('Sync failed')
+      toast.error(t('toast.syncFailed'))
     } finally {
       setSyncing(false)
     }
@@ -195,7 +199,7 @@ export default function AdminStripeProductsPage() {
       })
       const data = await res.json()
       if (res.ok) {
-        toast.success('Product created')
+        toast.success(t('toast.created'))
         setCreateDialogOpen(false)
         resetForm()
         setRefreshKey((k) => k + 1)
@@ -203,7 +207,7 @@ export default function AdminStripeProductsPage() {
         toast.error(data.error)
       }
     } catch {
-      toast.error('Failed to create product')
+      toast.error(t('toast.createFailed'))
     }
   }
 
@@ -230,7 +234,7 @@ export default function AdminStripeProductsPage() {
       )
       const data = await res.json()
       if (res.ok) {
-        toast.success('Product updated')
+        toast.success(t('toast.updated'))
         setEditDialogOpen(false)
         setSelectedProduct(null)
         resetForm()
@@ -239,7 +243,7 @@ export default function AdminStripeProductsPage() {
         toast.error(data.error)
       }
     } catch {
-      toast.error('Failed to update product')
+      toast.error(t('toast.updateFailed'))
     }
   }
 
@@ -255,8 +259,8 @@ export default function AdminStripeProductsPage() {
       if (res.ok) {
         const message =
           data.action === 'deleted'
-            ? 'Product deleted permanently'
-            : 'Product archived (has subscriptions)'
+            ? t('toast.deleted')
+            : t('toast.archivedWithSubs')
         toast.success(message)
         setDeleteDialogOpen(false)
         setSelectedProduct(null)
@@ -265,7 +269,7 @@ export default function AdminStripeProductsPage() {
         toast.error(data.error)
       }
     } catch {
-      toast.error('Failed to delete product')
+      toast.error(t('toast.deleteFailed'))
     }
   }
 
@@ -277,11 +281,13 @@ export default function AdminStripeProductsPage() {
         body: JSON.stringify({ enabled: !product.enabled }),
       })
       if (res.ok) {
-        toast.success(product.enabled ? 'Product disabled' : 'Product enabled')
+        toast.success(
+          product.enabled ? t('toast.disabled') : t('toast.enabled')
+        )
         setRefreshKey((k) => k + 1)
       }
     } catch {
-      toast.error('Failed to toggle product')
+      toast.error(t('toast.toggleFailed'))
     }
   }
 
@@ -326,9 +332,9 @@ export default function AdminStripeProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Stripe Products</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Manage your subscription plans ({products.length} total)
+            {t('subtitle', { count: products.length })}
           </p>
         </div>
 
@@ -339,66 +345,66 @@ export default function AdminStripeProductsPage() {
             disabled={loadingArchived}
           >
             <Archive className="mr-2 h-4 w-4" />
-            {showArchived ? 'Hide Archived' : 'Show Archived'}
+            {showArchived ? t('hideArchived') : t('showArchived')}
             {archivedProducts.length > 0 && ` (${archivedProducts.length})`}
           </Button>
           <Button variant="outline" onClick={handleSync} disabled={syncing}>
             <RefreshCw
               className={`mr-2 h-4 w-4 ${syncing ? 'animate-spin' : ''}`}
             />
-            Sync from Stripe
+            {t('sync')}
           </Button>
 
           <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={resetForm}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Product
+                {t('addProduct')}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
               <form onSubmit={handleCreate}>
                 <DialogHeader>
-                  <DialogTitle>Create Product</DialogTitle>
+                  <DialogTitle>{t('createDialog.title')}</DialogTitle>
                   <DialogDescription>
-                    Create a new product in Stripe and save it locally.
+                    {t('createDialog.description')}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name *</Label>
+                    <Label htmlFor="name">{t('form.name')} *</Label>
                     <Input
                       id="name"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      placeholder="Pro Plan"
+                      placeholder={t('form.namePlaceholder')}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">{t('form.description')}</Label>
                     <Input
                       id="description"
                       value={formDescription}
                       onChange={(e) => setFormDescription(e.target.value)}
-                      placeholder="For professionals and small teams"
+                      placeholder={t('form.descriptionPlaceholder')}
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="price">Price *</Label>
+                      <Label htmlFor="price">{t('form.price')} *</Label>
                       <Input
                         id="price"
                         type="number"
                         step="0.01"
                         value={formPrice}
                         onChange={(e) => setFormPrice(e.target.value)}
-                        placeholder="19.00"
+                        placeholder={t('form.pricePlaceholder')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="currency">Currency</Label>
+                      <Label htmlFor="currency">{t('form.currency')}</Label>
                       <Select
                         value={formCurrency}
                         onValueChange={setFormCurrency}
@@ -416,7 +422,7 @@ export default function AdminStripeProductsPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="interval">Billing Interval</Label>
+                      <Label htmlFor="interval">{t('form.interval')}</Label>
                       <Select
                         value={formInterval}
                         onValueChange={setFormInterval}
@@ -425,13 +431,17 @@ export default function AdminStripeProductsPage() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="month">Monthly</SelectItem>
-                          <SelectItem value="year">Yearly</SelectItem>
+                          <SelectItem value="month">
+                            {t('form.intervalMonthly')}
+                          </SelectItem>
+                          <SelectItem value="year">
+                            {t('form.intervalYearly')}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="trialDays">Trial Days</Label>
+                      <Label htmlFor="trialDays">{t('form.trialDays')}</Label>
                       <Input
                         id="trialDays"
                         type="number"
@@ -442,18 +452,18 @@ export default function AdminStripeProductsPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="features">Features (one per line)</Label>
+                    <Label htmlFor="features">{t('form.features')}</Label>
                     <Textarea
                       id="features"
                       value={formFeatures}
                       onChange={(e) => setFormFeatures(e.target.value)}
-                      placeholder="20 projects&#10;50 GB storage&#10;Priority support"
+                      placeholder={t('form.featuresPlaceholder')}
                       rows={4}
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="sortOrder">Sort Order</Label>
+                      <Label htmlFor="sortOrder">{t('form.sortOrder')}</Label>
                       <Input
                         id="sortOrder"
                         type="number"
@@ -469,7 +479,7 @@ export default function AdminStripeProductsPage() {
                           checked={formPopular}
                           onCheckedChange={setFormPopular}
                         />
-                        <Label htmlFor="popular">Popular</Label>
+                        <Label htmlFor="popular">{t('form.popular')}</Label>
                       </div>
                       <div className="flex items-center gap-2">
                         <Switch
@@ -477,7 +487,7 @@ export default function AdminStripeProductsPage() {
                           checked={formEnabled}
                           onCheckedChange={setFormEnabled}
                         />
-                        <Label htmlFor="enabled">Enabled</Label>
+                        <Label htmlFor="enabled">{tCommon('enabled')}</Label>
                       </div>
                     </div>
                   </div>
@@ -488,9 +498,9 @@ export default function AdminStripeProductsPage() {
                     variant="outline"
                     onClick={() => setCreateDialogOpen(false)}
                   >
-                    Cancel
+                    {tCommon('cancel')}
                   </Button>
-                  <Button type="submit">Create</Button>
+                  <Button type="submit">{t('createDialog.submit')}</Button>
                 </DialogFooter>
               </form>
             </DialogContent>
@@ -502,13 +512,13 @@ export default function AdminStripeProductsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[60px]">Order</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Interval</TableHead>
-              <TableHead>Trial</TableHead>
-              <TableHead>Popular</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="w-[60px]">{t('table.order')}</TableHead>
+              <TableHead>{t('table.name')}</TableHead>
+              <TableHead>{t('table.price')}</TableHead>
+              <TableHead>{t('table.interval')}</TableHead>
+              <TableHead>{t('table.trial')}</TableHead>
+              <TableHead>{t('table.popular')}</TableHead>
+              <TableHead>{t('table.status')}</TableHead>
               <TableHead className="w-[70px]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -516,13 +526,13 @@ export default function AdminStripeProductsPage() {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-24 text-center">
-                  Loading...
+                  {tCommon('loading')}
                 </TableCell>
               </TableRow>
             ) : products.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="h-24 text-center">
-                  No products. Create one or sync from Stripe.
+                  {t('table.empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -546,12 +556,14 @@ export default function AdminStripeProductsPage() {
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">
-                        {product.interval === 'year' ? 'Yearly' : 'Monthly'}
+                        {product.interval === 'year'
+                          ? t('form.intervalYearly')
+                          : t('form.intervalMonthly')}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       {product.trialDays > 0
-                        ? `${product.trialDays} days`
+                        ? t('table.trialDays', { days: product.trialDays })
                         : '-'}
                     </TableCell>
                     <TableCell>
@@ -573,13 +585,15 @@ export default function AdminStripeProductsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuLabel>
+                            {tCommon('actions')}
+                          </DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => openEditDialog(product)}
                           >
                             <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                            {tCommon('edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
@@ -589,7 +603,7 @@ export default function AdminStripeProductsPage() {
                             }}
                           >
                             <Archive className="mr-2 h-4 w-4" />
-                            Archive
+                            {t('archive')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-destructive"
@@ -600,7 +614,7 @@ export default function AdminStripeProductsPage() {
                             }}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            {tCommon('delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -617,29 +631,29 @@ export default function AdminStripeProductsPage() {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <Archive className="h-5 w-5" />
-            Archived Products
+            {t('archivedSection.title')}
           </h2>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Interval</TableHead>
-                  <TableHead>Stripe ID</TableHead>
+                  <TableHead>{t('table.name')}</TableHead>
+                  <TableHead>{t('table.price')}</TableHead>
+                  <TableHead>{t('table.interval')}</TableHead>
+                  <TableHead>{t('archivedSection.stripeId')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loadingArchived ? (
                   <TableRow>
                     <TableCell colSpan={4} className="h-24 text-center">
-                      Loading archived products...
+                      {t('archivedSection.loading')}
                     </TableCell>
                   </TableRow>
                 ) : archivedProducts.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="h-24 text-center">
-                      No archived products found.
+                      {t('archivedSection.empty')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -658,7 +672,9 @@ export default function AdminStripeProductsPage() {
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {product.interval === 'year' ? 'Yearly' : 'Monthly'}
+                          {product.interval === 'year'
+                            ? t('form.intervalYearly')
+                            : t('form.intervalMonthly')}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -679,15 +695,12 @@ export default function AdminStripeProductsPage() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Edit Product</DialogTitle>
-            <DialogDescription>
-              Update product details. Price cannot be changed (Stripe
-              limitation).
-            </DialogDescription>
+            <DialogTitle>{t('editDialog.title')}</DialogTitle>
+            <DialogDescription>{t('editDialog.description')}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto">
             <div className="space-y-2">
-              <Label htmlFor="editName">Name</Label>
+              <Label htmlFor="editName">{t('form.name')}</Label>
               <Input
                 id="editName"
                 value={formName}
@@ -695,7 +708,7 @@ export default function AdminStripeProductsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editDescription">Description</Label>
+              <Label htmlFor="editDescription">{t('form.description')}</Label>
               <Input
                 id="editDescription"
                 value={formDescription}
@@ -703,7 +716,7 @@ export default function AdminStripeProductsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Price (read-only)</Label>
+              <Label>{t('editDialog.priceReadonly')}</Label>
               <Input
                 value={formatPrice(
                   selectedProduct?.price || 0,
@@ -713,7 +726,7 @@ export default function AdminStripeProductsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editFeatures">Features (one per line)</Label>
+              <Label htmlFor="editFeatures">{t('form.features')}</Label>
               <Textarea
                 id="editFeatures"
                 value={formFeatures}
@@ -723,7 +736,7 @@ export default function AdminStripeProductsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="editTrialDays">Trial Days</Label>
+                <Label htmlFor="editTrialDays">{t('form.trialDays')}</Label>
                 <Input
                   id="editTrialDays"
                   type="number"
@@ -732,7 +745,7 @@ export default function AdminStripeProductsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="editSortOrder">Sort Order</Label>
+                <Label htmlFor="editSortOrder">{t('form.sortOrder')}</Label>
                 <Input
                   id="editSortOrder"
                   type="number"
@@ -748,7 +761,7 @@ export default function AdminStripeProductsPage() {
                   checked={formPopular}
                   onCheckedChange={setFormPopular}
                 />
-                <Label htmlFor="editPopular">Popular</Label>
+                <Label htmlFor="editPopular">{t('form.popular')}</Label>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
@@ -756,15 +769,15 @@ export default function AdminStripeProductsPage() {
                   checked={formEnabled}
                   onCheckedChange={setFormEnabled}
                 />
-                <Label htmlFor="editEnabled">Enabled</Label>
+                <Label htmlFor="editEnabled">{tCommon('enabled')}</Label>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
-            <Button onClick={handleUpdate}>Save</Button>
+            <Button onClick={handleUpdate}>{tCommon('save')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -774,12 +787,14 @@ export default function AdminStripeProductsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {deleteMode === 'delete' ? 'Delete Product' : 'Archive Product'}
+              {deleteMode === 'delete'
+                ? t('deleteDialog.titleDelete')
+                : t('deleteDialog.titleArchive')}
             </DialogTitle>
             <DialogDescription>
               {deleteMode === 'delete'
-                ? 'This will permanently delete the product from Stripe (only works if never used). If the product has subscriptions, it will be archived instead.'
-                : 'This will archive the product in Stripe and remove it from your local database. Existing subscriptions will not be affected.'}
+                ? t('deleteDialog.descriptionDelete')
+                : t('deleteDialog.descriptionArchive')}
             </DialogDescription>
           </DialogHeader>
           {selectedProduct && (
@@ -796,10 +811,10 @@ export default function AdminStripeProductsPage() {
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
-              {deleteMode === 'delete' ? 'Delete' : 'Archive'}
+              {deleteMode === 'delete' ? tCommon('delete') : t('archive')}
             </Button>
           </DialogFooter>
         </DialogContent>

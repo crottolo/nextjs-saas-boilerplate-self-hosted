@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -48,6 +49,9 @@ interface Stats {
 }
 
 export default function AdminStripeSubscriptionsPage() {
+  const t = useTranslations('admin.stripe.subscriptions')
+  const tCommon = useTranslations('common')
+
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [stats, setStats] = useState<Stats>({
     total: 0,
@@ -79,7 +83,7 @@ export default function AdminStripeSubscriptionsPage() {
         setStats(data.stats)
       }
     } catch {
-      toast.error('Failed to fetch subscriptions')
+      toast.error(t('toast.fetchFailed'))
     } finally {
       setLoading(false)
     }
@@ -88,15 +92,15 @@ export default function AdminStripeSubscriptionsPage() {
   function getStatusBadge(status: string) {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-500">Active</Badge>
+        return <Badge className="bg-green-500">{t('status.active')}</Badge>
       case 'trialing':
-        return <Badge className="bg-blue-500">Trialing</Badge>
+        return <Badge className="bg-blue-500">{t('status.trialing')}</Badge>
       case 'canceled':
-        return <Badge variant="secondary">Canceled</Badge>
+        return <Badge variant="secondary">{t('status.canceled')}</Badge>
       case 'past_due':
-        return <Badge variant="destructive">Past Due</Badge>
+        return <Badge variant="destructive">{t('status.pastDue')}</Badge>
       case 'incomplete':
-        return <Badge variant="outline">Incomplete</Badge>
+        return <Badge variant="outline">{t('status.incomplete')}</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -114,17 +118,17 @@ export default function AdminStripeSubscriptionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Subscriptions</h1>
-        <p className="text-muted-foreground">
-          View and manage user subscriptions
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('stats.total')}
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -133,7 +137,9 @@ export default function AdminStripeSubscriptionsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('stats.active')}
+            </CardTitle>
             <CreditCard className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -144,7 +150,9 @@ export default function AdminStripeSubscriptionsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Trialing</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('stats.trialing')}
+            </CardTitle>
             <Clock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
@@ -155,7 +163,9 @@ export default function AdminStripeSubscriptionsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Past Due</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t('stats.pastDue')}
+            </CardTitle>
             <AlertCircle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
@@ -171,7 +181,7 @@ export default function AdminStripeSubscriptionsPage() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or email..."
+            placeholder={t('filters.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-8"
@@ -179,15 +189,15 @@ export default function AdminStripeSubscriptionsPage() {
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={t('filters.filterByStatus')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="trialing">Trialing</SelectItem>
-            <SelectItem value="canceled">Canceled</SelectItem>
-            <SelectItem value="past_due">Past Due</SelectItem>
-            <SelectItem value="incomplete">Incomplete</SelectItem>
+            <SelectItem value="all">{t('filters.allStatuses')}</SelectItem>
+            <SelectItem value="active">{t('status.active')}</SelectItem>
+            <SelectItem value="trialing">{t('status.trialing')}</SelectItem>
+            <SelectItem value="canceled">{t('status.canceled')}</SelectItem>
+            <SelectItem value="past_due">{t('status.pastDue')}</SelectItem>
+            <SelectItem value="incomplete">{t('status.incomplete')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -197,24 +207,24 @@ export default function AdminStripeSubscriptionsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Plan</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Period End</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>{t('table.user')}</TableHead>
+              <TableHead>{t('table.plan')}</TableHead>
+              <TableHead>{t('table.status')}</TableHead>
+              <TableHead>{t('table.periodEnd')}</TableHead>
+              <TableHead>{t('table.created')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  Loading...
+                  {tCommon('loading')}
                 </TableCell>
               </TableRow>
             ) : subscriptions.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
-                  No subscriptions found.
+                  {t('table.empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -222,7 +232,9 @@ export default function AdminStripeSubscriptionsPage() {
                 <TableRow key={sub.id}>
                   <TableCell>
                     <div>
-                      <p className="font-medium">{sub.userName || 'No name'}</p>
+                      <p className="font-medium">
+                        {sub.userName || t('table.noName')}
+                      </p>
                       <p className="text-sm text-muted-foreground">
                         {sub.userEmail}
                       </p>
@@ -238,7 +250,7 @@ export default function AdminStripeSubscriptionsPage() {
                       {getStatusBadge(sub.status)}
                       {sub.cancelAtPeriodEnd && (
                         <span className="text-xs text-muted-foreground">
-                          (canceling)
+                          {t('table.canceling')}
                         </span>
                       )}
                     </div>

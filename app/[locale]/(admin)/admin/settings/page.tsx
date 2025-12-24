@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ShieldAlert } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { authClient, useSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,6 +28,8 @@ import {
 import { toast } from 'sonner'
 
 export default function AdminSettingsPage() {
+  const t = useTranslations('admin.settings')
+  const tCommon = useTranslations('common')
   const router = useRouter()
   const { data: session } = useSession()
   const [loading, setLoading] = useState(false)
@@ -44,7 +47,7 @@ export default function AdminSettingsPage() {
     const newEmail = formData.get('newEmail') as string
 
     if (!newEmail || newEmail === session?.user.email) {
-      setEmailMessage('Error: Enter a different email address')
+      setEmailMessage(`${tCommon('error')}: ${t('changeEmail.enterDifferent')}`)
       setLoading(false)
       return
     }
@@ -57,7 +60,9 @@ export default function AdminSettingsPage() {
 
     if (!res.ok) {
       const data = await res.json()
-      setEmailMessage(`Error: ${data.error || 'Failed to update email'}`)
+      setEmailMessage(
+        `${tCommon('error')}: ${data.error || t('changeEmail.failed')}`
+      )
       setLoading(false)
     } else {
       await authClient.signOut()
@@ -76,13 +81,17 @@ export default function AdminSettingsPage() {
     const confirmPassword = formData.get('confirmPassword') as string
 
     if (newPassword !== confirmPassword) {
-      setPasswordMessage('Error: Passwords do not match')
+      setPasswordMessage(
+        `${tCommon('error')}: ${t('changePassword.passwordMismatch')}`
+      )
       setLoading(false)
       return
     }
 
     if (newPassword.length < 8) {
-      setPasswordMessage('Error: Password must be at least 8 characters')
+      setPasswordMessage(
+        `${tCommon('error')}: ${t('changePassword.passwordTooShort')}`
+      )
       setLoading(false)
       return
     }
@@ -94,9 +103,9 @@ export default function AdminSettingsPage() {
     })
 
     if (error) {
-      setPasswordMessage(`Error: ${error.message}`)
+      setPasswordMessage(`${tCommon('error')}: ${error.message}`)
     } else {
-      setPasswordMessage('Password changed successfully!')
+      setPasswordMessage(t('changePassword.success'))
       ;(e.target as HTMLFormElement).reset()
     }
     setLoading(false)
@@ -112,7 +121,7 @@ export default function AdminSettingsPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('Two-factor authentication disabled')
+      toast.success(t('twoFactor.disabled'))
       setDisable2FAOpen(false)
       setDisable2FAPassword('')
     }
@@ -122,32 +131,27 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Account</h1>
-        <p className="text-muted-foreground">
-          Manage your admin account settings
-        </p>
+        <h1 className="text-3xl font-bold">{t('account.title')}</h1>
+        <p className="text-muted-foreground">{t('account.description')}</p>
       </div>
 
       <Alert variant="destructive">
         <ShieldAlert className="h-4 w-4" />
-        <AlertTitle>Admin Settings</AlertTitle>
-        <AlertDescription>
-          You are editing admin account settings. Changes here bypass normal
-          verification flows.
-        </AlertDescription>
+        <AlertTitle>{t('adminAlert.title')}</AlertTitle>
+        <AlertDescription>{t('adminAlert.description')}</AlertDescription>
       </Alert>
 
       <Card>
         <CardHeader>
-          <CardTitle>Change Email</CardTitle>
-          <CardDescription>
-            Update your admin email address (no verification required)
-          </CardDescription>
+          <CardTitle>{t('changeEmail.title')}</CardTitle>
+          <CardDescription>{t('changeEmail.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleChangeEmail} className="space-y-4 max-w-md">
             <div className="space-y-2">
-              <Label htmlFor="currentEmail">Current Email</Label>
+              <Label htmlFor="currentEmail">
+                {t('changeEmail.currentEmail')}
+              </Label>
               <Input
                 id="currentEmail"
                 type="email"
@@ -157,26 +161,26 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newEmail">New Email</Label>
+              <Label htmlFor="newEmail">{t('changeEmail.newEmail')}</Label>
               <Input
                 id="newEmail"
                 name="newEmail"
                 type="email"
-                placeholder="new@email.com"
+                placeholder={t('changeEmail.placeholder')}
                 required
               />
             </div>
 
             {emailMessage && (
               <p
-                className={`text-sm ${emailMessage.startsWith('Error') ? 'text-destructive' : 'text-green-600'}`}
+                className={`text-sm ${emailMessage.startsWith(tCommon('error')) ? 'text-destructive' : 'text-green-600'}`}
               >
                 {emailMessage}
               </p>
             )}
 
             <Button type="submit" disabled={loading}>
-              {loading ? 'Changing...' : 'Change Email'}
+              {loading ? t('changeEmail.changing') : t('changeEmail.submit')}
             </Button>
           </form>
         </CardContent>
@@ -184,19 +188,17 @@ export default function AdminSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Two-Factor Authentication</CardTitle>
-          <CardDescription>
-            Add an extra layer of security to your account
-          </CardDescription>
+          <CardTitle>{t('twoFactor.title')}</CardTitle>
+          <CardDescription>{t('twoFactor.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Status</p>
+              <p className="font-medium">{t('twoFactor.status')}</p>
               <p className="text-sm text-muted-foreground">
                 {session?.user.twoFactorEnabled
-                  ? 'Two-factor authentication is enabled'
-                  : 'Two-factor authentication is not enabled'}
+                  ? t('twoFactor.enabled')
+                  : t('twoFactor.notEnabled')}
               </p>
             </div>
             {session?.user.twoFactorEnabled ? (
@@ -205,11 +207,11 @@ export default function AdminSettingsPage() {
                 onClick={() => setDisable2FAOpen(true)}
                 disabled={loading}
               >
-                Disable 2FA
+                {t('twoFactor.disable')}
               </Button>
             ) : (
               <Link href="/2fa/setup">
-                <Button>Enable 2FA</Button>
+                <Button>{t('twoFactor.enable')}</Button>
               </Link>
             )}
           </div>
@@ -226,33 +228,37 @@ export default function AdminSettingsPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Disable Two-Factor Authentication</DialogTitle>
+            <DialogTitle>{t('twoFactor.disableDialog.title')}</DialogTitle>
             <DialogDescription>
-              Enter your password to disable two-factor authentication.
+              {t('twoFactor.disableDialog.description')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="disable2fa-password">Password</Label>
+              <Label htmlFor="disable2fa-password">
+                {t('twoFactor.disableDialog.password')}
+              </Label>
               <Input
                 id="disable2fa-password"
                 type="password"
                 value={disable2FAPassword}
                 onChange={(e) => setDisable2FAPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder={t('twoFactor.disableDialog.passwordPlaceholder')}
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDisable2FAOpen(false)}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDisable2FA}
               disabled={loading || !disable2FAPassword}
             >
-              {loading ? 'Disabling...' : 'Disable 2FA'}
+              {loading
+                ? t('twoFactor.disableDialog.disabling')
+                : t('twoFactor.disableDialog.submit')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -260,13 +266,15 @@ export default function AdminSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Change Password</CardTitle>
-          <CardDescription>Update your admin password</CardDescription>
+          <CardTitle>{t('changePassword.title')}</CardTitle>
+          <CardDescription>{t('changePassword.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current Password</Label>
+              <Label htmlFor="currentPassword">
+                {t('changePassword.currentPassword')}
+              </Label>
               <Input
                 id="currentPassword"
                 name="currentPassword"
@@ -275,17 +283,21 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
+              <Label htmlFor="newPassword">
+                {t('changePassword.newPassword')}
+              </Label>
               <Input
                 id="newPassword"
                 name="newPassword"
                 type="password"
-                placeholder="At least 8 characters"
+                placeholder={t('changePassword.placeholder')}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">
+                {t('changePassword.confirmPassword')}
+              </Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -296,14 +308,16 @@ export default function AdminSettingsPage() {
 
             {passwordMessage && (
               <p
-                className={`text-sm ${passwordMessage.startsWith('Error') ? 'text-destructive' : 'text-green-600'}`}
+                className={`text-sm ${passwordMessage.startsWith(tCommon('error')) ? 'text-destructive' : 'text-green-600'}`}
               >
                 {passwordMessage}
               </p>
             )}
 
             <Button type="submit" disabled={loading}>
-              {loading ? 'Changing...' : 'Change Password'}
+              {loading
+                ? t('changePassword.changing')
+                : t('changePassword.submit')}
             </Button>
           </form>
         </CardContent>
