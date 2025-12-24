@@ -14,6 +14,9 @@ import {
   Monitor,
   Building2,
   Bell,
+  CreditCard,
+  Package,
+  Receipt,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
@@ -82,6 +85,19 @@ const adminNavItems = [
   },
 ]
 
+const stripeNavItems = [
+  {
+    title: 'Products',
+    url: '/admin/stripe/products',
+    icon: Package,
+  },
+  {
+    title: 'Subscriptions',
+    url: '/admin/stripe/subscriptions',
+    icon: Receipt,
+  },
+]
+
 const appNavItems = [
   {
     title: 'Back to App',
@@ -128,6 +144,8 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={adminNavItems} label="Administration" />
+        <SidebarSeparator />
+        <NavMain items={stripeNavItems} label="Stripe" />
         <SidebarSeparator />
         <NavMain items={appNavItems} label="Navigation" />
       </SidebarContent>

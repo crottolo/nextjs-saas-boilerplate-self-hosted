@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Check, Crown } from 'lucide-react'
+import { Check, Crown, Loader2, AlertCircle } from 'lucide-react'
+import Link from 'next/link'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,80 +14,78 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 interface Plan {
+  id: string
   name: string
-  price: string
-  description: string
-  features: string[]
-  popular?: boolean
+  description: string | null
+  price: number
+  currency: string
+  interval: string | null
   priceId: string
+  features: string[]
+  limits: { projects?: number; storage?: number }
+  trialDays: number
+  popular: boolean
 }
 
-const plans: Plan[] = [
-  {
-    name: 'Free',
-    price: '€0',
-    description: 'For individuals just getting started',
-    priceId: 'price_1ShnG5HkRKq5DDJHngiNkwFL',
-    features: [
-      '3 projects',
-      '1 GB storage',
-      'Community support',
-      'Basic access',
-    ],
-  },
-  {
-    name: 'Pro',
-    price: '€19',
-    description: 'For professionals and small teams',
-    priceId: 'price_1ShnGWHkRKq5DDJHfQzl1IZb',
-    popular: true,
-    features: [
-      '20 projects',
-      '50 GB storage',
-      'Priority support',
-      '14-day free trial',
-      'Advanced analytics',
-      'API access',
-    ],
-  },
-  {
-    name: 'Enterprise',
-    price: '€99',
-    description: 'For large organizations',
-    priceId: 'price_1ShnGpHkRKq5DDJHaMkkLqwB',
-    features: [
-      'Unlimited projects',
-      'Unlimited storage',
-      '24/7 dedicated support',
-      'Custom integrations',
-      'SLA guarantee',
-      'On-premise option',
-    ],
-  },
-]
-
 export default function PricingPage() {
+  const [plans, setPlans] = useState<Plan[]>([])
+  const [loadingPlans, setLoadingPlans] = useState(true)
   const [loading, setLoading] = useState<string | null>(null)
   const [currentPlan, setCurrentPlan] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [subscription, setSubscription] = useState<{
     status?: string
     cancelAtPeriodEnd?: boolean
     periodEnd?: string
   } | null>(null)
 
-  // Show success toast if upgraded (from URL param or session check)
+  // Check if user is admin
+  useEffect(() => {
+    async function checkAdmin() {
+      try {
+        const { data } = await authClient.getSession()
+        if (data?.user?.role === 'admin') {
+          setIsAdmin(true)
+        }
+      } catch {
+        // Not admin
+      }
+    }
+    checkAdmin()
+  }, [])
+
+  // Fetch plans from API
+  useEffect(() => {
+    async function fetchPlans() {
+      try {
+        const res = await fetch('/api/plans')
+        const data = await res.json()
+        setPlans(data.plans || [])
+      } catch {
+        setPlans([])
+      } finally {
+        setLoadingPlans(false)
+      }
+    }
+    fetchPlans()
+  }, [])
+
+  // Show success toast if upgraded/updated (from URL param)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('upgraded') === 'true') {
-      toast.success('Subscription upgraded successfully!', { duration: 6000 })
-      // Clean URL
+      toast.success('Subscription activated successfully!', { duration: 6000 })
       window.history.replaceState({}, '', '/pricing')
     }
-    // Also check session_id from Stripe (alternative success detection)
+    if (params.get('updated') === 'true') {
+      toast.success('Plan updated successfully!', { duration: 6000 })
+      window.history.replaceState({}, '', '/pricing')
+    }
     if (params.get('session_id')) {
       toast.success('Payment successful! Subscription activated.', {
         duration: 6000,
@@ -98,10 +97,12 @@ export default function PricingPage() {
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const { data } = await authClient.subscription.list()
-        if (data && data.length > 0) {
-          const activeSub = data.find(
-            (s) => s.status === 'active' || s.status === 'trialing'
+        const res = await fetch('/api/subscription')
+        const data = await res.json()
+        if (data.subscriptions && data.subscriptions.length > 0) {
+          const activeSub = data.subscriptions.find(
+            (s: { status: string }) =>
+              s.status === 'active' || s.status === 'trialing'
           )
           if (activeSub) {
             setCurrentPlan(activeSub.plan)
@@ -121,33 +122,25 @@ export default function PricingPage() {
     fetchSubscription()
   }, [])
 
-  async function handleUpgrade(planName: string) {
+  async function handleUpgrade(planName: string, priceId: string) {
     setLoading(planName)
     try {
       const baseUrl = window.location.origin
       const successUrl = `${baseUrl}/pricing?upgraded=true`
       const cancelUrl = `${baseUrl}/pricing`
-      console.log('[Pricing] Upgrading with URLs:', { successUrl, cancelUrl })
-      const { data, error } = await authClient.subscription.upgrade({
-        plan: planName.toLowerCase(),
-        successUrl,
-        cancelUrl,
-        returnUrl: successUrl, // For billing portal (plan switch)
-        disableRedirect: true,
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, successUrl, cancelUrl }),
       })
-      console.log('[Pricing] Upgrade response:', { data, error })
-      if (data?.url) {
-        // New checkout - redirect to Stripe
-        console.log('[Pricing] Checkout URL:', data.url)
+
+      const data = await res.json()
+
+      if (res.ok && data.url) {
         window.location.href = data.url
-      } else if (!error) {
-        // Plan switch - no checkout needed, show success
-        toast.success('Plan switched successfully!', { duration: 6000 })
-        // Refresh subscription data
-        window.location.href = '/pricing?upgraded=true'
-      }
-      if (error) {
-        toast.error(error.message || 'Failed to upgrade')
+      } else {
+        toast.error(data.error || 'Failed to start checkout')
       }
     } catch {
       toast.error('Failed to start upgrade')
@@ -159,12 +152,17 @@ export default function PricingPage() {
   async function handleManageBilling() {
     setLoading('billing')
     try {
-      const { data, error } = await authClient.subscription.billingPortal({
-        returnUrl: `${window.location.origin}/pricing`,
+      const res = await fetch('/api/subscription/billing-portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          returnUrl: `${window.location.origin}/pricing`,
+        }),
       })
-      if (error) {
-        toast.error(error.message || 'Failed to open billing portal')
-      } else if (data?.url) {
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to open billing portal')
+      } else if (data.url) {
         window.location.href = data.url
       }
     } catch {
@@ -174,8 +172,51 @@ export default function PricingPage() {
     }
   }
 
-  // Determina il piano attuale (se nessun abbonamento = Free)
+  function formatPrice(cents: number, currency: string) {
+    return new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+      minimumFractionDigits: 0,
+    }).format(cents / 100)
+  }
+
   const activePlan = currentPlan || 'free'
+
+  if (loadingPlans) {
+    return (
+      <div className="container max-w-5xl py-8 mx-auto flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (plans.length === 0) {
+    return (
+      <div className="container max-w-5xl py-8 mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold mb-2">Choose your plan</h1>
+          <p className="text-muted-foreground">
+            Start free and upgrade as you grow
+          </p>
+        </div>
+        <Alert className="max-w-md mx-auto">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>No plans available</AlertTitle>
+          <AlertDescription>
+            Pricing plans have not been configured yet.
+            {isAdmin && (
+              <Link
+                href="/admin/stripe/products"
+                className="block mt-2 underline hover:no-underline"
+              >
+                Configure Stripe products
+              </Link>
+            )}
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
 
   return (
     <div className="container max-w-5xl py-8 mx-auto">
@@ -225,7 +266,7 @@ export default function PricingPage() {
 
           return (
             <Card
-              key={plan.name}
+              key={plan.id}
               className={cn(
                 'relative transition-all',
                 isCurrentPlan &&
@@ -233,13 +274,11 @@ export default function PricingPage() {
                 plan.popular && !isCurrentPlan && 'border-primary/50 shadow-md'
               )}
             >
-              {/* Current plan badge */}
               {isCurrentPlan && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
                   Current Plan
                 </Badge>
               )}
-              {/* Popular badge (only if not current plan) */}
               {plan.popular && !isCurrentPlan && (
                 <Badge
                   variant="secondary"
@@ -256,19 +295,31 @@ export default function PricingPage() {
                 </CardTitle>
                 <CardDescription>{plan.description}</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground">/mese</span>
+                  <span className="text-4xl font-bold">
+                    {formatPrice(plan.price, plan.currency)}
+                  </span>
+                  <span className="text-muted-foreground">
+                    /{plan.interval === 'year' ? 'anno' : 'mese'}
+                  </span>
                 </div>
               </CardHeader>
 
               <CardContent>
                 <ul className="space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-500 shrink-0" />
                       <span className="text-sm">{feature}</span>
                     </li>
                   ))}
+                  {plan.trialDays > 0 && (
+                    <li className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500 shrink-0" />
+                      <span className="text-sm">
+                        {plan.trialDays}-day free trial
+                      </span>
+                    </li>
+                  )}
                 </ul>
               </CardContent>
 
@@ -282,7 +333,7 @@ export default function PricingPage() {
                   <Button
                     className="w-full"
                     variant={plan.popular ? 'default' : 'outline'}
-                    onClick={() => handleUpgrade(plan.name)}
+                    onClick={() => handleUpgrade(plan.name, plan.priceId)}
                     disabled={loading === plan.name}
                   >
                     {loading === plan.name

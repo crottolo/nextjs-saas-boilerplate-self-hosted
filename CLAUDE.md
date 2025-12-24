@@ -7,17 +7,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Sistema di autenticazione completo self-hosted con Next.js, Better Auth e PostgreSQL.
 
 ## Stato del progetto
-- Development in progress 
+
+- Development in progress
 - Nessuna migrazione db da fare, si riparte da zero ricreando lo schema da zero.
 - Fino a quando non arriviamo ad un punto stabile, non dobbiamo fare la migrazione db.
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router, React 19)
-- **Auth**: Better Auth
-- **ORM**: Drizzle ORM
+- **Framework**: Next.js 16.1.1 (App Router, React 19.2.3)
+- **Auth**: Better Auth 1.4.9
+- **ORM**: Drizzle ORM 0.45.1
 - **Database**: PostgreSQL 16 + pgAdmin4
-- **Email**: Resend
+- **Email**: Nodemailer (SMTP)
+- **Payments**: Stripe
 - **UI**: shadcn/ui v4 + Tailwind CSS v4
 - **Deploy**: Docker Compose (Coolify)
 
@@ -25,26 +27,44 @@ Sistema di autenticazione completo self-hosted con Next.js, Better Auth e Postgr
 
 ```
 app/
-├── (auth)/              # Auth pages (login, register, reset, 2fa)
-├── (dashboard)/         # User dashboard & settings
+├── (auth)/              # Auth pages (login, reset, 2fa)
+├── (auth-full)/         # Registration (full page)
+├── (dashboard)/         # User dashboard, profile, organizations
 ├── (admin)/             # Admin panel
-└── api/auth/[...all]/   # Better Auth API handler
+├── (public)/            # Privacy, terms
+├── invite/[id]/         # Organization invite acceptance
+└── api/
+    ├── auth/[...all]/   # Better Auth API handler
+    ├── admin/           # Admin-only endpoints
+    ├── notifications/   # Notification CRUD
+    ├── activity/        # Activity logging
+    └── upload/          # File uploads
 
 lib/
-├── db/                  # Drizzle ORM config & schema
+├── db/
+│   └── auth-schema.ts   # Drizzle ORM schema (all tables)
 ├── auth.ts              # Better Auth server config
 ├── auth-client.ts       # Better Auth React client
-└── email.ts             # Resend integration
+├── email.ts             # Nodemailer integration
+├── notifications.ts     # Notification helpers
+└── activity.ts          # Activity logging helpers
 
-proxy.ts                 # Next.js 16 route protection (replaces middleware.ts)
-components/ui/           # shadcn/ui components
+components/
+├── notifications/       # NotificationBell dropdown
+├── admin/               # AdminSidebar
+├── dashboard/           # AppSidebar, NavUser
+├── organization/        # OrgSwitcher, InviteDialog, MembersTable
+└── ui/                  # shadcn/ui components
+
+proxy.ts                 # Next.js 16 route protection (NOT middleware.ts)
+scripts/seed-admin.ts    # Create admin user
 ```
 
 ## Commands
 
 ```bash
 # Development
-pnpm dev                 # Start dev server
+pnpm dev                 # Start dev server (turbopack)
 
 # Build
 pnpm build               # Build for production
@@ -55,15 +75,100 @@ pnpm db:generate         # Generate Drizzle schema
 pnpm db:migrate          # Run migrations
 pnpm db:studio           # Open Drizzle Studio
 
-# Docker - Local Development
-docker compose -f docker-compose.yaml -f docker-compose.local.yml --env-file .env.docker up -d
+# Admin
+pnpm seed:admin          # Create admin user (uses ADMIN_EMAIL, ADMIN_PASSWORD env vars)
 
-# Docker - Production (Coolify reads docker-compose.yaml automatically)
+# Docker - Local (solo DB)
+docker compose -f docker-compose.local.yml up -d      # Avvia PostgreSQL + pgAdmin
+docker compose -f docker-compose.local.yml down       # Stop
+docker compose -f docker-compose.local.yml down -v    # Stop + cancella dati
 ```
 
-## Next.js 16 Proxy (NOT middleware.ts)
+## Key Features
 
-Next.js 16 uses `proxy.ts` instead of `middleware.ts` for route protection:
+### Better Auth Plugins (Server)
+
+- Email/password with email verification
+- Magic link authentication
+- Two-factor TOTP
+- OAuth: GitHub, Google (optional)
+- Organization plugin with email invites
+- Admin plugin
+- Stripe plugin (free/pro/enterprise plans)
+
+### Better Auth Plugins (Client - lib/auth-client.ts)
+
+```typescript
+plugins: [
+  adminClient(),
+  organizationClient(),
+  twoFactorClient(),
+  magicLinkClient(),
+  stripeClient(),
+  inferAdditionalFields<typeof auth>(),
+]
+```
+
+### Rate Limiting
+
+- Login: 5/min
+- Signup: 3/min
+- 2FA: 5/min
+
+### Session Config
+
+- Duration: 7 days
+- Refresh: every 24h
+- Cookie caching: 5 min
+
+## Database Schema (Key Tables)
+
+| Table          | Purpose                      |
+| -------------- | ---------------------------- |
+| `user`         | Users + theme, onboarding    |
+| `session`      | Multi-device sessions        |
+| `account`      | OAuth/credential accounts    |
+| `twoFactor`    | TOTP secrets + backup codes  |
+| `organization` | Teams/workspaces             |
+| `member`       | Org membership (owner/admin) |
+| `invitation`   | Email invites to orgs        |
+| `notification` | User notifications           |
+| `activityLog`  | Action history               |
+| `subscription` | Stripe subscriptions         |
+
+## Notification System
+
+**API Endpoints:**
+
+- `GET /api/notifications` - Fetch user notifications (limit, unread params)
+- `PATCH /api/notifications` - Mark as read (single or all)
+
+**Admin:**
+
+- `POST /api/admin/notifications/send` - Send to all or selected users
+
+**Component:** `NotificationBell` - Dropdown bell with smart refresh (on route change, not polling)
+
+## Activity Logging
+
+```typescript
+type ActivityAction =
+  | 'login'
+  | 'logout'
+  | 'password_change'
+  | 'password_reset'
+  | '2fa_enabled'
+  | '2fa_disabled'
+  | 'profile_updated'
+  | 'email_verified'
+  | 'organization_created'
+  | 'organization_joined'
+  | 'member_invited'
+```
+
+Auto-logged on login via Better Auth databaseHooks.
+
+## Next.js 16 Proxy (NOT middleware.ts)
 
 ```typescript
 // proxy.ts - NOT middleware.ts!
@@ -76,84 +181,68 @@ export async function proxy(request: NextRequest) {
 }
 ```
 
-## Better Auth Configuration
-
-### Secure Cookies for HTTPS
-
-```typescript
-// lib/auth.ts
-export const auth = betterAuth({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL,
-  advanced: {
-    useSecureCookies: process.env.NODE_ENV === 'production',
-  },
-  // ...
-})
-```
-
-### Client Config (`lib/auth-client.ts`)
-
-```typescript
-'use client'
-import { createAuthClient } from 'better-auth/react'
-import {
-  adminClient,
-  organizationClient,
-  twoFactorClient,
-  magicLinkClient,
-} from 'better-auth/client/plugins'
-
-export const authClient = createAuthClient({
-  plugins: [
-    adminClient(),
-    organizationClient(),
-    twoFactorClient(),
-    magicLinkClient(),
-  ],
-})
-
-export const { useSession } = authClient
-```
-
 ## Docker Compose Setup
 
-### Two-file approach for local vs production:
+### File separati:
 
-- `docker-compose.yaml` - Production config (no ports, Coolify magic variables)
-- `docker-compose.local.yml` - Local overrides (ports, auto-connect pgAdmin)
-- `.env.docker` - Local environment variables
-
-### Coolify Magic Variables
-
-```yaml
-# Auto-generated credentials
-- POSTGRES_USER=$SERVICE_USER_POSTGRESQL
-- POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRESQL
-- BETTER_AUTH_SECRET=$SERVICE_BASE64_64_AUTH
-
-# Auto-generated URL
-- SERVICE_FQDN_PGADMIN_80 # Generates domain for pgAdmin
-```
+- `docker-compose.yaml` - Production (Coolify magic variables)
+- `docker-compose.local.yml` - Solo DB per sviluppo locale (standalone)
 
 ### Local Development
 
 ```bash
-# Start PostgreSQL (port 5433) and pgAdmin (port 5050)
-docker compose -f docker-compose.yaml -f docker-compose.local.yml --env-file .env.docker up -d
+# 1. Avvia solo PostgreSQL + pgAdmin
+docker compose -f docker-compose.local.yml up -d
 
-# Run migrations
-DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5433/auth_app" pnpm db:migrate
+# 2. Prima volta: genera e applica lo schema
+pnpm db:generate
+pnpm db:migrate
+
+# 3. Avvia l'app Next.js
+pnpm dev
 ```
 
-## Database (Drizzle)
+### Accessi locali
 
-```typescript
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
+| Servizio   | URL                   | Credenziali                |
+| ---------- | --------------------- | -------------------------- |
+| App        | http://localhost:3000 | -                          |
+| pgAdmin    | http://localhost:5050 | admin@example.com/admin123 |
+| PostgreSQL | localhost:5433        | postgres/postgres          |
 
-const client = postgres(process.env.DATABASE_URL!)
-export const db = drizzle(client, { schema })
+### Gestione Database
+
+```bash
+# Reset completo (ricrea da zero)
+docker compose -f docker-compose.local.yml down -v
+docker compose -f docker-compose.local.yml up -d
+pnpm db:generate && pnpm db:migrate
+
+# Solo rigenerare schema (dopo modifiche a auth-schema.ts)
+pnpm db:generate
+pnpm db:migrate
+
+# Visualizza DB
+pnpm db:studio
 ```
+
+## Environment Variables
+
+| Variable                             | Required | Description                       |
+| ------------------------------------ | -------- | --------------------------------- |
+| `DATABASE_URL`                       | ✅       | PostgreSQL connection string      |
+| `BETTER_AUTH_SECRET`                 | ✅       | JWT/session secret (min 32 chars) |
+| `NEXT_PUBLIC_APP_URL`                | ✅       | Base URL of the app               |
+| `SMTP_HOST`                          | ✅       | SMTP server host                  |
+| `SMTP_PORT`                          | ❌       | SMTP port (default: 587)          |
+| `SMTP_USER`                          | ✅       | SMTP username                     |
+| `SMTP_PASS`                          | ✅       | SMTP password                     |
+| `EMAIL_FROM`                         | ✅       | Sender email address              |
+| `GITHUB_CLIENT_ID/SECRET`            | ❌       | GitHub OAuth                      |
+| `GOOGLE_CLIENT_ID/SECRET`            | ❌       | Google OAuth                      |
+| `STRIPE_SECRET_KEY`                  | ❌       | Stripe secret key                 |
+| `STRIPE_WEBHOOK_SECRET`              | ❌       | Stripe webhook secret             |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | ❌       | Stripe public key                 |
 
 ## Framer Motion with React 19
 
@@ -162,23 +251,14 @@ export const db = drizzle(client, { schema })
 import { motion } from 'motion/react'
 ```
 
-## Environment Variables
-
-| Variable              | Description                       |
-| --------------------- | --------------------------------- |
-| `DATABASE_URL`        | PostgreSQL connection string      |
-| `BETTER_AUTH_SECRET`  | JWT/session secret (min 32 chars) |
-| `NEXT_PUBLIC_APP_URL` | Base URL of the app               |
-| `RESEND_API_KEY`      | Resend API key for emails         |
-| `EMAIL_FROM`          | Sender email address              |
-
 ## DO NOT
 
 - Do not use `middleware.ts` - Next.js 16 uses `proxy.ts`
-- Do not use deprecated `getServerSession` - use Better Auth `auth.api.getSession`
+- Do not use deprecated `getServerSession` - use `auth.api.getSession`
 - Do not use `pages/` directory - use App Router only
 - Do not use `ports:` in docker-compose.yaml for Coolify (proxy conflicts)
 - Do not hardcode secrets - use environment variables
+- Do not use Resend - project uses Nodemailer (SMTP)
 
 ## Documentation References
 
