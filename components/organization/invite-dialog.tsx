@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { UserPlus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import {
@@ -29,6 +30,8 @@ interface InviteDialogProps {
 }
 
 export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
+  const t = useTranslations('inviteDialog')
+  const tCommon = useTranslations('common')
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'admin' | 'member'>('member')
@@ -52,7 +55,7 @@ export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
       setOpen(false)
       onSuccess?.()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send invitation')
+      setError(err instanceof Error ? err.message : t('failed'))
     } finally {
       setLoading(false)
     }
@@ -63,35 +66,33 @@ export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
       <DialogTrigger asChild>
         <Button>
           <UserPlus className="mr-2 h-4 w-4" />
-          Invite Member
+          {t('trigger')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Invite Member</DialogTitle>
-          <DialogDescription>
-            Send an invitation to add a new member to your organization.
-          </DialogDescription>
+          <DialogTitle>{t('title')}</DialogTitle>
+          <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="user@example.com"
+              placeholder={t('emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="role">Role</Label>
+            <Label htmlFor="role">{t('role')}</Label>
             <Select
               value={role}
               onValueChange={(v) => setRole(v as 'admin' | 'member')}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select role" />
+                <SelectValue placeholder={t('selectRole')} />
               </SelectTrigger>
               <SelectContent className="min-w-[200px]">
                 <SelectItem value="admin">Admin</SelectItem>
@@ -99,19 +100,17 @@ export function InviteDialog({ organizationId, onSuccess }: InviteDialogProps) {
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              {role === 'admin'
-                ? 'Can manage members and settings'
-                : 'Read-only access'}
+              {role === 'admin' ? t('roleAdmin') : t('roleMember')}
             </p>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+            {tCommon('cancel')}
           </Button>
           <Button onClick={handleInvite} disabled={loading || !email}>
-            {loading ? 'Sending...' : 'Send Invitation'}
+            {loading ? t('submitting') : t('submit')}
           </Button>
         </DialogFooter>
       </DialogContent>

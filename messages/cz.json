@@ -374,29 +374,29 @@
     "goToDashboard": "Go to Dashboard"
   },
   "members": {
-    "name": "Name",
-    "email": "Email",
+    "name": "Jméno",
+    "email": "E-mail",
     "role": "Role",
-    "joined": "Joined",
-    "you": "(you)",
-    "remove": "Remove",
-    "removeTitle": "Remove Member",
-    "removeDescription": "Are you sure you want to remove {email} from this organization?",
-    "removeFailed": "Failed to remove member"
+    "joined": "Připojen",
+    "you": "(vy)",
+    "remove": "Odebrat",
+    "removeTitle": "Odebrat člena",
+    "removeDescription": "Opravdu chcete odebrat {email} z této organizace?",
+    "removeFailed": "Nepodařilo se odebrat člena"
   },
   "inviteDialog": {
-    "trigger": "Invite Member",
-    "title": "Invite Member",
-    "description": "Send an invitation to add a new member to your organization.",
-    "email": "Email",
-    "emailPlaceholder": "user@example.com",
+    "trigger": "Pozvat člena",
+    "title": "Pozvat člena",
+    "description": "Odešlete pozvánku a přidejte nového člena do vaší organizace.",
+    "email": "E-mail",
+    "emailPlaceholder": "uzivatel@priklad.cz",
     "role": "Role",
-    "selectRole": "Select role",
-    "roleAdmin": "Can manage members and settings",
-    "roleMember": "Read-only access",
-    "submit": "Send Invitation",
-    "submitting": "Sending...",
-    "failed": "Failed to send invitation"
+    "selectRole": "Vyberte roli",
+    "roleAdmin": "Může spravovat členy a nastavení",
+    "roleMember": "Přístup pouze pro čtení",
+    "submit": "Odeslat pozvánku",
+    "submitting": "Odesílání...",
+    "failed": "Nepodařilo se odeslat pozvánku"
   },
   "orgSwitcher": {
     "loading": "Loading...",

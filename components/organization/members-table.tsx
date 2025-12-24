@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { MoreHorizontal, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { authClient } from '@/lib/auth-client'
 import { RoleBadge } from './role-badge'
 import { Button } from '@/components/ui/button'
@@ -67,6 +68,8 @@ export function MembersTable({
   organizationId,
   onUpdate,
 }: MembersTableProps) {
+  const t = useTranslations('members')
+  const tCommon = useTranslations('common')
   const [updating, setUpdating] = useState<string | null>(null)
   const [removeMemberEmail, setRemoveMemberEmail] = useState<string | null>(
     null
@@ -103,7 +106,7 @@ export function MembersTable({
       setRemoveMemberEmail(null)
     } catch (error) {
       console.error('Failed to remove member:', error)
-      toast.error('Failed to remove member')
+      toast.error(t('removeFailed'))
     }
   }
 
@@ -111,10 +114,10 @@ export function MembersTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Joined</TableHead>
+          <TableHead>{t('name')}</TableHead>
+          <TableHead>{t('email')}</TableHead>
+          <TableHead>{t('role')}</TableHead>
+          <TableHead>{t('joined')}</TableHead>
           {canManageMembers && <TableHead className="w-[50px]"></TableHead>}
         </TableRow>
       </TableHeader>
@@ -130,7 +133,7 @@ export function MembersTable({
                 {member.user.name}
                 {isCurrentUser && (
                   <span className="ml-2 text-xs text-muted-foreground">
-                    (you)
+                    {t('you')}
                   </span>
                 )}
               </TableCell>
@@ -169,7 +172,9 @@ export function MembersTable({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel>
+                          {tCommon('actions')}
+                        </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() =>
@@ -178,7 +183,7 @@ export function MembersTable({
                           className="text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Remove
+                          {t('remove')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -197,19 +202,18 @@ export function MembersTable({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Member</AlertDialogTitle>
+            <AlertDialogTitle>{t('removeTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove {removeMemberEmail} from this
-              organization?
+              {t('removeDescription', { email: removeMemberEmail ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRemoveMember}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Remove
+              {t('remove')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
