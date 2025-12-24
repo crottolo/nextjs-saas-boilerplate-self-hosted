@@ -502,10 +502,12 @@ export default function AdminStripeProductsPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[60px]">Order</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Interval</TableHead>
               <TableHead>Trial</TableHead>
+              <TableHead>Popular</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="w-[70px]"></TableHead>
             </TableRow>
@@ -513,91 +515,98 @@ export default function AdminStripeProductsPage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : products.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   No products. Create one or sync from Stripe.
                 </TableCell>
               </TableRow>
             ) : (
-              products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
+              [...products]
+                .sort((a, b) => a.sortOrder - b.sortOrder)
+                .map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="text-center font-mono text-sm">
+                      {product.sortOrder}
+                    </TableCell>
+                    <TableCell>
                       <span className="font-medium">{product.name}</span>
+                      {product.description && (
+                        <p className="text-sm text-muted-foreground truncate max-w-[200px]">
+                          {product.description}
+                        </p>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {formatPrice(product.price, product.currency)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {product.interval === 'year' ? 'Yearly' : 'Monthly'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {product.trialDays > 0
+                        ? `${product.trialDays} days`
+                        : '-'}
+                    </TableCell>
+                    <TableCell>
                       {product.popular && (
                         <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
                       )}
-                    </div>
-                    {product.description && (
-                      <p className="text-sm text-muted-foreground truncate max-w-[200px]">
-                        {product.description}
-                      </p>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {formatPrice(product.price, product.currency)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {product.interval === 'year' ? 'Yearly' : 'Monthly'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {product.trialDays > 0 ? `${product.trialDays} days` : '-'}
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={product.enabled}
-                      onCheckedChange={() => handleToggleEnabled(product)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => openEditDialog(product)}
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedProduct(product)
-                            setDeleteMode('archive')
-                            setDeleteDialogOpen(true)
-                          }}
-                        >
-                          <Archive className="mr-2 h-4 w-4" />
-                          Archive
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => {
-                            setSelectedProduct(product)
-                            setDeleteMode('delete')
-                            setDeleteDialogOpen(true)
-                          }}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={product.enabled}
+                        onCheckedChange={() => handleToggleEnabled(product)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => openEditDialog(product)}
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setSelectedProduct(product)
+                              setDeleteMode('archive')
+                              setDeleteDialogOpen(true)
+                            }}
+                          >
+                            <Archive className="mr-2 h-4 w-4" />
+                            Archive
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              setSelectedProduct(product)
+                              setDeleteMode('delete')
+                              setDeleteDialogOpen(true)
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
             )}
           </TableBody>
         </Table>
