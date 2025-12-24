@@ -6,6 +6,7 @@ import {
   boolean,
   index,
   uniqueIndex,
+  integer,
 } from 'drizzle-orm/pg-core'
 
 export const user = pgTable('user', {
@@ -25,6 +26,7 @@ export const user = pgTable('user', {
   banned: boolean('banned').default(false),
   banReason: text('ban_reason'),
   banExpires: timestamp('ban_expires'),
+  stripeCustomerId: text('stripe_customer_id'),
 })
 
 export const session = pgTable(
@@ -194,6 +196,36 @@ export const invitation = pgTable(
   ]
 )
 
+// Stripe subscription table
+export const subscription = pgTable(
+  'subscription',
+  {
+    id: text('id').primaryKey(),
+    plan: text('plan').notNull(),
+    referenceId: text('reference_id').notNull(),
+    stripeCustomerId: text('stripe_customer_id'),
+    stripeSubscriptionId: text('stripe_subscription_id'),
+    status: text('status').default('incomplete').notNull(),
+    periodStart: timestamp('period_start'),
+    periodEnd: timestamp('period_end'),
+    cancelAtPeriodEnd: boolean('cancel_at_period_end').default(false),
+    seats: integer('seats'),
+    trialStart: timestamp('trial_start'),
+    trialEnd: timestamp('trial_end'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index('subscription_referenceId_idx').on(table.referenceId),
+    index('subscription_stripeSubscriptionId_idx').on(
+      table.stripeSubscriptionId
+    ),
+  ]
+)
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -201,6 +233,7 @@ export const userRelations = relations(user, ({ many }) => ({
   teamMembers: many(teamMember),
   members: many(member),
   invitations: many(invitation),
+  subscriptions: many(subscription),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -267,6 +300,13 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
   }),
   user: one(user, {
     fields: [invitation.inviterId],
+    references: [user.id],
+  }),
+}))
+
+export const subscriptionRelations = relations(subscription, ({ one }) => ({
+  user: one(user, {
+    fields: [subscription.referenceId],
     references: [user.id],
   }),
 }))

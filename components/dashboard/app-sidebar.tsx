@@ -1,6 +1,14 @@
 'use client'
 
-import { Home, Building2, User, Sun, Moon, Monitor } from 'lucide-react'
+import {
+  Home,
+  Building2,
+  User,
+  CreditCard,
+  Sun,
+  Moon,
+  Monitor,
+} from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 import {
@@ -46,6 +54,11 @@ const mainNavItems = [
     url: '/profile',
     icon: User,
   },
+  {
+    title: 'Pricing',
+    url: '/pricing',
+    icon: CreditCard,
+  },
 ]
 
 export function AppSidebar({ user }: AppSidebarProps) {
@@ -60,9 +73,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild></DropdownMenuTrigger>
               <DropdownMenuContent align="start" side="right">
                 <DropdownMenuItem onClick={() => setTheme('light')}>
                   <Sun className="mr-2 h-4 w-4" />

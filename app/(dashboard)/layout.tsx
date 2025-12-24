@@ -28,6 +28,8 @@ const pathLabels: Record<string, string> = {
   profile: 'Profile',
   organizations: 'Organizations',
   create: 'Create',
+  pricing: 'Pricing',
+  billing: 'Billing',
 }
 
 export default function DashboardLayout({
