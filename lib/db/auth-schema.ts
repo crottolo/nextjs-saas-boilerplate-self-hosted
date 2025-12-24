@@ -269,6 +269,35 @@ export const subscription = pgTable(
   ]
 )
 
+// Stripe product/plan table for admin management
+export const stripeProduct = pgTable(
+  'stripe_product',
+  {
+    id: text('id').primaryKey(),
+    stripeProductId: text('stripe_product_id').notNull(),
+    stripePriceId: text('stripe_price_id').notNull().unique(),
+    name: text('name').notNull(),
+    description: text('description'),
+    price: integer('price').notNull(), // in cents
+    currency: text('currency').default('eur').notNull(),
+    interval: text('interval').default('month'), // month, year, null for one-time
+    features: text('features'), // JSON array
+    limits: text('limits'), // JSON: { projects: number, storage: number }
+    trialDays: integer('trial_days').default(0),
+    enabled: boolean('enabled').default(false).notNull(),
+    sortOrder: integer('sort_order').default(0),
+    popular: boolean('popular').default(false),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date()),
+  },
+  (table) => [
+    index('stripeProduct_enabled_idx').on(table.enabled),
+    index('stripeProduct_sortOrder_idx').on(table.sortOrder),
+  ]
+)
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),

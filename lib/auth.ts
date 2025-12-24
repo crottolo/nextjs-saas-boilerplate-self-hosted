@@ -1,16 +1,9 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin, organization, twoFactor, magicLink } from 'better-auth/plugins'
-import { stripe } from '@better-auth/stripe'
-import Stripe from 'stripe'
 import { db } from './db'
 import { sendEmail } from './email'
 import { logActivity } from './activity'
-
-// Stripe client
-const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-12-15.clover',
-})
 
 // DEBUG: Log configurazione auth
 console.log(
@@ -131,32 +124,7 @@ export const auth = betterAuth({
       },
     }),
     admin(),
-    stripe({
-      stripeClient,
-      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      createCustomerOnSignUp: true,
-      subscription: {
-        enabled: true,
-        plans: [
-          {
-            name: 'free',
-            priceId: 'price_1ShnG5HkRKq5DDJHngiNkwFL',
-            limits: { projects: 3, storage: 1 },
-          },
-          {
-            name: 'pro',
-            priceId: 'price_1ShnGWHkRKq5DDJHfQzl1IZb',
-            limits: { projects: 20, storage: 50 },
-            freeTrial: { days: 14 },
-          },
-          {
-            name: 'enterprise',
-            priceId: 'price_1ShnGpHkRKq5DDJHaMkkLqwB',
-            limits: { projects: -1, storage: -1 }, // unlimited
-          },
-        ],
-      },
-    }),
+    // Stripe is handled manually via /api/stripe/webhook and /api/checkout
   ],
 
   databaseHooks: {
