@@ -124,6 +124,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     }
   }
 
+  // Helper to safely create Date from timestamp
+  const safeDate = (timestamp: number | null | undefined): Date | null => {
+    if (!timestamp || typeof timestamp !== 'number') return null
+    const date = new Date(timestamp * 1000)
+    return isNaN(date.getTime()) ? null : date
+  }
+
   // Create or update subscription in DB
   const subscriptionData = {
     id: subscriptionId,
@@ -132,13 +139,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     stripeCustomerId: customerId,
     stripeSubscriptionId: subscriptionId,
     status: subData.status,
-    periodStart: new Date(subData.current_period_start * 1000),
-    periodEnd: new Date(subData.current_period_end * 1000),
-    cancelAtPeriodEnd: subData.cancel_at_period_end,
-    trialStart: subData.trial_start
-      ? new Date(subData.trial_start * 1000)
-      : null,
-    trialEnd: subData.trial_end ? new Date(subData.trial_end * 1000) : null,
+    periodStart: safeDate(subData.current_period_start) || new Date(),
+    periodEnd: safeDate(subData.current_period_end) || new Date(),
+    cancelAtPeriodEnd: subData.cancel_at_period_end || false,
+    trialStart: safeDate(subData.trial_start),
+    trialEnd: safeDate(subData.trial_end),
   }
 
   await db
@@ -198,6 +203,13 @@ async function handleSubscriptionUpdate(sub: Stripe.Subscription) {
     }
   }
 
+  // Helper to safely create Date from timestamp
+  const safeDate = (timestamp: number | null | undefined): Date | null => {
+    if (!timestamp || typeof timestamp !== 'number') return null
+    const date = new Date(timestamp * 1000)
+    return isNaN(date.getTime()) ? null : date
+  }
+
   const subscriptionData = {
     id: subAny.id,
     plan: planName,
@@ -205,11 +217,11 @@ async function handleSubscriptionUpdate(sub: Stripe.Subscription) {
     stripeCustomerId: customerId,
     stripeSubscriptionId: subAny.id,
     status: subAny.status,
-    periodStart: new Date(subAny.current_period_start * 1000),
-    periodEnd: new Date(subAny.current_period_end * 1000),
-    cancelAtPeriodEnd: subAny.cancel_at_period_end,
-    trialStart: subAny.trial_start ? new Date(subAny.trial_start * 1000) : null,
-    trialEnd: subAny.trial_end ? new Date(subAny.trial_end * 1000) : null,
+    periodStart: safeDate(subAny.current_period_start) || new Date(),
+    periodEnd: safeDate(subAny.current_period_end) || new Date(),
+    cancelAtPeriodEnd: subAny.cancel_at_period_end || false,
+    trialStart: safeDate(subAny.trial_start),
+    trialEnd: safeDate(subAny.trial_end),
   }
 
   await db
