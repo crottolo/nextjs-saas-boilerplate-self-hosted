@@ -261,6 +261,13 @@
       "signOutOthers": "Sign out other sessions",
       "current": "Current",
       "revoke": "Revoke"
+    },
+    "toast": {
+      "profileUpdated": "Profile updated successfully!",
+      "passwordChanged": "Password changed successfully!",
+      "passwordSet": "Password set successfully! You can now sign in with email and password.",
+      "twoFactorDisabled": "Two-factor authentication disabled",
+      "error": "Error"
     }
   },
   "activity": {
@@ -504,6 +511,7 @@
     },
     "skip": "Skip",
     "continue": "Continue",
+    "loading": "Loading...",
     "goToDashboard": "Go to Dashboard"
   },
   "admin": {

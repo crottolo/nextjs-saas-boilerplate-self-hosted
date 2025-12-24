@@ -261,6 +261,13 @@
       "signOutOthers": "Sign out other sessions",
       "current": "Current",
       "revoke": "Revoke"
+    },
+    "toast": {
+      "profileUpdated": "Profil úspěšně aktualizován!",
+      "passwordChanged": "Heslo úspěšně změněno!",
+      "passwordSet": "Heslo úspěšně nastaveno! Nyní se můžete přihlásit pomocí emailu a hesla.",
+      "twoFactorDisabled": "Dvoufaktorové ověření zakázáno",
+      "error": "Chyba"
     }
   },
   "activity": {
@@ -474,37 +481,38 @@
   },
   "onboarding": {
     "steps": {
-      "welcome": "Welcome",
-      "workspace": "Workspace",
-      "preferences": "Preferences",
-      "complete": "Complete"
+      "welcome": "Vítejte",
+      "workspace": "Pracovní prostor",
+      "preferences": "Předvolby",
+      "complete": "Dokončeno"
     },
     "welcome": {
-      "title": "Welcome to AuthApp!",
-      "description": "Let's get you set up. This will only take a minute.",
-      "name": "Your name",
-      "namePlaceholder": "Enter your name"
+      "title": "Vítejte v AuthApp!",
+      "description": "Pojďme vás nastavit. Zabere to jen chvilku.",
+      "name": "Vaše jméno",
+      "namePlaceholder": "Zadejte své jméno"
     },
     "workspace": {
-      "title": "Set up your workspace",
-      "hasWorkspace": "You already have a workspace. You can continue or create a new one.",
-      "noWorkspace": "Create your first workspace to get started.",
-      "name": "Workspace name",
-      "namePlaceholder": "My Workspace",
-      "yourWorkspaces": "Your workspaces:"
+      "title": "Nastavit pracovní prostor",
+      "hasWorkspace": "Již máte pracovní prostor. Můžete pokračovat nebo vytvořit nový.",
+      "noWorkspace": "Vytvořte svůj první pracovní prostor.",
+      "name": "Název pracovního prostoru",
+      "namePlaceholder": "Můj pracovní prostor",
+      "yourWorkspaces": "Vaše pracovní prostory:"
     },
     "preferences": {
-      "title": "Your preferences",
-      "description": "Customize your experience.",
-      "theme": "Theme"
+      "title": "Vaše předvolby",
+      "description": "Přizpůsobte si svou zkušenost.",
+      "theme": "Téma"
     },
     "complete": {
-      "title": "You're all set!",
-      "description": "Your account is ready. Let's get started!"
+      "title": "Vše je připraveno!",
+      "description": "Váš účet je připraven. Pojďme začít!"
     },
-    "skip": "Skip",
-    "continue": "Continue",
-    "goToDashboard": "Go to Dashboard"
+    "skip": "Přeskočit",
+    "continue": "Pokračovat",
+    "loading": "Načítání...",
+    "goToDashboard": "Přejít na Dashboard"
   },
   "admin": {
     "title": "Admin Dashboard",

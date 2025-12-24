@@ -39,6 +39,7 @@ export default function ProfilePage() {
   const t = useTranslations('profile')
   const tCommon = useTranslations('common')
   const t2FA = useTranslations('twoFactor')
+  const tToast = useTranslations('profile.toast')
   const { data: session } = useSession()
   const [loading, setLoading] = useState(false)
   const [profileMessage, setProfileMessage] = useState('')
@@ -98,9 +99,9 @@ export default function ProfilePage() {
     })
 
     if (error) {
-      setProfileMessage(`Error: ${error.message}`)
+      setProfileMessage(`${tToast('error')}: ${error.message}`)
     } else {
-      setProfileMessage('Profile updated successfully!')
+      setProfileMessage(tToast('profileUpdated'))
       logActivityClient('profile_updated')
     }
     setLoading(false)
@@ -117,13 +118,15 @@ export default function ProfilePage() {
     const confirmPassword = formData.get('confirmPassword') as string
 
     if (newPassword !== confirmPassword) {
-      setPasswordMessage('Error: Passwords do not match')
+      setPasswordMessage(`${tToast('error')}: Passwords do not match`)
       setLoading(false)
       return
     }
 
     if (newPassword.length < 8) {
-      setPasswordMessage('Error: Password must be at least 8 characters')
+      setPasswordMessage(
+        `${tToast('error')}: Password must be at least 8 characters`
+      )
       setLoading(false)
       return
     }
@@ -135,9 +138,9 @@ export default function ProfilePage() {
     })
 
     if (error) {
-      setPasswordMessage(`Error: ${error.message}`)
+      setPasswordMessage(`${tToast('error')}: ${error.message}`)
     } else {
-      setPasswordMessage('Password changed successfully!')
+      setPasswordMessage(tToast('passwordChanged'))
       logActivityClient('password_change')
       ;(e.target as HTMLFormElement).reset()
     }
@@ -154,13 +157,15 @@ export default function ProfilePage() {
     const confirmPassword = formData.get('setConfirmPassword') as string
 
     if (password !== confirmPassword) {
-      setNewPasswordMessage('Error: Passwords do not match')
+      setNewPasswordMessage(`${tToast('error')}: Passwords do not match`)
       setLoading(false)
       return
     }
 
     if (password.length < 8) {
-      setNewPasswordMessage('Error: Password must be at least 8 characters')
+      setNewPasswordMessage(
+        `${tToast('error')}: Password must be at least 8 characters`
+      )
       setLoading(false)
       return
     }
@@ -175,16 +180,14 @@ export default function ProfilePage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setNewPasswordMessage(`Error: ${data.error}`)
+        setNewPasswordMessage(`${tToast('error')}: ${data.error}`)
       } else {
-        setNewPasswordMessage(
-          'Password set successfully! You can now sign in with email and password.'
-        )
+        setNewPasswordMessage(tToast('passwordSet'))
         setHasCredential(true)
         ;(e.target as HTMLFormElement).reset()
       }
     } catch {
-      setNewPasswordMessage('Error: Failed to set password')
+      setNewPasswordMessage(`${tToast('error')}: Failed to set password`)
     }
     setLoading(false)
   }
@@ -199,7 +202,7 @@ export default function ProfilePage() {
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('Two-factor authentication disabled')
+      toast.success(tToast('twoFactorDisabled'))
       logActivityClient('2fa_disabled')
       setDisable2FAOpen(false)
       setDisable2FAPassword('')

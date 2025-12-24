@@ -261,6 +261,13 @@
       "signOutOthers": "Disconnetti altre sessioni",
       "current": "Corrente",
       "revoke": "Revoca"
+    },
+    "toast": {
+      "profileUpdated": "Profilo aggiornato con successo!",
+      "passwordChanged": "Password modificata con successo!",
+      "passwordSet": "Password impostata con successo! Ora puoi accedere con email e password.",
+      "twoFactorDisabled": "Autenticazione a due fattori disabilitata",
+      "error": "Errore"
     }
   },
   "activity": {
@@ -504,6 +511,7 @@
     },
     "skip": "Salta",
     "continue": "Continua",
+    "loading": "Caricamento...",
     "goToDashboard": "Vai alla Dashboard"
   },
   "admin": {

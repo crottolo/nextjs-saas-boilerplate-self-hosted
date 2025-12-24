@@ -17,31 +17,42 @@ import {
 import { toast } from 'sonner'
 import { Check, ChevronRight, Sparkles, Building2, Palette } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { useTranslations } from 'next-intl'
 
 type Step = 'welcome' | 'organization' | 'preferences' | 'complete'
-
-const steps: { id: Step; title: string; icon: React.ReactNode }[] = [
-  { id: 'welcome', title: 'Welcome', icon: <Sparkles className="h-5 w-5" /> },
-  {
-    id: 'organization',
-    title: 'Workspace',
-    icon: <Building2 className="h-5 w-5" />,
-  },
-  {
-    id: 'preferences',
-    title: 'Preferences',
-    icon: <Palette className="h-5 w-5" />,
-  },
-  { id: 'complete', title: 'Complete', icon: <Check className="h-5 w-5" /> },
-]
 
 export default function OnboardingPage() {
   const router = useRouter()
   const { data: session } = useSession()
   const { data: organizations } = authClient.useListOrganizations()
   const { setTheme, theme } = useTheme()
+  const t = useTranslations('onboarding')
+  const tTheme = useTranslations('theme')
   const [currentStep, setCurrentStep] = useState<Step>('welcome')
   const [loading, setLoading] = useState(false)
+
+  const steps: { id: Step; title: string; icon: React.ReactNode }[] = [
+    {
+      id: 'welcome',
+      title: t('steps.welcome'),
+      icon: <Sparkles className="h-5 w-5" />,
+    },
+    {
+      id: 'organization',
+      title: t('steps.workspace'),
+      icon: <Building2 className="h-5 w-5" />,
+    },
+    {
+      id: 'preferences',
+      title: t('steps.preferences'),
+      icon: <Palette className="h-5 w-5" />,
+    },
+    {
+      id: 'complete',
+      title: t('steps.complete'),
+      icon: <Check className="h-5 w-5" />,
+    },
+  ]
 
   const [name, setName] = useState('')
   const [orgName, setOrgName] = useState('')
@@ -142,25 +153,25 @@ export default function OnboardingPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-center">
-              {currentStep === 'welcome' && 'Welcome to AuthApp!'}
-              {currentStep === 'organization' && 'Set up your workspace'}
-              {currentStep === 'preferences' && 'Your preferences'}
-              {currentStep === 'complete' && "You're all set!"}
+              {currentStep === 'welcome' && t('welcome.title')}
+              {currentStep === 'organization' && t('workspace.title')}
+              {currentStep === 'preferences' && t('preferences.title')}
+              {currentStep === 'complete' && t('complete.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {currentStep === 'welcome' && (
               <div className="space-y-4">
                 <p className="text-muted-foreground text-center">
-                  Let&apos;s get you set up. This will only take a minute.
+                  {t('welcome.description')}
                 </p>
                 <div className="space-y-2">
-                  <Label htmlFor="name">Your name</Label>
+                  <Label htmlFor="name">{t('welcome.name')}</Label>
                   <Input
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
+                    placeholder={t('welcome.namePlaceholder')}
                   />
                 </div>
               </div>
@@ -170,23 +181,25 @@ export default function OnboardingPage() {
               <div className="space-y-4">
                 <p className="text-muted-foreground text-center">
                   {organizations && organizations.length > 0
-                    ? 'You already have a workspace. You can continue or create a new one.'
-                    : 'Create your first workspace to get started.'}
+                    ? t('workspace.hasWorkspace')
+                    : t('workspace.noWorkspace')}
                 </p>
                 {(!organizations || organizations.length === 0) && (
                   <div className="space-y-2">
-                    <Label htmlFor="orgName">Workspace name</Label>
+                    <Label htmlFor="orgName">{t('workspace.name')}</Label>
                     <Input
                       id="orgName"
                       value={orgName}
                       onChange={(e) => setOrgName(e.target.value)}
-                      placeholder="My Workspace"
+                      placeholder={t('workspace.namePlaceholder')}
                     />
                   </div>
                 )}
                 {organizations && organizations.length > 0 && (
                   <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm font-medium">Your workspaces:</p>
+                    <p className="text-sm font-medium">
+                      {t('workspace.yourWorkspaces')}
+                    </p>
                     <ul className="mt-2 space-y-1">
                       {organizations.map((org) => (
                         <li
@@ -205,21 +218,21 @@ export default function OnboardingPage() {
             {currentStep === 'preferences' && (
               <div className="space-y-4">
                 <p className="text-muted-foreground text-center">
-                  Customize your experience.
+                  {t('preferences.description')}
                 </p>
                 <div className="space-y-2">
-                  <Label htmlFor="theme">Theme</Label>
+                  <Label htmlFor="theme">{t('preferences.theme')}</Label>
                   <Select
                     value={selectedTheme}
                     onValueChange={setSelectedTheme}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select theme" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
+                      <SelectItem value="light">{tTheme('light')}</SelectItem>
+                      <SelectItem value="dark">{tTheme('dark')}</SelectItem>
+                      <SelectItem value="system">{tTheme('system')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -234,7 +247,7 @@ export default function OnboardingPage() {
                   </div>
                 </div>
                 <p className="text-muted-foreground">
-                  Your account is ready. Let&apos;s get started!
+                  {t('complete.description')}
                 </p>
               </div>
             )}
@@ -242,7 +255,7 @@ export default function OnboardingPage() {
             <div className="flex justify-between pt-4">
               {currentStep !== 'complete' && (
                 <Button variant="ghost" onClick={handleSkip} disabled={loading}>
-                  Skip
+                  {t('skip')}
                 </Button>
               )}
               <Button
@@ -251,12 +264,12 @@ export default function OnboardingPage() {
                 className={currentStep === 'complete' ? 'w-full' : 'ml-auto'}
               >
                 {loading ? (
-                  'Loading...'
+                  t('loading')
                 ) : currentStep === 'complete' ? (
-                  'Go to Dashboard'
+                  t('goToDashboard')
                 ) : (
                   <>
-                    Continue
+                    {t('continue')}
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </>
                 )}
