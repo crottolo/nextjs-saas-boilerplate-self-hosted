@@ -1,16 +1,26 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import createIntlMiddleware from 'next-intl/middleware'
+import { routing } from '@/i18n/routing'
 
-// "/" is now the login page
-const publicPaths = [
-  '/',
+// Create the next-intl middleware
+const intlMiddleware = createIntlMiddleware(routing)
+
+// Locales supported
+const locales = ['en', 'it', 'cz']
+
+// Public paths (without locale prefix)
+const publicPathsWithoutLocale = [
+  '', // root becomes /[locale]
   '/register',
   '/reset-password',
   '/verify',
   '/2fa',
   '/invite',
 ]
-const authPaths = ['/', '/register', '/reset-password']
+
+// Auth paths that redirect to dashboard when logged in
+const authPathsWithoutLocale = ['', '/register', '/reset-password']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -24,6 +34,20 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Check if pathname has a locale prefix
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  )
+
+  // If no locale in path, let next-intl handle the redirect
+  if (!pathnameHasLocale) {
+    return intlMiddleware(request)
+  }
+
+  // Extract locale and path without locale
+  const locale = pathname.split('/')[1]
+  const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/'
+
   // Get session from Better Auth - check both possible cookie names
   // In HTTPS with useSecureCookies, the cookie name has __Secure- prefix
   const sessionCookie =
@@ -32,27 +56,30 @@ export async function proxy(request: NextRequest) {
 
   const hasSession = !!sessionCookie?.value
 
-  // Check if path is public
-  const isPublicPath = publicPaths.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`)
+  // Check if path is public (using path without locale)
+  const isPublicPath = publicPathsWithoutLocale.some(
+    (path) =>
+      pathWithoutLocale === path || pathWithoutLocale.startsWith(`${path}/`)
   )
-  const isAuthPath = authPaths.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`)
+  const isAuthPath = authPathsWithoutLocale.some(
+    (path) =>
+      pathWithoutLocale === path || pathWithoutLocale.startsWith(`${path}/`)
   )
 
-  // Redirect to home (login) if no session and trying to access protected route
+  // Redirect to login if no session and trying to access protected route
   if (!hasSession && !isPublicPath) {
-    const url = new URL('/', request.url)
+    const url = new URL(`/${locale}`, request.url)
     url.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(url)
   }
 
   // Redirect to dashboard if has session and trying to access auth pages
   if (hasSession && isAuthPath) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
   }
 
-  return NextResponse.next()
+  // Process with next-intl middleware for locale handling
+  return intlMiddleware(request)
 }
 
 export const config = {
