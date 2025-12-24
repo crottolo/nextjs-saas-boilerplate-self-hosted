@@ -15,6 +15,13 @@
       "when": 1766526548319,
       "tag": "0001_nifty_obadiah_stane",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1766562741205,
+      "tag": "0002_outgoing_micromacro",
+      "breakpoints": true
     }
   ]
 }
