@@ -25,8 +25,13 @@
     "previous": "Previous",
     "page": "Page {current} of {total}",
     "saveChanges": "Save changes",
-    "saving": "Saving...",
-    "clear": "Clear"
+    "saving": "Ukládání...",
+    "clear": "Vymazat"
+  },
+  "roles": {
+    "owner": "Vlastník",
+    "admin": "Admin",
+    "member": "Člen"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -503,8 +508,9 @@
   },
   "admin": {
     "title": "Admin Dashboard",
-    "description": "Overview of your application",
-    "totalUsers": "Total Users",
+    "description": "Přehled vaší aplikace",
+    "overview": "Přehled",
+    "totalUsers": "Celkem uživatelů",
     "viewAllUsers": "View all users",
     "quickActions": "Quick Actions",
     "manageUsers": "Manage users",

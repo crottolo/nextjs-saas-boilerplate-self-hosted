@@ -28,6 +28,11 @@
     "saving": "Saving...",
     "clear": "Clear"
   },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "member": "Member"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "profile": "Profile",
@@ -504,6 +509,7 @@
   "admin": {
     "title": "Admin Dashboard",
     "description": "Overview of your application",
+    "overview": "Overview",
     "totalUsers": "Total Users",
     "viewAllUsers": "View all users",
     "quickActions": "Quick Actions",

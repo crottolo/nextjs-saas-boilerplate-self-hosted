@@ -28,6 +28,11 @@
     "saving": "Salvataggio...",
     "clear": "Cancella"
   },
+  "roles": {
+    "owner": "Proprietario",
+    "admin": "Admin",
+    "member": "Membro"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "profile": "Profilo",
@@ -504,6 +509,7 @@
   "admin": {
     "title": "Pannello Admin",
     "description": "Panoramica della tua applicazione",
+    "overview": "Panoramica",
     "totalUsers": "Utenti totali",
     "viewAllUsers": "Visualizza tutti gli utenti",
     "quickActions": "Azioni rapide",

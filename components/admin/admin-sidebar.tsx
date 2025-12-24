@@ -55,6 +55,8 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ user }: AdminSidebarProps) {
   const t = useTranslations('nav')
+  const tAdmin = useTranslations('admin')
+  const tCommon = useTranslations('common')
   const tTheme = useTranslations('theme')
   const tSidebar = useTranslations('sidebar')
   const router = useRouter()
@@ -62,18 +64,30 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
   const { setTheme } = useTheme()
 
   const adminNavItems = [
-    { title: 'Overview', url: '/admin', icon: ShieldCheck },
-    { title: 'Users', url: '/admin/users', icon: Users },
-    { title: t('organizations'), url: '/admin/organizations', icon: Building2 },
-    { title: 'Notifications', url: '/admin/notifications', icon: Bell },
-    { title: 'Sessions', url: '/admin/sessions', icon: Activity },
-    { title: t('settings'), url: '/admin/settings', icon: Settings },
+    { title: tAdmin('overview'), url: '/admin', icon: ShieldCheck },
+    { title: tAdmin('users.title'), url: '/admin/users', icon: Users },
+    {
+      title: tAdmin('organizations.title'),
+      url: '/admin/organizations',
+      icon: Building2,
+    },
+    {
+      title: tAdmin('notifications.title'),
+      url: '/admin/notifications',
+      icon: Bell,
+    },
+    { title: tAdmin('sessions.title'), url: '/admin/sessions', icon: Activity },
+    { title: tAdmin('settings.title'), url: '/admin/settings', icon: Settings },
   ]
 
   const stripeNavItems = [
-    { title: 'Products', url: '/admin/stripe/products', icon: Package },
     {
-      title: 'Subscriptions',
+      title: tAdmin('stripe.products.title'),
+      url: '/admin/stripe/products',
+      icon: Package,
+    },
+    {
+      title: tAdmin('stripe.subscriptions.title'),
       url: '/admin/stripe/subscriptions',
       icon: Receipt,
     },
@@ -105,7 +119,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{t('admin')}</span>
-                  <span className="truncate text-xs">AuthApp</span>
+                  <span className="truncate text-xs">{tCommon('appName')}</span>
                 </div>
               </Link>
             </SidebarMenuButton>
