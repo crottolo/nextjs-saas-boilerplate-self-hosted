@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Bell, CheckCheck } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -25,6 +26,7 @@ interface Notification {
 }
 
 export function NotificationBell() {
+  const t = useTranslations('notifications')
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
@@ -99,7 +101,7 @@ export function NotificationBell() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80">
         <div className="flex items-center justify-between px-4 py-2">
-          <span className="font-semibold">Notifications</span>
+          <span className="font-semibold">{t('title')}</span>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -108,14 +110,14 @@ export function NotificationBell() {
               className="h-auto py-1 px-2 text-xs"
             >
               <CheckCheck className="mr-1 h-3 w-3" />
-              Mark all read
+              {t('markAllRead')}
             </Button>
           )}
         </div>
         <DropdownMenuSeparator />
         {notifications.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground text-sm">
-            No notifications
+            {t('empty')}
           </div>
         ) : (
           <>
