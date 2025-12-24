@@ -12,6 +12,7 @@ import {
   Sun,
   Moon,
   Monitor,
+  Building2,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
@@ -57,6 +58,11 @@ const adminNavItems = [
     title: 'Users',
     url: '/admin/users',
     icon: Users,
+  },
+  {
+    title: 'Organizations',
+    url: '/admin/organizations',
+    icon: Building2,
   },
   {
     title: 'Sessions',
@@ -112,7 +118,6 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
