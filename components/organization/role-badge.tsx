@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 
 interface RoleBadgeProps {
@@ -5,6 +8,7 @@ interface RoleBadgeProps {
 }
 
 export function RoleBadge({ role }: RoleBadgeProps) {
+  const t = useTranslations('roles')
   const variants: Record<
     string,
     'default' | 'secondary' | 'destructive' | 'outline'
@@ -14,9 +18,11 @@ export function RoleBadge({ role }: RoleBadgeProps) {
     member: 'secondary',
   }
 
+  const roleLabel = t.has(role) ? t(role as 'owner' | 'admin' | 'member') : role
+
   return (
     <Badge variant={variants[role] || 'outline'} className="capitalize">
-      {role}
+      {roleLabel}
     </Badge>
   )
 }

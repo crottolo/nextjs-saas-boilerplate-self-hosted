@@ -1,0 +1,899 @@
+{
+  "common": {
+    "appName": "AuthApp",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "error": "Error",
+    "success": "Success",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "notSet": "Not set",
+    "unknown": "Unknown",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "actions": "Actions",
+    "previous": "Previous",
+    "page": "Page {current} of {total}",
+    "saveChanges": "Save changes",
+    "saving": "Ukládání...",
+    "clear": "Vymazat"
+  },
+  "roles": {
+    "owner": "Vlastník",
+    "admin": "Admin",
+    "member": "Člen"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "organizations": "Organizations",
+    "pricing": "Pricing",
+    "activity": "Activity",
+    "help": "Help",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "admin": "Admin Panel",
+    "backToApp": "Back to App"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "sidebar": {
+    "platform": "Platform",
+    "administration": "Administration",
+    "navigation": "Navigation",
+    "stripe": "Stripe"
+  },
+  "login": {
+    "title": "Login to your account",
+    "subtitle": "Enter your email below to login to your account",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "submit": "Login",
+    "submitting": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "orContinueWith": "Or continue with",
+    "github": "Login with GitHub",
+    "google": "Login with Google",
+    "welcomeBack": "Welcome back",
+    "signInToAccount": "Sign in to your account"
+  },
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Fill in the form below to create your account",
+    "name": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number (optional)",
+    "phonePlaceholder": "+39 333 1234567",
+    "password": "Password",
+    "passwordHint": "Must be at least 8 characters long.",
+    "passwordPlaceholder": "At least 8 characters",
+    "confirmPassword": "Confirm Password",
+    "submit": "Create Account",
+    "submitting": "Creating account...",
+    "hasAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "success": {
+      "title": "Check your email",
+      "message": "We sent you a verification link. Please check your email to verify your account."
+    },
+    "backToLogin": "Back to login"
+  },
+  "magicLink": {
+    "tab": "Magic Link",
+    "submit": "Poslat magic link",
+    "submitting": "Odesílání...",
+    "success": "Zkontrolujte email pro magic link!",
+    "failed": "Odeslání magic linku selhalo"
+  },
+  "twoFactor": {
+    "title": "Two-Factor Authentication",
+    "subtitle": "Enter the code from your authenticator app",
+    "code": "Verification Code",
+    "codePlaceholder": "000000",
+    "verify": "Verify",
+    "verifying": "Verifying...",
+    "invalidCode": "Invalid code",
+    "setup": {
+      "title": "Povolit dvoufaktorové ověření",
+      "passwordPrompt": "Zadejte heslo pro pokračování",
+      "password": "Heslo",
+      "continue": "Pokračovat",
+      "enabling": "Enabling...",
+      "scanQR": "Scan QR Code",
+      "scanQRDescription": "Scan this code with your authenticator app",
+      "manualEntry": "Manual Entry Code",
+      "backupCodes": "Backup Codes",
+      "backupCodesDescription": "Save these codes in a safe place. You can use them to access your account if you lose your device.",
+      "savedBackupCodes": "I've saved my backup codes",
+      "verifySetup": "Verify Setup",
+      "verifySetupDescription": "Enter a code from your authenticator app to complete setup",
+      "completeSetup": "Complete Setup"
+    },
+    "disable": {
+      "title": "Disable Two-Factor Authentication",
+      "description": "Enter your password to disable two-factor authentication.",
+      "submit": "Disable 2FA",
+      "submitting": "Disabling..."
+    }
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "subtitle": "Enter your email and we'll send you a reset link",
+    "email": "Email",
+    "submit": "Send reset link",
+    "submitting": "Sending...",
+    "success": {
+      "title": "Check your email",
+      "message": "If an account exists with that email, we've sent a password reset link."
+    },
+    "backToLogin": "Back to login",
+    "newPassword": {
+      "title": "Nastavit nové heslo",
+      "subtitle": "Zadejte nové heslo níže",
+      "password": "Nové heslo",
+      "placeholder": "Alespoň 8 znaků",
+      "confirmPassword": "Potvrdit nové heslo",
+      "submit": "Resetovat heslo",
+      "submitting": "Resetování..."
+    },
+    "complete": {
+      "title": "Password reset!",
+      "message": "Your password has been successfully reset."
+    }
+  },
+  "verify": {
+    "title": "Check your email",
+    "message": "We've sent you a verification link. Please check your email to verify your account.",
+    "hint": "Didn't receive the email? Check your spam folder or try signing in again to resend.",
+    "backToLogin": "Back to login"
+  },
+  "errors": {
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "loginFailed": "Login failed",
+    "registrationFailed": "Registration failed",
+    "generic": "Something went wrong",
+    "network": "Network error"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcomeBack": "Welcome back, {name}!",
+    "user": "User",
+    "account": {
+      "title": "Account",
+      "description": "Your account information",
+      "email": "Email",
+      "name": "Name",
+      "notSet": "Not set",
+      "twoFactor": "2FA",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "session": {
+      "title": "Session",
+      "description": "Current session details",
+      "id": "Session ID",
+      "created": "Created",
+      "unknown": "Unknown"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Common tasks",
+      "updateProfile": "Update profile",
+      "securitySettings": "Security settings",
+      "manageOrganizations": "Manage organizations"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "description": "Spravujte nastavení účtu a zabezpečení",
+    "avatar": {
+      "change": "Změnit Avatar",
+      "uploading": "Nahrávání...",
+      "hint": "JPG, PNG. Max 2MB.",
+      "selectImage": "Vyberte obrázek",
+      "maxSize": "Obrázek musí být menší než 2MB",
+      "updated": "Avatar aktualizován!",
+      "uploadFailed": "Nahrávání selhalo"
+    },
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "sessions": "Sessions"
+    },
+    "personal": {
+      "title": "Personal Information",
+      "description": "Update your profile information",
+      "email": "Email",
+      "emailHint": "Email cannot be changed",
+      "name": "Name",
+      "phone": "Phone Number",
+      "success": "Profile updated successfully!"
+    },
+    "security": {
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account",
+        "status": "Status",
+        "enabled": "Two-factor authentication is enabled",
+        "disabled": "Two-factor authentication is not enabled",
+        "enable": "Enable 2FA",
+        "disable": "Disable 2FA"
+      },
+      "setPassword": {
+        "title": "Set Password",
+        "description": "Add a password to your account to sign in with email and password",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "submit": "Set password",
+        "submitting": "Setting..."
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "description": "Update your password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "submit": "Change password",
+        "submitting": "Changing..."
+      }
+    },
+    "sessions": {
+      "title": "Active Sessions",
+      "description": "Manage your active sessions across devices",
+      "signOutOthers": "Sign out other sessions",
+      "current": "Current",
+      "revoke": "Revoke"
+    },
+    "toast": {
+      "profileUpdated": "Profil úspěšně aktualizován!",
+      "passwordChanged": "Heslo úspěšně změněno!",
+      "passwordSet": "Heslo úspěšně nastaveno! Nyní se můžete přihlásit pomocí emailu a hesla.",
+      "twoFactorDisabled": "Dvoufaktorové ověření zakázáno",
+      "error": "Chyba"
+    }
+  },
+  "activity": {
+    "title": "Activity",
+    "description": "Your recent account activity and security events.",
+    "recent": "Recent Activity",
+    "empty": "No activity recorded yet.",
+    "loadMore": "Load More",
+    "actions": {
+      "login": "Signed in",
+      "logout": "Signed out",
+      "password_change": "Changed password",
+      "password_reset": "Reset password",
+      "2fa_enabled": "Enabled two-factor authentication",
+      "2fa_disabled": "Disabled two-factor authentication",
+      "profile_updated": "Updated profile",
+      "email_verified": "Verified email address",
+      "subscription_upgraded": "Upgraded subscription",
+      "subscription_cancelled": "Cancelled subscription",
+      "organization_created": "Created organization",
+      "organization_joined": "Joined organization",
+      "member_invited": "Invited team member"
+    }
+  },
+  "organizations": {
+    "title": "Organizations",
+    "description": "Manage your organizations and teams",
+    "create": "Create Organization",
+    "empty": "You don't have any organizations yet.",
+    "createFirst": "Create your first organization",
+    "active": "Active",
+    "role": "Role: {role}",
+    "manage": "Manage",
+    "createPage": {
+      "title": "Create Organization",
+      "description": "Create a new organization to collaborate with your team",
+      "name": "Organization Name",
+      "namePlaceholder": "Acme Inc.",
+      "slug": "URL Slug",
+      "slugPlaceholder": "acme-inc",
+      "submit": "Create Organization",
+      "submitting": "Creating...",
+      "cancel": "Cancel"
+    },
+    "detail": {
+      "title": "Organization",
+      "members": "Members",
+      "membersDescription": "People who have access to this organization",
+      "settings": "Settings",
+      "backToOrgs": "Back to Organizations",
+      "notFound": "Organization not found",
+      "notFoundDescription": "The organization you're looking for doesn't exist.",
+      "membersCount": "{count} member(s)"
+    },
+    "invitations": {
+      "title": "Invitations",
+      "pendingTitle": "Pending Invitations",
+      "description": "Invitations that haven't been accepted yet",
+      "empty": "No pending invitations",
+      "expires": "Expires",
+      "resend": "Resend",
+      "cancel": "Cancel",
+      "resendSuccess": "Invitation resent successfully!",
+      "resendFailed": "Failed to resend invitation",
+      "cancelFailed": "Failed to cancel invitation",
+      "cancelDialog": {
+        "title": "Cancel Invitation",
+        "description": "Are you sure you want to cancel this invitation? The invited user will no longer be able to join.",
+        "keep": "Keep Invitation",
+        "confirm": "Cancel Invitation"
+      }
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "description": "Irreversible actions for this organization",
+      "deleteTitle": "Delete Organization",
+      "deleteDescription": "Permanently delete this organization and all its data",
+      "deleteConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "deleteFailed": "Failed to delete organization"
+    },
+    "slugHint": "URL-friendly identifier. Leave empty to auto-generate."
+  },
+  "invite": {
+    "title": "Organization Invitation",
+    "subtitle": "You have been invited to join an organization",
+    "forEmail": "This invitation is for {email}",
+    "clickToReceive": "Click below to receive a sign-in link at your email.",
+    "pleaseSignIn": "Please sign in to view and accept this invitation.",
+    "sendMagicLink": "Send Magic Link to {email}",
+    "signInWithPassword": "Sign in with password instead",
+    "checkEmail": {
+      "title": "Check your email",
+      "message": "We sent a magic link to {email}",
+      "hint": "Click the link in your email to sign in and accept this invitation."
+    },
+    "useDifferentMethod": "Use a different method",
+    "youreInvited": "You're Invited!",
+    "invitedBy": "{email} has invited you to join {organization}",
+    "organization": "Organization",
+    "role": "Role",
+    "member": "Member",
+    "invitedByLabel": "Invited by",
+    "pleaseSignInToAccept": "Please sign in to accept or decline this invitation.",
+    "decline": "Decline",
+    "accept": "Accept",
+    "signInToAccept": "Sign in to Accept",
+    "invalid": "Invalid Invitation",
+    "expired": {
+      "title": "Invitation Expired",
+      "message": "This invitation has expired. Please request a new one."
+    },
+    "handled": {
+      "title": "Invitation Already Handled",
+      "message": "This invitation has already been {status}."
+    },
+    "goToDashboard": "Go to Dashboard"
+  },
+  "members": {
+    "name": "Jméno",
+    "email": "E-mail",
+    "role": "Role",
+    "joined": "Připojen",
+    "you": "(vy)",
+    "remove": "Odebrat",
+    "removeTitle": "Odebrat člena",
+    "removeDescription": "Opravdu chcete odebrat {email} z této organizace?",
+    "removeFailed": "Nepodařilo se odebrat člena"
+  },
+  "inviteDialog": {
+    "trigger": "Pozvat člena",
+    "title": "Pozvat člena",
+    "description": "Odešlete pozvánku a přidejte nového člena do vaší organizace.",
+    "email": "E-mail",
+    "emailPlaceholder": "uzivatel@priklad.cz",
+    "role": "Role",
+    "selectRole": "Vyberte roli",
+    "roleAdmin": "Může spravovat členy a nastavení",
+    "roleMember": "Přístup pouze pro čtení",
+    "submit": "Odeslat pozvánku",
+    "submitting": "Odesílání...",
+    "failed": "Nepodařilo se odeslat pozvánku"
+  },
+  "orgSwitcher": {
+    "loading": "Loading...",
+    "select": "Select Organization",
+    "noOrg": "No organization",
+    "organizations": "Organizations",
+    "create": "Create Organization",
+    "manage": "Manage Organizations"
+  },
+  "pricing": {
+    "title": "Choose your plan",
+    "description": "Start free and upgrade as you grow",
+    "noPlans": {
+      "title": "No plans available",
+      "description": "Pricing plans have not been configured yet.",
+      "configure": "Configure Stripe products"
+    },
+    "currentPlan": "Current plan: {name}",
+    "trial": "Trial",
+    "active": "Active",
+    "cancelsOn": "Cancels on",
+    "renewsOn": "Renews on",
+    "manageSubscription": "Manage Subscription",
+    "currentPlanBadge": "Current Plan",
+    "mostPopular": "Most Popular",
+    "perInterval": "/{interval}",
+    "trialDays": "{days}-day free trial",
+    "getStarted": "Get Started",
+    "switchPlan": "Switch Plan",
+    "footer": {
+      "guarantee": "All plans include a 14-day money-back guarantee",
+      "custom": "Need something custom?",
+      "contactUs": "Contact us"
+    },
+    "toast": {
+      "activated": "Subscription activated successfully!",
+      "updated": "Plan updated successfully!",
+      "paymentSuccess": "Payment successful! Subscription activated."
+    }
+  },
+  "help": {
+    "title": "Help & FAQ",
+    "description": "Find answers to common questions or contact our support team.",
+    "faqTitle": "Frequently Asked Questions",
+    "stillNeedHelp": "Still need help?",
+    "emailSupport": "Email Support",
+    "privacyPolicy": "Privacy Policy",
+    "faq": {
+      "q1": "How do I enable two-factor authentication?",
+      "a1": "Go to Profile > Security tab and click on \"Enable Two-Factor Authentication\". You'll need an authenticator app like Google Authenticator or Authy to scan the QR code.",
+      "q2": "How do I change my password?",
+      "a2": "Navigate to Profile > Security tab. If you have a password set, you'll see a \"Change Password\" section. If you signed up with a social provider, you can set a password in the \"Set Password\" section.",
+      "q3": "How do I create an organization?",
+      "a3": "Go to the Organizations page and click \"Create Organization\". Fill in your organization name and URL slug, then invite team members.",
+      "q4": "How do I invite team members?",
+      "a4": "From the Organizations page, select your organization and click \"Invite Member\". Enter their email address and select a role.",
+      "q5": "How do I upgrade my subscription?",
+      "a5": "Visit the Pricing page to see available plans. Click on the plan you want to upgrade to and complete the checkout process.",
+      "q6": "How do I manage my billing?",
+      "a6": "Go to Pricing and click \"Manage Subscription\" to access the Stripe billing portal where you can update payment methods, view invoices, and cancel your subscription.",
+      "q7": "How do I sign out from all devices?",
+      "a7": "Go to Profile > Sessions tab. You'll see all your active sessions. Click \"Sign out other sessions\" to terminate all sessions except your current one.",
+      "q8": "What happens if I forget my password?",
+      "a8": "On the login page, click \"Forgot Password\" and enter your email. You'll receive a password reset link. Alternatively, you can use the Magic Link option to sign in without a password.",
+      "q9": "How do I delete my account?",
+      "a9": "Account deletion is currently handled through support. Please contact support@authapp.com to request account deletion.",
+      "q10": "Is my data secure?",
+      "a10": "Yes, we use industry-standard encryption and security practices. Your passwords are hashed, sessions are encrypted, and we support two-factor authentication for additional security."
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "welcome": "Vítejte",
+      "workspace": "Pracovní prostor",
+      "preferences": "Předvolby",
+      "complete": "Dokončeno"
+    },
+    "welcome": {
+      "title": "Vítejte v AuthApp!",
+      "description": "Pojďme vás nastavit. Zabere to jen chvilku.",
+      "name": "Vaše jméno",
+      "namePlaceholder": "Zadejte své jméno"
+    },
+    "workspace": {
+      "title": "Nastavit pracovní prostor",
+      "hasWorkspace": "Již máte pracovní prostor. Můžete pokračovat nebo vytvořit nový.",
+      "noWorkspace": "Vytvořte svůj první pracovní prostor.",
+      "name": "Název pracovního prostoru",
+      "namePlaceholder": "Můj pracovní prostor",
+      "yourWorkspaces": "Vaše pracovní prostory:"
+    },
+    "preferences": {
+      "title": "Vaše předvolby",
+      "description": "Přizpůsobte si svou zkušenost.",
+      "theme": "Téma"
+    },
+    "complete": {
+      "title": "Vše je připraveno!",
+      "description": "Váš účet je připraven. Pojďme začít!"
+    },
+    "skip": "Přeskočit",
+    "continue": "Pokračovat",
+    "loading": "Načítání...",
+    "goToDashboard": "Přejít na Dashboard"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "description": "Přehled vaší aplikace",
+    "overview": "Přehled",
+    "totalUsers": "Celkem uživatelů",
+    "viewAllUsers": "View all users",
+    "quickActions": "Quick Actions",
+    "manageUsers": "Manage users",
+    "viewSessions": "View sessions",
+    "users": {
+      "title": "Users",
+      "description": "Manage all users in your application ({total} total)",
+      "addUser": "Add User",
+      "createUser": {
+        "title": "Create User",
+        "description": "Create a new user account manually.",
+        "name": "Name",
+        "namePlaceholder": "John Doe",
+        "email": "Email",
+        "emailPlaceholder": "john@example.com",
+        "password": "Password",
+        "passwordPlaceholder": "Min 8 characters",
+        "submit": "Create"
+      },
+      "search": "Search by email...",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "status": "Status",
+        "role": "Role",
+        "stripeId": "Stripe ID",
+        "created": "Created"
+      },
+      "noName": "No name",
+      "status": {
+        "banned": "Banned",
+        "verified": "Verified",
+        "unverified": "Unverified"
+      },
+      "roles": {
+        "admin": "Admin",
+        "user": "User"
+      },
+      "actions": {
+        "edit": "Edit User",
+        "resetPassword": "Reset Password",
+        "makeUser": "Make User",
+        "makeAdmin": "Make Admin",
+        "impersonate": "Impersonate",
+        "viewSessions": "View Sessions",
+        "ban": "Ban User",
+        "unban": "Unban User",
+        "delete": "Delete User"
+      },
+      "deleteDialog": {
+        "title": "Delete User",
+        "description": "Are you sure you want to delete this user? This action cannot be undone."
+      },
+      "resetPasswordDialog": {
+        "title": "Reset Password",
+        "description": "Set a new password for {email}",
+        "newPassword": "New Password"
+      },
+      "editDialog": {
+        "title": "Edit User",
+        "description": "Update user information for {email}",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "role": "Role",
+        "selectRole": "Select role",
+        "stripeId": "Stripe Customer ID",
+        "stripeIdPlaceholder": "cus_xxx",
+        "clearStripe": "Zrušit pro odstranění asociace se Stripe"
+      },
+      "noUsers": "Nenalezeni žádní uživatelé.",
+      "toast": {
+        "banned": "Uživatel zablokován",
+        "unbanned": "Uživatel odblokován",
+        "deleted": "Uživatel smazán",
+        "deletedWithOrgs": "Uživatel smazán ({count} osiřelá org. smazána)",
+        "deleteFailed": "Nepodařilo se smazat uživatele",
+        "created": "Uživatel úspěšně vytvořen!",
+        "roleUpdated": "Role změněna na {role}",
+        "passwordMinLength": "Heslo musí mít alespoň 8 znaků",
+        "passwordReset": "Heslo úspěšně resetováno",
+        "updated": "Uživatel úspěšně aktualizován",
+        "impersonating": "Přihlašování jako uživatel..."
+      }
+    },
+    "sessions": {
+      "title": "Relace",
+      "description": "Zobrazit a spravovat všechny aktivní relace",
+      "activeSessions": "Aktivní Relace",
+      "activeSessionsCount": "{count} aktivní relace",
+      "loading": "Načítání...",
+      "noSessions": "Žádné aktivní relace",
+      "unknownDevice": "Neznámé zařízení",
+      "unknownIP": "Neznámý",
+      "created": "Vytvořeno",
+      "expires": "Platnost do",
+      "revoke": "Zrušit",
+      "revokeAll": "Zrušit Vše",
+      "revokeDialog": {
+        "title": "Zrušit Relaci",
+        "description": "Opravdu chcete zrušit tuto relaci? Uživatel bude odhlášen."
+      },
+      "revokeAllDialog": {
+        "title": "Zrušit Všechny Relace",
+        "description": "Opravdu chcete zrušit všechny relace tohoto uživatele? Budou odhlášeni ze všech zařízení."
+      }
+    },
+    "organizations": {
+      "title": "Organizace",
+      "description": "Spravovat všechny organizace",
+      "descriptionWithTotal": "Spravovat všechny organizace ({total} celkem)",
+      "search": "Hledat podle jména nebo slugu...",
+      "columns": {
+        "name": "Jméno",
+        "slug": "Slug",
+        "owner": "Vlastník",
+        "members": "Členové",
+        "created": "Vytvořeno"
+      },
+      "noOrgs": "Nenalezeny žádné organizace.",
+      "orphaned": "{count} osiřelá/é organizace bez členů",
+      "orphanedBadge": "Osiřelá",
+      "orphanedWarning": "Tyto organizace nemají žádné členy a měly by být smazány.",
+      "deleteAction": "Smazat organizaci",
+      "deleteDialog": {
+        "title": "Smazat organizaci",
+        "description": "Opravdu chcete smazat tuto organizaci? Tím budou odstraněni i všichni členové z organizace.",
+        "memberCount": "{count} člen/ů"
+      },
+      "toast": {
+        "deleted": "Organizace smazána ({count} členů odstraněno)",
+        "deleteFailed": "Nepodařilo se smazat organizaci"
+      }
+    },
+    "notifications": {
+      "title": "Oznámení",
+      "description": "Odeslat upozornění uživatelům",
+      "pageTitle": "Odeslat Oznámení",
+      "types": {
+        "info": "Info",
+        "success": "Úspěch",
+        "warning": "Varování",
+        "system": "Systém",
+        "invite": "Pozvánka"
+      },
+      "compose": {
+        "title": "Vytvořit",
+        "description": "Vytvořte své oznámení",
+        "type": "Typ",
+        "titleLabel": "Název",
+        "titlePlaceholder": "Název oznámení",
+        "message": "Zpráva (volitelné)",
+        "messagePlaceholder": "Další podrobnosti...",
+        "link": "Odkaz (volitelné)",
+        "linkPlaceholder": "/dashboard nebo https://...",
+        "preview": "Náhled"
+      },
+      "recipients": {
+        "title": "Příjemci",
+        "description": "Vyberte, kdo obdrží toto oznámení",
+        "allUsers": "Všichni uživatelé",
+        "selectUsers": "Vybrat uživatele",
+        "searchPlaceholder": "Hledat uživatele...",
+        "selected": "{count} vybráno",
+        "selectAll": "Vybrat vše",
+        "moreCount": "+{count} dalších",
+        "noUsers": "Nenalezeni žádní uživatelé",
+        "noName": "Bez jména",
+        "allUsersWarning": "Toto odešle oznámení všem {count} uživatelům (kromě vás)."
+      },
+      "sendButton": {
+        "send": "Odeslat oznámení",
+        "sending": "Odesílání..."
+      },
+      "history": {
+        "title": "Odeslaná oznámení",
+        "description": "Nedávná oznámení ({count})",
+        "empty": "Zatím nebyla odeslána žádná oznámení.",
+        "columns": {
+          "type": "Typ",
+          "title": "Název",
+          "recipient": "Příjemce",
+          "sent": "Odesláno"
+        }
+      },
+      "toast": {
+        "loadFailed": "Nepodařilo se načíst data",
+        "titleRequired": "Název je povinný",
+        "selectUser": "Vyberte alespoň jednoho uživatele",
+        "sendFailed": "Nepodařilo se odeslat oznámení",
+        "sent": "Oznámení odesláno {count} uživatelům"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Application settings",
+      "account": {
+        "title": "Účet",
+        "description": "Spravujte nastavení admin účtu"
+      },
+      "adminAlert": {
+        "title": "Nastavení Admin",
+        "description": "Upravujete nastavení admin účtu. Změny zde obcházejí běžné ověřovací toky."
+      },
+      "changeEmail": {
+        "title": "Změnit Email",
+        "description": "Aktualizovat admin emailovou adresu (není vyžadováno ověření)",
+        "currentEmail": "Současný Email",
+        "newEmail": "Nový Email",
+        "placeholder": "novy@email.cz",
+        "submit": "Změnit Email",
+        "changing": "Změna...",
+        "enterDifferent": "Zadejte jiný email",
+        "failed": "Nepodařilo se aktualizovat email"
+      },
+      "twoFactor": {
+        "title": "Dvoufaktorové Ověření",
+        "description": "Přidejte další vrstvu zabezpečení k vašemu účtu",
+        "status": "Stav",
+        "enabled": "Dvoufaktorové ověření je povoleno",
+        "notEnabled": "Dvoufaktorové ověření není povoleno",
+        "enable": "Povolit 2FA",
+        "disable": "Zakázat 2FA",
+        "disabled": "Dvoufaktorové ověření zakázáno",
+        "disableDialog": {
+          "title": "Zakázat Dvoufaktorové Ověření",
+          "description": "Zadejte heslo pro zakázání dvoufaktorového ověření.",
+          "password": "Heslo",
+          "passwordPlaceholder": "Zadejte heslo",
+          "submit": "Zakázat 2FA",
+          "disabling": "Zakazování..."
+        }
+      },
+      "changePassword": {
+        "title": "Změnit Heslo",
+        "description": "Aktualizovat admin heslo",
+        "currentPassword": "Současné Heslo",
+        "newPassword": "Nové Heslo",
+        "confirmPassword": "Potvrdit Nové Heslo",
+        "placeholder": "Alespoň 8 znaků",
+        "submit": "Změnit Heslo",
+        "changing": "Změna...",
+        "passwordMismatch": "Hesla se neshodují",
+        "passwordTooShort": "Heslo musí mít alespoň 8 znaků",
+        "success": "Heslo úspěšně změněno!"
+      }
+    },
+    "stripe": {
+      "products": {
+        "title": "Stripe Produkty",
+        "subtitle": "Spravujte své předplatné plány ({count} celkem)",
+        "description": "Spravovat Stripe produkty",
+        "showArchived": "Zobrazit Archivované",
+        "hideArchived": "Skrýt Archivované",
+        "sync": "Synchronizovat ze Stripe",
+        "addProduct": "Přidat Produkt",
+        "archive": "Archivovat",
+        "createDialog": {
+          "title": "Vytvořit Produkt",
+          "description": "Vytvořte nový produkt ve Stripe a uložte jej lokálně.",
+          "submit": "Vytvořit"
+        },
+        "editDialog": {
+          "title": "Upravit Produkt",
+          "description": "Aktualizujte detaily produktu. Cenu nelze změnit (omezení Stripe).",
+          "priceReadonly": "Cena (pouze pro čtení)"
+        },
+        "deleteDialog": {
+          "titleDelete": "Smazat Produkt",
+          "titleArchive": "Archivovat Produkt",
+          "descriptionDelete": "Toto trvale smaže produkt ze Stripe (funguje pouze pokud nebyl nikdy použit). Pokud má produkt předplatná, bude archivován.",
+          "descriptionArchive": "Toto archivuje produkt ve Stripe a odebere jej z lokální databáze. Existující předplatná nebudou ovlivněna."
+        },
+        "form": {
+          "name": "Název",
+          "namePlaceholder": "Pro Plán",
+          "description": "Popis",
+          "descriptionPlaceholder": "Pro profesionály a malé týmy",
+          "price": "Cena",
+          "pricePlaceholder": "19.00",
+          "currency": "Měna",
+          "interval": "Fakturační Interval",
+          "intervalMonthly": "Měsíční",
+          "intervalYearly": "Roční",
+          "trialDays": "Zkušební Dny",
+          "features": "Funkce (jedna na řádek)",
+          "featuresPlaceholder": "20 projektů\n50 GB úložiště\nPrioritní podpora",
+          "sortOrder": "Pořadí",
+          "popular": "Populární"
+        },
+        "table": {
+          "order": "Pořadí",
+          "name": "Název",
+          "price": "Cena",
+          "interval": "Interval",
+          "trial": "Zkušební",
+          "popular": "Populární",
+          "status": "Stav",
+          "empty": "Žádné produkty. Vytvořte jeden nebo synchronizujte ze Stripe.",
+          "trialDays": "{days} dní"
+        },
+        "archivedSection": {
+          "title": "Archivované Produkty",
+          "stripeId": "Stripe ID",
+          "loading": "Načítání archivovaných produktů...",
+          "empty": "Nenalezeny žádné archivované produkty."
+        },
+        "toast": {
+          "fetchFailed": "Nepodařilo se načíst produkty",
+          "fetchArchivedFailed": "Nepodařilo se načíst archivované produkty",
+          "syncSuccess": "Produkty úspěšně synchronizovány",
+          "syncFailed": "Synchronizace selhala",
+          "created": "Produkt vytvořen",
+          "createFailed": "Nepodařilo se vytvořit produkt",
+          "updated": "Produkt aktualizován",
+          "updateFailed": "Nepodařilo se aktualizovat produkt",
+          "deleted": "Produkt trvale smazán",
+          "archivedWithSubs": "Produkt archivován (má předplatná)",
+          "deleteFailed": "Nepodařilo se smazat produkt",
+          "enabled": "Produkt povolen",
+          "disabled": "Produkt zakázán",
+          "toggleFailed": "Nepodařilo se přepnout produkt"
+        }
+      },
+      "subscriptions": {
+        "title": "Předplatná",
+        "subtitle": "Zobrazit a spravovat předplatná uživatelů",
+        "description": "Zobrazit všechna předplatná",
+        "stats": {
+          "total": "Celkem",
+          "active": "Aktivní",
+          "trialing": "Zkušební",
+          "pastDue": "Po Splatnosti"
+        },
+        "status": {
+          "active": "Aktivní",
+          "trialing": "Zkušební",
+          "canceled": "Zrušeno",
+          "pastDue": "Po Splatnosti",
+          "incomplete": "Neúplné"
+        },
+        "filters": {
+          "searchPlaceholder": "Hledat podle jména nebo emailu...",
+          "filterByStatus": "Filtrovat podle stavu",
+          "allStatuses": "Všechny Stavy"
+        },
+        "table": {
+          "user": "Uživatel",
+          "plan": "Plán",
+          "status": "Stav",
+          "periodEnd": "Konec Období",
+          "created": "Vytvořeno",
+          "empty": "Nenalezena žádná předplatná.",
+          "noName": "Bez jména",
+          "canceling": "(rušení)"
+        },
+        "toast": {
+          "fetchFailed": "Nepodařilo se načíst předplatná"
+        }
+      }
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications"
+  },
+  "impersonation": {
+    "message": "You are currently impersonating this user",
+    "stop": "Stop Impersonating"
+  },
+  "privacy": {
+    "title": "Privacy Policy"
+  },
+  "terms": {
+    "title": "Terms of Service"
+  }
+}

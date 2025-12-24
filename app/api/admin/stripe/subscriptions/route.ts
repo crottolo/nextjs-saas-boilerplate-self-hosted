@@ -34,6 +34,29 @@ export async function GET(request: NextRequest) {
       expand: ['data.customer'],
     })
 
+    // Collect unique product IDs from subscriptions
+    const productIds = new Set<string>()
+    for (const sub of stripeSubscriptions.data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const subAny = sub as any
+      const productId = subAny.items?.data?.[0]?.price?.product
+      if (productId && typeof productId === 'string') {
+        productIds.add(productId)
+      }
+    }
+
+    // Fetch all products in one call
+    const productMap = new Map<string, string>()
+    if (productIds.size > 0) {
+      const products = await stripe.products.list({
+        ids: Array.from(productIds),
+        limit: 100,
+      })
+      for (const product of products.data) {
+        productMap.set(product.id, product.name)
+      }
+    }
+
     // Map subscriptions with user info from DB
     const subscriptions = await Promise.all(
       stripeSubscriptions.data.map(async (sub) => {
@@ -52,12 +75,15 @@ export async function GET(request: NextRequest) {
           dbUser = foundUser
         }
 
+        // Get product name from map
+        const price = subAny.items?.data?.[0]?.price
+        const productId = price?.product
+        const planName =
+          productMap.get(productId) || price?.nickname || price?.id || 'Unknown'
+
         return {
           id: sub.id,
-          plan:
-            subAny.items?.data?.[0]?.price?.nickname ||
-            subAny.items?.data?.[0]?.price?.id ||
-            'Unknown',
+          plan: planName,
           status: sub.status,
           stripeCustomerId: customer?.id || null,
           stripeSubscriptionId: sub.id,

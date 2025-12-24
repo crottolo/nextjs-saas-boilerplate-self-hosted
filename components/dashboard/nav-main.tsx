@@ -1,8 +1,7 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { type LucideIcon } from 'lucide-react'
+import { Link, usePathname } from '@/i18n/navigation'
 
 import {
   SidebarGroup,
@@ -31,10 +30,11 @@ export function NavMain({ items, label }: NavMainProps) {
       {label && <SidebarGroupLabel>{label}</SidebarGroupLabel>}
       <SidebarMenu>
         {items.map((item) => {
+          // pathname from next-intl is already without locale prefix
           const isActive =
             pathname === item.url || pathname.startsWith(`${item.url}/`)
           return (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem key={item.url}>
               <SidebarMenuButton
                 asChild
                 isActive={isActive}
