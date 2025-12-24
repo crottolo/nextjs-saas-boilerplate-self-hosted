@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
+import { useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
+import { Link } from '@/i18n/navigation'
 
 // GitHub SVG icon
 function GitHubIcon() {
@@ -63,9 +64,15 @@ export function SignupForm({
   callbackUrl = '/dashboard',
   ...props
 }: SignupFormProps) {
+  const locale = useLocale()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  // Build localized callback URL for auth
+  const localizedCallbackUrl = callbackUrl.startsWith(`/${locale}`)
+    ? callbackUrl
+    : `/${locale}${callbackUrl}`
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -112,7 +119,7 @@ export function SignupForm({
 
     await authClient.signIn.social({
       provider,
-      callbackURL: callbackUrl,
+      callbackURL: localizedCallbackUrl,
     })
   }
 

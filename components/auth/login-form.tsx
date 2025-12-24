@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { authClient } from '@/lib/auth-client'
+import { Link, useRouter } from '@/i18n/navigation'
 
 // GitHub SVG icon
 function GitHubIcon() {
@@ -65,9 +66,15 @@ export function LoginForm({
   ...props
 }: LoginFormProps) {
   const router = useRouter()
+  const locale = useLocale()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [magicLinkSent, setMagicLinkSent] = useState(false)
+
+  // Build localized callback URL for auth
+  const localizedCallbackUrl = callbackUrl.startsWith(`/${locale}`)
+    ? callbackUrl
+    : `/${locale}${callbackUrl}`
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -81,7 +88,7 @@ export function LoginForm({
     const { error: signInError } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: callbackUrl,
+      callbackURL: localizedCallbackUrl,
     })
 
     if (signInError) {
@@ -98,7 +105,7 @@ export function LoginForm({
 
     await authClient.signIn.social({
       provider,
-      callbackURL: callbackUrl,
+      callbackURL: localizedCallbackUrl,
     })
   }
 
@@ -112,7 +119,7 @@ export function LoginForm({
 
     const { error } = await authClient.signIn.magicLink({
       email,
-      callbackURL: callbackUrl,
+      callbackURL: localizedCallbackUrl,
     })
 
     if (error) {
@@ -161,12 +168,12 @@ export function LoginForm({
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <a
+                <Link
                   href="/reset-password"
                   className="ml-auto text-sm underline-offset-4 hover:underline"
                 >
                   Forgot your password?
-                </a>
+                </Link>
               </div>
               <Input
                 id="password"
@@ -257,12 +264,12 @@ export function LoginForm({
 
       <div className="text-center text-sm">
         Don&apos;t have an account?{' '}
-        <a
+        <Link
           href={`/register${defaultEmail || callbackUrl !== '/dashboard' ? `?${new URLSearchParams({ ...(defaultEmail && { email: defaultEmail }), ...(callbackUrl !== '/dashboard' && { callbackUrl }) }).toString()}` : ''}`}
           className="underline underline-offset-4"
         >
           Sign up
-        </a>
+        </Link>
       </div>
     </div>
   )

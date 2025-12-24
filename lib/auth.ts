@@ -113,7 +113,8 @@ export const auth = betterAuth({
     }),
     organization({
       async sendInvitationEmail(data) {
-        const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${data.id}?email=${encodeURIComponent(data.email)}`
+        // Use /en/ as default locale for invite emails (user will be redirected to preferred locale)
+        const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/en/invite/${data.id}?email=${encodeURIComponent(data.email)}`
         await sendEmail({
           to: data.email,
           subject: `You've been invited to join ${data.organization.name}`,
