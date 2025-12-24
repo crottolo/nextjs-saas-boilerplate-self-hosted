@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     if (!dbUser?.stripeCustomerId) {
       return NextResponse.json(
-        { error: 'No subscription found. Please subscribe first.' },
+        { error: 'No subscription found', redirect: '/pricing' },
         { status: 404 }
       )
     }
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         .where(eq(user.id, session.user.id))
 
       return NextResponse.json(
-        { error: 'No subscription found. Please subscribe first.' },
+        { error: 'No subscription found', redirect: '/pricing' },
         { status: 404 }
       )
     }

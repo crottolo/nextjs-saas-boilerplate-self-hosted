@@ -161,7 +161,12 @@ export default function PricingPage() {
       })
       const data = await res.json()
       if (!res.ok) {
-        toast.error(data.error || 'Failed to open billing portal')
+        if (data.redirect) {
+          // Customer not found, refresh page to show subscribe options
+          window.location.reload()
+        } else {
+          toast.error(data.error || 'Failed to open billing portal')
+        }
       } else if (data.url) {
         window.location.href = data.url
       }
