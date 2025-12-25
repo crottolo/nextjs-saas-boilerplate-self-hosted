@@ -17,6 +17,7 @@ import {
   Bell,
   Package,
   Receipt,
+  Layers,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
@@ -81,6 +82,11 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
   ]
 
   const stripeNavItems = [
+    {
+      title: tAdmin('plans.title'),
+      url: '/admin/plans',
+      icon: Layers,
+    },
     {
       title: tAdmin('stripe.products.title'),
       url: '/admin/stripe/products',

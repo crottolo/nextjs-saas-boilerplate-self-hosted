@@ -97,6 +97,7 @@ export async function PUT(
     if (body.enabled !== undefined) updateData.enabled = body.enabled
     if (body.sortOrder !== undefined) updateData.sortOrder = body.sortOrder
     if (body.popular !== undefined) updateData.popular = body.popular
+    if (body.planId !== undefined) updateData.planId = body.planId || null
 
     if (Object.keys(updateData).length > 0) {
       await db

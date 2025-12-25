@@ -807,7 +807,9 @@
           "features": "Features (one per line)",
           "featuresPlaceholder": "20 projects\n50 GB storage\nPriority support",
           "sortOrder": "Sort Order",
-          "popular": "Popular"
+          "popular": "Popular",
+          "plan": "Plan",
+          "noPlan": "No plan"
         },
         "table": {
           "order": "Order",
@@ -878,6 +880,58 @@
         "toast": {
           "fetchFailed": "Failed to fetch subscriptions"
         }
+      }
+    },
+    "plans": {
+      "title": "Plans",
+      "description": "Manage subscription plans and limits",
+      "addPlan": "Add Plan",
+      "editPlan": "Edit Plan",
+      "createDialog": {
+        "title": "Create Plan",
+        "description": "Create a new subscription plan."
+      },
+      "editDialog": {
+        "title": "Edit Plan",
+        "description": "Update plan details and limits."
+      },
+      "deleteDialog": {
+        "title": "Delete Plan",
+        "description": "Are you sure you want to delete this plan? This action cannot be undone.",
+        "cannotDelete": "Cannot delete plan with linked Stripe products."
+      },
+      "form": {
+        "id": "Plan ID",
+        "idPlaceholder": "pro",
+        "idHint": "URL-friendly identifier (e.g., free, starter, pro)",
+        "name": "Name",
+        "description": "Description",
+        "price": "Indicative Price (€)",
+        "credits": "Credits",
+        "maxOrganizations": "Max Organizations",
+        "maxOrganizationsHint": "-1 for unlimited",
+        "sortOrder": "Sort Order",
+        "isDefault": "Default Plan"
+      },
+      "table": {
+        "id": "ID",
+        "name": "Name",
+        "price": "Price",
+        "credits": "Credits",
+        "maxOrgs": "Max Orgs",
+        "order": "Order",
+        "default": "Default",
+        "linkedProducts": "Products",
+        "unlimited": "Unlimited",
+        "empty": "No plans. Create one to get started."
+      },
+      "toast": {
+        "created": "Plan created",
+        "updated": "Plan updated",
+        "deleted": "Plan deleted",
+        "cannotDelete": "Cannot delete plan with linked Stripe products",
+        "fetchFailed": "Failed to fetch plans",
+        "saveFailed": "Failed to save plan"
       }
     }
   },

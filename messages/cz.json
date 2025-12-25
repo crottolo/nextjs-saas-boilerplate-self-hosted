@@ -807,7 +807,9 @@
           "features": "Funkce (jedna na řádek)",
           "featuresPlaceholder": "20 projektů\n50 GB úložiště\nPrioritní podpora",
           "sortOrder": "Pořadí",
-          "popular": "Populární"
+          "popular": "Populární",
+          "plan": "Plán",
+          "noPlan": "Žádný plán"
         },
         "table": {
           "order": "Pořadí",
@@ -879,12 +881,64 @@
           "fetchFailed": "Nepodařilo se načíst předplatná"
         }
       }
+    },
+    "plans": {
+      "title": "Plány",
+      "description": "Správa předplatných plánů a limitů",
+      "addPlan": "Přidat Plán",
+      "editPlan": "Upravit Plán",
+      "createDialog": {
+        "title": "Vytvořit Plán",
+        "description": "Vytvořit nový předplatný plán."
+      },
+      "editDialog": {
+        "title": "Upravit Plán",
+        "description": "Aktualizovat detaily a limity plánu."
+      },
+      "deleteDialog": {
+        "title": "Smazat Plán",
+        "description": "Opravdu chcete smazat tento plán? Tuto akci nelze vrátit zpět.",
+        "cannotDelete": "Nelze smazat plán s propojenými Stripe produkty."
+      },
+      "form": {
+        "id": "ID Plánu",
+        "idPlaceholder": "pro",
+        "idHint": "URL identifikátor (např: free, starter, pro)",
+        "name": "Název",
+        "description": "Popis",
+        "price": "Orientační Cena (€)",
+        "credits": "Kredity",
+        "maxOrganizations": "Max Organizací",
+        "maxOrganizationsHint": "-1 pro neomezeno",
+        "sortOrder": "Pořadí",
+        "isDefault": "Výchozí Plán"
+      },
+      "table": {
+        "id": "ID",
+        "name": "Název",
+        "price": "Cena",
+        "credits": "Kredity",
+        "maxOrgs": "Max Org",
+        "order": "Pořadí",
+        "default": "Výchozí",
+        "linkedProducts": "Produkty",
+        "unlimited": "Neomezeno",
+        "empty": "Žádné plány. Vytvořte jeden pro začátek."
+      },
+      "toast": {
+        "created": "Plán vytvořen",
+        "updated": "Plán aktualizován",
+        "deleted": "Plán smazán",
+        "cannotDelete": "Nelze smazat plán s propojenými Stripe produkty",
+        "fetchFailed": "Nepodařilo se načíst plány",
+        "saveFailed": "Nepodařilo se uložit plán"
+      }
     }
   },
   "notifications": {
-    "title": "Notifications",
-    "markAllRead": "Mark all read",
-    "empty": "No notifications"
+    "title": "Oznámení",
+    "markAllRead": "Označit vše jako přečtené",
+    "empty": "Žádná oznámení"
   },
   "impersonation": {
     "message": "You are currently impersonating this user",

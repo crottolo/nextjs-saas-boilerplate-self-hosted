@@ -807,7 +807,9 @@
           "features": "Funzionalità (una per riga)",
           "featuresPlaceholder": "20 progetti\n50 GB di spazio\nSupporto prioritario",
           "sortOrder": "Ordine",
-          "popular": "Popolare"
+          "popular": "Popolare",
+          "plan": "Piano",
+          "noPlan": "Nessun piano"
         },
         "table": {
           "order": "Ordine",
@@ -878,6 +880,58 @@
         "toast": {
           "fetchFailed": "Impossibile recuperare gli abbonamenti"
         }
+      }
+    },
+    "plans": {
+      "title": "Piani",
+      "description": "Gestisci i piani di abbonamento e i limiti",
+      "addPlan": "Aggiungi Piano",
+      "editPlan": "Modifica Piano",
+      "createDialog": {
+        "title": "Crea Piano",
+        "description": "Crea un nuovo piano di abbonamento."
+      },
+      "editDialog": {
+        "title": "Modifica Piano",
+        "description": "Aggiorna i dettagli e i limiti del piano."
+      },
+      "deleteDialog": {
+        "title": "Elimina Piano",
+        "description": "Sei sicuro di voler eliminare questo piano? Questa azione non può essere annullata.",
+        "cannotDelete": "Impossibile eliminare un piano con prodotti Stripe collegati."
+      },
+      "form": {
+        "id": "ID Piano",
+        "idPlaceholder": "pro",
+        "idHint": "Identificatore URL-friendly (es: free, starter, pro)",
+        "name": "Nome",
+        "description": "Descrizione",
+        "price": "Prezzo Indicativo (€)",
+        "credits": "Crediti",
+        "maxOrganizations": "Max Organizzazioni",
+        "maxOrganizationsHint": "-1 per illimitato",
+        "sortOrder": "Ordine",
+        "isDefault": "Piano Default"
+      },
+      "table": {
+        "id": "ID",
+        "name": "Nome",
+        "price": "Prezzo",
+        "credits": "Crediti",
+        "maxOrgs": "Max Org",
+        "order": "Ordine",
+        "default": "Default",
+        "linkedProducts": "Prodotti",
+        "unlimited": "Illimitato",
+        "empty": "Nessun piano. Creane uno per iniziare."
+      },
+      "toast": {
+        "created": "Piano creato",
+        "updated": "Piano aggiornato",
+        "deleted": "Piano eliminato",
+        "cannotDelete": "Impossibile eliminare un piano con prodotti Stripe collegati",
+        "fetchFailed": "Impossibile recuperare i piani",
+        "saveFailed": "Impossibile salvare il piano"
       }
     }
   },
