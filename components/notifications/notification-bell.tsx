@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Bell, CheckCheck } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useLocalizedContent } from '@/hooks/use-localized-content'
+import type { LocalizedField } from '@/lib/db/localized'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -18,8 +20,8 @@ import Link from 'next/link'
 interface Notification {
   id: string
   type: string
-  title: string
-  message: string | null
+  title: LocalizedField
+  message: LocalizedField | null
   link: string | null
   read: boolean
   createdAt: string
@@ -27,6 +29,7 @@ interface Notification {
 
 export function NotificationBell() {
   const t = useTranslations('notifications')
+  const { t: localize } = useLocalizedContent()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
@@ -143,11 +146,11 @@ export function NotificationBell() {
                       )}
                       <div className={notification.read ? 'ml-4' : ''}>
                         <p className="text-sm font-medium">
-                          {notification.title}
+                          {localize(notification.title)}
                         </p>
                         {notification.message && (
                           <p className="text-xs text-muted-foreground line-clamp-2">
-                            {notification.message}
+                            {localize(notification.message)}
                           </p>
                         )}
                         <p className="text-xs text-muted-foreground mt-1">
@@ -168,11 +171,11 @@ export function NotificationBell() {
                     )}
                     <div className={notification.read ? 'ml-4' : ''}>
                       <p className="text-sm font-medium">
-                        {notification.title}
+                        {localize(notification.title)}
                       </p>
                       {notification.message && (
                         <p className="text-xs text-muted-foreground line-clamp-2">
-                          {notification.message}
+                          {localize(notification.message)}
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">

@@ -2,6 +2,7 @@ import { db } from './db'
 import { notification, user } from './db/auth-schema'
 import { nanoid } from 'nanoid'
 import { ne } from 'drizzle-orm'
+import type { LocalizedField } from './db/localized'
 
 export type NotificationType =
   | 'info'
@@ -13,8 +14,8 @@ export type NotificationType =
 interface CreateNotificationParams {
   userId: string
   type: NotificationType
-  title: string
-  message?: string
+  title: LocalizedField
+  message?: LocalizedField
   link?: string
 }
 
@@ -44,8 +45,8 @@ export async function createNotification({
 interface BulkNotificationParams {
   userIds: string[]
   type: NotificationType
-  title: string
-  message?: string
+  title: LocalizedField
+  message?: LocalizedField
   link?: string
 }
 
@@ -78,8 +79,8 @@ export async function createBulkNotifications({
 
 interface NotifyAllUsersParams {
   type: NotificationType
-  title: string
-  message?: string
+  title: LocalizedField
+  message?: LocalizedField
   link?: string
   excludeUserId?: string
 }

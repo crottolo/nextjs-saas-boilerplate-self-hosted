@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 import { stripeProduct } from '@/lib/db/auth-schema'
 import { eq } from 'drizzle-orm'
 import Stripe from 'stripe'
+import { getLocalized } from '@/lib/db/localized'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-12-15.clover',
@@ -72,19 +73,24 @@ export async function PUT(
 
     // Update Stripe product if name or description changed
     if (body.name || body.description !== undefined) {
+      // Use English description for Stripe
+      const stripeDescription = body.description
+        ? getLocalized(body.description, 'en')
+        : existing.description
+          ? getLocalized(existing.description, 'en')
+          : undefined
       await stripe.products.update(existing.stripeProductId, {
         name: body.name || existing.name,
-        description: body.description ?? existing.description ?? undefined,
+        description: stripeDescription || undefined,
       })
     }
 
-    // Update DB
+    // Update DB (description and features are JSONB, no stringify needed)
     const updateData: Record<string, unknown> = {}
     if (body.name !== undefined) updateData.name = body.name
     if (body.description !== undefined)
       updateData.description = body.description
-    if (body.features !== undefined)
-      updateData.features = JSON.stringify(body.features)
+    if (body.features !== undefined) updateData.features = body.features
     if (body.limits !== undefined)
       updateData.limits = JSON.stringify(body.limits)
     if (body.trialDays !== undefined) updateData.trialDays = body.trialDays

@@ -5,7 +5,9 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { TranslationInput } from '@/components/admin/translation-input'
+import type { LocalizedField } from '@/lib/db/localized'
+import { getLocalized } from '@/lib/db/localized'
 import {
   Card,
   CardContent,
@@ -52,8 +54,8 @@ interface UserOption {
 interface SentNotification {
   id: string
   type: string
-  title: string
-  message: string | null
+  title: LocalizedField
+  message: LocalizedField | null
   link: string | null
   createdAt: string
   recipientName: string | null
@@ -105,8 +107,8 @@ export default function AdminNotificationsPage() {
 
   // Form state
   const [type, setType] = useState<NotificationType>('info')
-  const [title, setTitle] = useState('')
-  const [message, setMessage] = useState('')
+  const [title, setTitle] = useState<LocalizedField>({})
+  const [message, setMessage] = useState<LocalizedField>({})
   const [link, setLink] = useState('')
   const [target, setTarget] = useState<'all' | 'selected'>('selected')
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
@@ -129,6 +131,7 @@ export default function AdminNotificationsPage() {
       }
     }
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey])
 
   const filteredUsers = search
@@ -156,7 +159,9 @@ export default function AdminNotificationsPage() {
   }
 
   async function handleSend() {
-    if (!title.trim()) {
+    // Check if at least one language has title
+    const hasTitle = Object.values(title).some((v) => v && v.trim())
+    if (!hasTitle) {
       toast.error(t('toast.titleRequired'))
       return
     }
@@ -168,13 +173,24 @@ export default function AdminNotificationsPage() {
 
     setSending(true)
     try {
+      // Clean up empty values
+      const cleanTitle: LocalizedField = {}
+      Object.entries(title).forEach(([k, v]) => {
+        if (v && v.trim()) cleanTitle[k as keyof LocalizedField] = v.trim()
+      })
+      const cleanMessage: LocalizedField = {}
+      Object.entries(message).forEach(([k, v]) => {
+        if (v && v.trim()) cleanMessage[k as keyof LocalizedField] = v.trim()
+      })
+
       const response = await fetch('/api/admin/notifications/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type,
-          title: title.trim(),
-          message: message.trim() || undefined,
+          title: cleanTitle,
+          message:
+            Object.keys(cleanMessage).length > 0 ? cleanMessage : undefined,
           link: link.trim() || undefined,
           target,
           userIds: target === 'selected' ? selectedUsers : undefined,
@@ -188,8 +204,8 @@ export default function AdminNotificationsPage() {
       } else {
         toast.success(t('toast.sent', { count: data.count }))
         // Reset form and refresh list
-        setTitle('')
-        setMessage('')
+        setTitle({})
+        setMessage({})
         setLink('')
         setSelectedUsers([])
         setRefreshKey((k) => k + 1)
@@ -242,26 +258,18 @@ export default function AdminNotificationsPage() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="title">{t('compose.titleLabel')} *</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder={t('compose.titlePlaceholder')}
-              />
-            </div>
+            <TranslationInput
+              label={`${t('compose.titleLabel')} *`}
+              value={title}
+              onChange={setTitle}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="message">{t('compose.message')}</Label>
-              <Textarea
-                id="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder={t('compose.messagePlaceholder')}
-                rows={3}
-              />
-            </div>
+            <TranslationInput
+              label={t('compose.message')}
+              value={message}
+              onChange={setMessage}
+              multiline
+            />
 
             <div className="space-y-2">
               <Label htmlFor="link">{t('compose.link')}</Label>
@@ -274,7 +282,7 @@ export default function AdminNotificationsPage() {
             </div>
 
             {/* Preview */}
-            {title && (
+            {Object.values(title).some((v) => v && v.trim()) && (
               <div className="p-4 border rounded-lg bg-muted/50">
                 <p className="text-xs text-muted-foreground mb-2">
                   {t('compose.preview')}:
@@ -286,9 +294,11 @@ export default function AdminNotificationsPage() {
                     {typeConfig[type].icon}
                   </div>
                   <div>
-                    <p className="font-medium">{title}</p>
-                    {message && (
-                      <p className="text-sm text-muted-foreground">{message}</p>
+                    <p className="font-medium">{getLocalized(title, 'en')}</p>
+                    {Object.values(message).some((v) => v && v.trim()) && (
+                      <p className="text-sm text-muted-foreground">
+                        {getLocalized(message, 'en')}
+                      </p>
                     )}
                     {link && (
                       <p className="text-xs text-blue-500 mt-1">{link}</p>
@@ -423,7 +433,10 @@ export default function AdminNotificationsPage() {
 
       {/* Send button */}
       <div className="flex justify-end">
-        <Button onClick={handleSend} disabled={sending || !title.trim()}>
+        <Button
+          onClick={handleSend}
+          disabled={sending || !Object.values(title).some((v) => v && v.trim())}
+        >
           <Send className="mr-2 h-4 w-4" />
           {sending ? t('sendButton.sending') : t('sendButton.send')}
         </Button>
@@ -478,10 +491,12 @@ export default function AdminNotificationsPage() {
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{n.title}</div>
+                          <div className="font-medium">
+                            {getLocalized(n.title, 'en')}
+                          </div>
                           {n.message && (
                             <div className="text-xs text-muted-foreground truncate max-w-xs">
-                              {n.message}
+                              {getLocalized(n.message, 'en')}
                             </div>
                           )}
                         </div>

@@ -6,6 +6,8 @@ import { stripeProduct } from '@/lib/db/auth-schema'
 import { desc, eq } from 'drizzle-orm'
 import Stripe from 'stripe'
 import { nanoid } from 'nanoid'
+import type { LocalizedField, LocalizedArray } from '@/lib/db/localized'
+import { getLocalized } from '@/lib/db/localized'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-12-15.clover',
@@ -53,13 +55,25 @@ export async function POST(request: NextRequest) {
       price,
       currency = 'eur',
       interval = 'month',
-      features = [],
+      features,
       limits = { projects: 3, storage: 1 },
       trialDays = 0,
       enabled = false,
       sortOrder = 0,
       popular = false,
-    } = body
+    } = body as {
+      name: string
+      description?: LocalizedField
+      price: number
+      currency?: string
+      interval?: string
+      features?: LocalizedArray
+      limits?: Record<string, number>
+      trialDays?: number
+      enabled?: boolean
+      sortOrder?: number
+      popular?: boolean
+    }
 
     if (!name || price === undefined) {
       return NextResponse.json(
@@ -68,10 +82,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create product in Stripe
+    // Create product in Stripe (use English description for Stripe)
+    const stripeDescription = description
+      ? getLocalized(description, 'en')
+      : undefined
     const stripeProductObj = await stripe.products.create({
       name,
-      description: description || undefined,
+      description: stripeDescription || undefined,
       active: true,
       metadata: {
         source: 'admin-panel',
@@ -91,18 +108,18 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Save to DB
+    // Save to DB (description and features are JSONB, no stringify needed)
     const id = nanoid()
     await db.insert(stripeProduct).values({
       id,
       stripeProductId: stripeProductObj.id,
       stripePriceId: stripePrice.id,
       name,
-      description,
+      description: description || null,
       price,
       currency,
       interval,
-      features: JSON.stringify(features),
+      features: features || null,
       limits: JSON.stringify(limits),
       trialDays,
       enabled,
