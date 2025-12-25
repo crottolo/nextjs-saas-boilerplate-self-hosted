@@ -251,14 +251,85 @@ pnpm db:studio
 import { motion } from 'motion/react'
 ```
 
-## DO NOT
+## Database Migrations & Seeds - CRITICAL
 
-- Do not use `middleware.ts` - Next.js 16 uses `proxy.ts`
-- Do not use deprecated `getServerSession` - use `auth.api.getSession`
-- Do not use `pages/` directory - use App Router only
-- Do not use `ports:` in docker-compose.yaml for Coolify (proxy conflicts)
-- Do not hardcode secrets - use environment variables
-- Do not use Resend - project uses Nodemailer (SMTP)
+### Architettura Runtime vs Build
+
+Le migrazioni e i seed vengono eseguiti **all'avvio del container** (runtime), NON durante il build Docker.
+
+**Motivo**: Durante il build Docker, il container è isolato e non può accedere al database PostgreSQL.
+
+### Flusso di esecuzione in produzione (Coolify)
+
+```
+Docker Build (pnpm build)     →  Container Start (scripts/start.sh)
+      ↓                                    ↓
+  Solo Next.js build               1. migrate.mjs (migrazioni)
+  NO accesso al DB                 2. seed-plans.mjs (piani default)
+                                   3. seed-admin.mjs (utente admin)
+                                   4. node server.js (avvio app)
+```
+
+### Tipi di Script
+
+| Estensione | Uso                    | Richiede       | Esempio                 |
+| ---------- | ---------------------- | -------------- | ----------------------- |
+| `.ts`      | Development (pnpm run) | `tsx`          | `scripts/seed-admin.ts` |
+| `.mjs`     | Runtime (Docker)       | Node.js nativo | `scripts/migrate.mjs`   |
+
+**IMPORTANTE**: Gli script `.mjs` devono usare ESM puro (import/export) senza dipendenze TypeScript.
+
+### Modificare lo Schema Database
+
+```bash
+# 1. Modifica lib/db/auth-schema.ts
+
+# 2. Genera la migrazione
+pnpm db:generate
+
+# 3. Applica localmente (dev)
+pnpm db:migrate
+
+# 4. Commit dei file in drizzle/
+git add drizzle/
+
+# 5. In produzione: le migrazioni si applicano automaticamente all'avvio
+```
+
+### Aggiungere un Nuovo Seed
+
+1. Crea lo script `.ts` per dev:
+
+```typescript
+// scripts/seed-example.ts
+import { config } from 'dotenv'
+config({ path: '.env.local' })
+// ... logica seed con drizzle
+```
+
+2. Crea la versione `.mjs` per runtime:
+
+```javascript
+// scripts/seed-example.mjs
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
+// ... logica seed senza TypeScript
+```
+
+3. Aggiungi al `package.json`:
+
+```json
+"seed:example": "tsx scripts/seed-example.ts"
+```
+
+4. Aggiungi a `scripts/start.sh`:
+
+```bash
+echo "Seeding example..."
+node scripts/seed-example.mjs
+```
+
+5. Il Dockerfile copia automaticamente tutti i file in `scripts/`
 
 ## Internationalization (i18n) - IMPORTANT
 
@@ -336,14 +407,26 @@ import { useRouter } from '@/i18n/navigation'
 
 ## DO NOT
 
+### General
+
 - Do not use `middleware.ts` - Next.js 16 uses `proxy.ts`
 - Do not use deprecated `getServerSession` - use `auth.api.getSession`
 - Do not use `pages/` directory - use App Router only
 - Do not use `ports:` in docker-compose.yaml for Coolify (proxy conflicts)
 - Do not hardcode secrets - use environment variables
 - Do not use Resend - project uses Nodemailer (SMTP)
+
+### i18n
+
 - **Do not hardcode UI strings** - use `useTranslations()` from next-intl
 - **Do not use `next/link` or `next/navigation`** - use `@/i18n/navigation`
+
+### Database & Migrations
+
+- **Do not run migrations during Docker build** - il DB non è accessibile
+- **Do not use `drizzle-kit migrate` in build script** - fallirà senza DATABASE_URL
+- **Do not use tsx in runtime scripts** - usa `.mjs` con ESM puro
+- **Do not forget to create both .ts and .mjs versions** - servono entrambi per dev e prod
 
 ## Documentation References
 
