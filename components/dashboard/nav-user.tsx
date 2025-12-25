@@ -29,7 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { authClient } from '@/lib/auth-client'
+import { authClient, useSession } from '@/lib/auth-client'
 
 interface NavUserProps {
   user: {
@@ -45,6 +45,14 @@ export function NavUser({ user }: NavUserProps) {
   const router = useRouter()
   const { isMobile } = useSidebar()
   const { setTheme } = useTheme()
+  const { data: session } = useSession()
+
+  const handleThemeChange = async (theme: 'light' | 'dark' | 'system') => {
+    setTheme(theme)
+    if (session?.user) {
+      await authClient.updateUser({ theme })
+    }
+  }
 
   const initials =
     user.name
@@ -113,15 +121,15 @@ export function NavUser({ user }: NavUserProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => setTheme('light')}>
+              <DropdownMenuItem onClick={() => handleThemeChange('light')}>
                 <Sun className="mr-2 h-4 w-4" />
                 {tTheme('light')}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('dark')}>
+              <DropdownMenuItem onClick={() => handleThemeChange('dark')}>
                 <Moon className="mr-2 h-4 w-4" />
                 {tTheme('dark')}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('system')}>
+              <DropdownMenuItem onClick={() => handleThemeChange('system')}>
                 <Monitor className="mr-2 h-4 w-4" />
                 {tTheme('system')}
               </DropdownMenuItem>
