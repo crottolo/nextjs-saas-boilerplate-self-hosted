@@ -466,6 +466,13 @@
       "activated": "Předplatné úspěšně aktivováno!",
       "updated": "Plán úspěšně aktualizován!",
       "paymentSuccess": "Platba proběhla úspěšně! Předplatné aktivováno."
+    },
+    "downgrade": {
+      "title": "Nelze snížit plán",
+      "description": "Před přechodem na tento plán musíte smazat některé pracovní prostory.",
+      "alertTitle": "Příliš mnoho pracovních prostorů",
+      "alertText": "Máte {current} pracovních prostorů, ale tento plán povoluje pouze {max}. Nejdříve smažte {toDelete} pracovní(ch) prostor(ů).",
+      "manageOrgs": "Spravovat pracovní prostory"
     }
   },
   "help": {

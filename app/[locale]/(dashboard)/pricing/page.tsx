@@ -26,6 +26,14 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
@@ -65,6 +73,12 @@ export default function PricingPage() {
     cancelAtPeriodEnd?: boolean
     periodEnd?: string
   } | null>(null)
+  const [downgradeDialog, setDowngradeDialog] = useState<{
+    open: boolean
+    currentOrgs: number
+    targetMax: number
+    toDelete: number
+  }>({ open: false, currentOrgs: 0, targetMax: 0, toDelete: 0 })
 
   // Check if user is admin
   useEffect(() => {
@@ -161,8 +175,16 @@ export default function PricingPage() {
 
       if (res.ok && data.url) {
         window.location.href = data.url
+      } else if (data.error === 'downgrade_blocked' && data.details) {
+        // Show downgrade dialog with details
+        setDowngradeDialog({
+          open: true,
+          currentOrgs: data.details.currentOrgs,
+          targetMax: data.details.targetMax,
+          toDelete: data.details.toDelete,
+        })
       } else {
-        toast.error(data.error || 'Failed to start checkout')
+        toast.error(data.message || data.error || 'Failed to start checkout')
       }
     } catch {
       toast.error('Failed to start upgrade')
@@ -474,6 +496,53 @@ export default function PricingPage() {
           </Link>
         </p>
       </div>
+
+      {/* Downgrade Blocked Dialog */}
+      <Dialog
+        open={downgradeDialog.open}
+        onOpenChange={(open) =>
+          setDowngradeDialog((prev) => ({ ...prev, open }))
+        }
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-orange-500" />
+              {t('downgrade.title')}
+            </DialogTitle>
+            <DialogDescription>{t('downgrade.description')}</DialogDescription>
+          </DialogHeader>
+
+          <Alert variant="destructive">
+            <Building2 className="h-4 w-4" />
+            <AlertTitle>{t('downgrade.alertTitle')}</AlertTitle>
+            <AlertDescription>
+              {t('downgrade.alertText', {
+                current: downgradeDialog.currentOrgs,
+                max: downgradeDialog.targetMax,
+                toDelete: downgradeDialog.toDelete,
+              })}
+            </AlertDescription>
+          </Alert>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() =>
+                setDowngradeDialog((prev) => ({ ...prev, open: false }))
+              }
+            >
+              {tCommon('cancel')}
+            </Button>
+            <Button asChild>
+              <Link href="/organizations">
+                <Building2 className="mr-2 h-4 w-4" />
+                {t('downgrade.manageOrgs')}
+              </Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

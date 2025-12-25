@@ -466,6 +466,13 @@
       "activated": "Abbonamento attivato con successo!",
       "updated": "Piano aggiornato con successo!",
       "paymentSuccess": "Pagamento riuscito! Abbonamento attivato."
+    },
+    "downgrade": {
+      "title": "Impossibile effettuare il downgrade",
+      "description": "Devi eliminare alcuni workspace prima di passare a questo piano.",
+      "alertTitle": "Troppi Workspace",
+      "alertText": "Hai {current} workspace, ma questo piano ne consente solo {max}. Elimina prima {toDelete} workspace.",
+      "manageOrgs": "Gestisci Workspace"
     }
   },
   "help": {

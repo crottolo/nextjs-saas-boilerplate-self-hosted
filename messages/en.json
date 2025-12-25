@@ -466,6 +466,13 @@
       "activated": "Subscription activated successfully!",
       "updated": "Plan updated successfully!",
       "paymentSuccess": "Payment successful! Subscription activated."
+    },
+    "downgrade": {
+      "title": "Cannot Downgrade Plan",
+      "description": "You need to delete some workspaces before downgrading to this plan.",
+      "alertTitle": "Too Many Workspaces",
+      "alertText": "You have {current} workspaces, but this plan only allows {max}. Please delete {toDelete} workspace(s) first.",
+      "manageOrgs": "Manage Workspaces"
     }
   },
   "help": {
