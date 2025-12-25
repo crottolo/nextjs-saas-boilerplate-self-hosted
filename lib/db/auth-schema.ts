@@ -7,7 +7,9 @@ import {
   index,
   uniqueIndex,
   integer,
+  jsonb,
 } from 'drizzle-orm/pg-core'
+import type { LocalizedField, LocalizedArray } from './localized'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -227,8 +229,8 @@ export const notification = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
     type: text('type').notNull(),
-    title: text('title').notNull(),
-    message: text('message'),
+    title: jsonb('title').$type<LocalizedField>().notNull(),
+    message: jsonb('message').$type<LocalizedField>(),
     link: text('link'),
     read: boolean('read').default(false).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -277,11 +279,11 @@ export const stripeProduct = pgTable(
     stripeProductId: text('stripe_product_id').notNull(),
     stripePriceId: text('stripe_price_id').notNull().unique(),
     name: text('name').notNull(),
-    description: text('description'),
+    description: jsonb('description').$type<LocalizedField>(),
     price: integer('price').notNull(), // in cents
     currency: text('currency').default('eur').notNull(),
     interval: text('interval').default('month'), // month, year, null for one-time
-    features: text('features'), // JSON array
+    features: jsonb('features').$type<LocalizedArray>(),
     limits: text('limits'), // JSON: { projects: number, storage: number }
     trialDays: integer('trial_days').default(0),
     enabled: boolean('enabled').default(false).notNull(),

@@ -10,6 +10,7 @@ import {
   notifyAllUsers,
   NotificationType,
 } from '@/lib/notifications'
+import type { LocalizedField } from '@/lib/db/localized'
 
 // GET: List users for selection
 export async function GET(request: NextRequest) {
@@ -84,14 +85,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { type, title, message, link, target, userIds } = body as {
       type: NotificationType
-      title: string
-      message?: string
+      title: LocalizedField
+      message?: LocalizedField
       link?: string
       target: 'all' | 'selected'
       userIds?: string[]
     }
 
-    if (!type || !title) {
+    if (!type || !title || Object.keys(title).length === 0) {
       return NextResponse.json(
         { error: 'type and title are required' },
         { status: 400 }

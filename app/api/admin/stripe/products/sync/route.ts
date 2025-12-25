@@ -57,11 +57,11 @@ export async function POST() {
           stripeProductId: product.id,
           stripePriceId: price.id,
           name: product.name,
-          description: product.description || null,
+          description: product.description ? { en: product.description } : null,
           price: price.unit_amount || 0,
           currency: price.currency,
           interval: price.recurring?.interval || null,
-          features: JSON.stringify([]),
+          features: [],
           limits: JSON.stringify({ projects: 3, storage: 1 }),
           trialDays: 0,
           enabled: false, // Admin must enable manually

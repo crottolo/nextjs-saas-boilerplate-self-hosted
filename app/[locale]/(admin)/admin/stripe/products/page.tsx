@@ -7,6 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { TranslationInput } from '@/components/admin/translation-input'
+import type { LocalizedField, LocalizedArray } from '@/lib/db/localized'
+import { getLocalized, getLocalizedArray } from '@/lib/db/localized'
 import {
   Table,
   TableBody,
@@ -56,11 +59,11 @@ interface Product {
   stripeProductId: string
   stripePriceId: string
   name: string
-  description: string | null
+  description: LocalizedField | null
   price: number
   currency: string
   interval: string | null
-  features: string | null
+  features: LocalizedArray | null
   limits: string | null
   trialDays: number
   enabled: boolean
@@ -105,7 +108,7 @@ export default function AdminStripeProductsPage() {
 
   // Form states
   const [formName, setFormName] = useState('')
-  const [formDescription, setFormDescription] = useState('')
+  const [formDescription, setFormDescription] = useState<LocalizedField>({})
   const [formPrice, setFormPrice] = useState('')
   const [formCurrency, setFormCurrency] = useState('eur')
   const [formInterval, setFormInterval] = useState('month')
@@ -179,18 +182,25 @@ export default function AdminStripeProductsPage() {
   async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     try {
+      // Convert features textarea to LocalizedArray (each line becomes { en: line })
+      const featuresArray: LocalizedArray = formFeatures
+        ? formFeatures
+            .split('\n')
+            .filter((f) => f.trim())
+            .map((f) => ({ en: f.trim() }))
+        : []
+
       const res = await fetch('/api/admin/stripe/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formName,
-          description: formDescription || null,
+          description:
+            Object.keys(formDescription).length > 0 ? formDescription : null,
           price: Math.round(parseFloat(formPrice) * 100),
           currency: formCurrency,
           interval: formInterval || null,
-          features: formFeatures
-            ? formFeatures.split('\n').filter((f) => f.trim())
-            : [],
+          features: featuresArray.length > 0 ? featuresArray : null,
           trialDays: parseInt(formTrialDays) || 0,
           sortOrder: parseInt(formSortOrder) || 0,
           popular: formPopular,
@@ -214,6 +224,14 @@ export default function AdminStripeProductsPage() {
   async function handleUpdate() {
     if (!selectedProduct) return
     try {
+      // Convert features textarea to LocalizedArray (each line becomes { en: line })
+      const featuresArray: LocalizedArray = formFeatures
+        ? formFeatures
+            .split('\n')
+            .filter((f) => f.trim())
+            .map((f) => ({ en: f.trim() }))
+        : []
+
       const res = await fetch(
         `/api/admin/stripe/products/${selectedProduct.id}`,
         {
@@ -221,10 +239,9 @@ export default function AdminStripeProductsPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: formName,
-            description: formDescription || null,
-            features: formFeatures
-              ? formFeatures.split('\n').filter((f) => f.trim())
-              : [],
+            description:
+              Object.keys(formDescription).length > 0 ? formDescription : null,
+            features: featuresArray.length > 0 ? featuresArray : null,
             trialDays: parseInt(formTrialDays) || 0,
             sortOrder: parseInt(formSortOrder) || 0,
             popular: formPopular,
@@ -294,12 +311,15 @@ export default function AdminStripeProductsPage() {
   function openEditDialog(product: Product) {
     setSelectedProduct(product)
     setFormName(product.name)
-    setFormDescription(product.description || '')
+    setFormDescription(product.description || {})
     setFormPrice((product.price / 100).toString())
     setFormCurrency(product.currency)
     setFormInterval(product.interval || 'month')
+    // Convert LocalizedArray to newline-separated string (using English values)
     setFormFeatures(
-      product.features ? JSON.parse(product.features).join('\n') : ''
+      product.features
+        ? getLocalizedArray(product.features, 'en').join('\n')
+        : ''
     )
     setFormTrialDays(product.trialDays.toString())
     setFormSortOrder(product.sortOrder.toString())
@@ -310,7 +330,7 @@ export default function AdminStripeProductsPage() {
 
   function resetForm() {
     setFormName('')
-    setFormDescription('')
+    setFormDescription({})
     setFormPrice('')
     setFormCurrency('eur')
     setFormInterval('month')
@@ -381,15 +401,11 @@ export default function AdminStripeProductsPage() {
                       required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description">{t('form.description')}</Label>
-                    <Input
-                      id="description"
-                      value={formDescription}
-                      onChange={(e) => setFormDescription(e.target.value)}
-                      placeholder={t('form.descriptionPlaceholder')}
-                    />
-                  </div>
+                  <TranslationInput
+                    label={t('form.description')}
+                    value={formDescription}
+                    onChange={setFormDescription}
+                  />
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="price">{t('form.price')} *</Label>
@@ -547,7 +563,7 @@ export default function AdminStripeProductsPage() {
                       <span className="font-medium">{product.name}</span>
                       {product.description && (
                         <p className="text-sm text-muted-foreground truncate max-w-[200px]">
-                          {product.description}
+                          {getLocalized(product.description, 'en')}
                         </p>
                       )}
                     </TableCell>
@@ -707,14 +723,11 @@ export default function AdminStripeProductsPage() {
                 onChange={(e) => setFormName(e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="editDescription">{t('form.description')}</Label>
-              <Input
-                id="editDescription"
-                value={formDescription}
-                onChange={(e) => setFormDescription(e.target.value)}
-              />
-            </div>
+            <TranslationInput
+              label={t('form.description')}
+              value={formDescription}
+              onChange={setFormDescription}
+            />
             <div className="space-y-2">
               <Label>{t('editDialog.priceReadonly')}</Label>
               <Input

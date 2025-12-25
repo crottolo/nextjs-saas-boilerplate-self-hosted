@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { GalleryVerticalEnd } from 'lucide-react'
 import { LoginForm } from '@/components/auth/login-form'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LocaleSwitcher } from '@/components/locale-switcher'
 import { authClient } from '@/lib/auth-client'
 
 function LoginPageContent() {
@@ -46,7 +47,8 @@ function LoginPageContent() {
             </div>
             AuthApp
           </Link>
-          <div className="md:ml-auto">
+          <div className="md:ml-auto flex items-center gap-2">
+            <LocaleSwitcher />
             <ThemeToggle />
           </div>
         </div>
