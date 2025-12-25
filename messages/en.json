@@ -296,6 +296,7 @@
     "title": "Organizations",
     "description": "Manage your organizations and teams",
     "create": "Create Organization",
+    "upgrade": "Upgrade Plan",
     "empty": "You don't have any organizations yet.",
     "createFirst": "Create your first organization",
     "active": "Active",
@@ -310,7 +311,14 @@
       "slugPlaceholder": "acme-inc",
       "submit": "Create Organization",
       "submitting": "Creating...",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "limitReached": {
+        "title": "Organization Limit Reached",
+        "description": "You've reached the maximum number of organizations for your plan.",
+        "currentUsage": "Current Usage",
+        "usageText": "You have {current} of {max} organizations on the {plan} plan.",
+        "upgrade": "Upgrade Plan"
+      }
     },
     "detail": {
       "title": "Organization",
@@ -421,6 +429,17 @@
   "pricing": {
     "title": "Choose your plan",
     "description": "Start free and upgrade as you grow",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "savePercent": "Save {percent}%",
+    "free": "Free",
+    "freePlan": "Free Plan",
+    "noPrice": "Coming soon",
+    "limits": {
+      "organizations": "{count} organizations",
+      "credits": "{count} credits",
+      "unlimitedOrgs": "Unlimited organizations"
+    },
     "noPlans": {
       "title": "No plans available",
       "description": "Pricing plans have not been configured yet.",
@@ -447,6 +466,13 @@
       "activated": "Subscription activated successfully!",
       "updated": "Plan updated successfully!",
       "paymentSuccess": "Payment successful! Subscription activated."
+    },
+    "downgrade": {
+      "title": "Cannot Downgrade Plan",
+      "description": "You need to delete some workspaces before downgrading to this plan.",
+      "alertTitle": "Too Many Workspaces",
+      "alertText": "You have {current} workspaces, but this plan only allows {max}. Please delete {toDelete} workspace(s) first.",
+      "manageOrgs": "Manage Workspaces"
     }
   },
   "help": {
@@ -807,7 +833,9 @@
           "features": "Features (one per line)",
           "featuresPlaceholder": "20 projects\n50 GB storage\nPriority support",
           "sortOrder": "Sort Order",
-          "popular": "Popular"
+          "popular": "Popular",
+          "plan": "Plan",
+          "noPlan": "No plan"
         },
         "table": {
           "order": "Order",
@@ -878,6 +906,58 @@
         "toast": {
           "fetchFailed": "Failed to fetch subscriptions"
         }
+      }
+    },
+    "plans": {
+      "title": "Plans",
+      "description": "Manage subscription plans and limits",
+      "addPlan": "Add Plan",
+      "editPlan": "Edit Plan",
+      "createDialog": {
+        "title": "Create Plan",
+        "description": "Create a new subscription plan."
+      },
+      "editDialog": {
+        "title": "Edit Plan",
+        "description": "Update plan details and limits."
+      },
+      "deleteDialog": {
+        "title": "Delete Plan",
+        "description": "Are you sure you want to delete this plan? This action cannot be undone.",
+        "cannotDelete": "Cannot delete plan with linked Stripe products."
+      },
+      "form": {
+        "id": "Plan ID",
+        "idPlaceholder": "pro",
+        "idHint": "URL-friendly identifier (e.g., free, starter, pro)",
+        "name": "Name",
+        "description": "Description",
+        "price": "Indicative Price (€)",
+        "credits": "Credits",
+        "maxOrganizations": "Max Organizations",
+        "maxOrganizationsHint": "-1 for unlimited",
+        "sortOrder": "Sort Order",
+        "isDefault": "Default Plan"
+      },
+      "table": {
+        "id": "ID",
+        "name": "Name",
+        "price": "Price",
+        "credits": "Credits",
+        "maxOrgs": "Max Orgs",
+        "order": "Order",
+        "default": "Default",
+        "linkedProducts": "Products",
+        "unlimited": "Unlimited",
+        "empty": "No plans. Create one to get started."
+      },
+      "toast": {
+        "created": "Plan created",
+        "updated": "Plan updated",
+        "deleted": "Plan deleted",
+        "cannotDelete": "Cannot delete plan with linked Stripe products",
+        "fetchFailed": "Failed to fetch plans",
+        "saveFailed": "Failed to save plan"
       }
     }
   },

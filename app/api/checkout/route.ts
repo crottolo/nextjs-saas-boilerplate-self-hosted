@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { db } from '@/lib/db'
-import { user } from '@/lib/db/auth-schema'
+import { user, stripeProduct, plans } from '@/lib/db/auth-schema'
 import { eq } from 'drizzle-orm'
 import Stripe from 'stripe'
+import { canDowngradeToPlan, getUserPlan } from '@/lib/plans'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-12-15.clover',
@@ -87,6 +88,37 @@ export async function POST(request: NextRequest) {
           { error: 'You are already on this plan' },
           { status: 400 }
         )
+      }
+
+      // Get target plan from the priceId
+      const [targetProduct] = await db
+        .select({ planId: stripeProduct.planId })
+        .from(stripeProduct)
+        .where(eq(stripeProduct.stripePriceId, priceId))
+        .limit(1)
+
+      if (targetProduct?.planId) {
+        // Check if this is a downgrade and if it's allowed
+        const downgradeCheck = await canDowngradeToPlan(
+          session.user.id,
+          targetProduct.planId
+        )
+
+        if (!downgradeCheck.allowed) {
+          const excess = downgradeCheck.current - downgradeCheck.targetMax
+          return NextResponse.json(
+            {
+              error: 'downgrade_blocked',
+              message: downgradeCheck.reason,
+              details: {
+                currentOrgs: downgradeCheck.current,
+                targetMax: downgradeCheck.targetMax,
+                toDelete: excess,
+              },
+            },
+            { status: 400 }
+          )
+        }
       }
 
       const returnUrl =

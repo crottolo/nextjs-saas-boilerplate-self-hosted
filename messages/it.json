@@ -296,6 +296,7 @@
     "title": "Organizzazioni",
     "description": "Gestisci le tue organizzazioni e i team",
     "create": "Crea organizzazione",
+    "upgrade": "Passa a un piano superiore",
     "empty": "Non hai ancora nessuna organizzazione.",
     "createFirst": "Crea la tua prima organizzazione",
     "active": "Attiva",
@@ -310,7 +311,14 @@
       "slugPlaceholder": "acme-srl",
       "submit": "Crea organizzazione",
       "submitting": "Creazione...",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "limitReached": {
+        "title": "Limite organizzazioni raggiunto",
+        "description": "Hai raggiunto il numero massimo di organizzazioni per il tuo piano.",
+        "currentUsage": "Utilizzo attuale",
+        "usageText": "Hai {current} di {max} organizzazioni con il piano {plan}.",
+        "upgrade": "Passa a un piano superiore"
+      }
     },
     "detail": {
       "title": "Organizzazione",
@@ -421,6 +429,17 @@
   "pricing": {
     "title": "Scegli il tuo piano",
     "description": "Inizia gratis e aggiorna man mano che cresci",
+    "monthly": "Mensile",
+    "yearly": "Annuale",
+    "savePercent": "Risparmia {percent}%",
+    "free": "Gratis",
+    "freePlan": "Piano Gratuito",
+    "noPrice": "Prossimamente",
+    "limits": {
+      "organizations": "{count} organizzazioni",
+      "credits": "{count} crediti",
+      "unlimitedOrgs": "Organizzazioni illimitate"
+    },
     "noPlans": {
       "title": "Nessun piano disponibile",
       "description": "I piani tariffari non sono ancora stati configurati.",
@@ -447,6 +466,13 @@
       "activated": "Abbonamento attivato con successo!",
       "updated": "Piano aggiornato con successo!",
       "paymentSuccess": "Pagamento riuscito! Abbonamento attivato."
+    },
+    "downgrade": {
+      "title": "Impossibile effettuare il downgrade",
+      "description": "Devi eliminare alcuni workspace prima di passare a questo piano.",
+      "alertTitle": "Troppi Workspace",
+      "alertText": "Hai {current} workspace, ma questo piano ne consente solo {max}. Elimina prima {toDelete} workspace.",
+      "manageOrgs": "Gestisci Workspace"
     }
   },
   "help": {
@@ -807,7 +833,9 @@
           "features": "Funzionalità (una per riga)",
           "featuresPlaceholder": "20 progetti\n50 GB di spazio\nSupporto prioritario",
           "sortOrder": "Ordine",
-          "popular": "Popolare"
+          "popular": "Popolare",
+          "plan": "Piano",
+          "noPlan": "Nessun piano"
         },
         "table": {
           "order": "Ordine",
@@ -878,6 +906,58 @@
         "toast": {
           "fetchFailed": "Impossibile recuperare gli abbonamenti"
         }
+      }
+    },
+    "plans": {
+      "title": "Piani",
+      "description": "Gestisci i piani di abbonamento e i limiti",
+      "addPlan": "Aggiungi Piano",
+      "editPlan": "Modifica Piano",
+      "createDialog": {
+        "title": "Crea Piano",
+        "description": "Crea un nuovo piano di abbonamento."
+      },
+      "editDialog": {
+        "title": "Modifica Piano",
+        "description": "Aggiorna i dettagli e i limiti del piano."
+      },
+      "deleteDialog": {
+        "title": "Elimina Piano",
+        "description": "Sei sicuro di voler eliminare questo piano? Questa azione non può essere annullata.",
+        "cannotDelete": "Impossibile eliminare un piano con prodotti Stripe collegati."
+      },
+      "form": {
+        "id": "ID Piano",
+        "idPlaceholder": "pro",
+        "idHint": "Identificatore URL-friendly (es: free, starter, pro)",
+        "name": "Nome",
+        "description": "Descrizione",
+        "price": "Prezzo Indicativo (€)",
+        "credits": "Crediti",
+        "maxOrganizations": "Max Organizzazioni",
+        "maxOrganizationsHint": "-1 per illimitato",
+        "sortOrder": "Ordine",
+        "isDefault": "Piano Default"
+      },
+      "table": {
+        "id": "ID",
+        "name": "Nome",
+        "price": "Prezzo",
+        "credits": "Crediti",
+        "maxOrgs": "Max Org",
+        "order": "Ordine",
+        "default": "Default",
+        "linkedProducts": "Prodotti",
+        "unlimited": "Illimitato",
+        "empty": "Nessun piano. Creane uno per iniziare."
+      },
+      "toast": {
+        "created": "Piano creato",
+        "updated": "Piano aggiornato",
+        "deleted": "Piano eliminato",
+        "cannotDelete": "Impossibile eliminare un piano con prodotti Stripe collegati",
+        "fetchFailed": "Impossibile recuperare i piani",
+        "saveFailed": "Impossibile salvare il piano"
       }
     }
   },

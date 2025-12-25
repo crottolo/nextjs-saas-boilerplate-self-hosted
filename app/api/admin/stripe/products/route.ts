@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
       enabled = false,
       sortOrder = 0,
       popular = false,
+      planId = null,
     } = body as {
       name: string
       description?: LocalizedField
@@ -73,6 +74,7 @@ export async function POST(request: NextRequest) {
       enabled?: boolean
       sortOrder?: number
       popular?: boolean
+      planId?: string | null
     }
 
     if (!name || price === undefined) {
@@ -125,6 +127,7 @@ export async function POST(request: NextRequest) {
       enabled,
       sortOrder,
       popular,
+      planId: planId || null,
     })
 
     const [created] = await db

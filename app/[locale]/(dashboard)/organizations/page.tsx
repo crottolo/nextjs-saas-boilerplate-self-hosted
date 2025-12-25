@@ -15,6 +15,9 @@ import {
 } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Sparkles, Infinity, Building2 } from 'lucide-react'
 
 interface Organization {
   id: string
@@ -23,25 +26,46 @@ interface Organization {
   members?: { id: string }[]
 }
 
+interface UserLimits {
+  plan: {
+    id: string
+    name: string
+    maxOrganizations: number
+  }
+  usage: {
+    organizationsOwned: number
+  }
+  canCreateOrganization: boolean
+}
+
 export default function OrganizationsPage() {
   const t = useTranslations('organizations')
   const tCommon = useTranslations('common')
   const router = useRouter()
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
+  const [limits, setLimits] = useState<UserLimits | null>(null)
 
   // Use reactive hook for active organization
   const { data: activeOrg } = authClient.useActiveOrganization()
 
   useEffect(() => {
-    async function fetchOrgs() {
-      const { data } = await authClient.organization.list()
-      if (data) {
-        setOrganizations(data as Organization[])
+    async function fetchData() {
+      const [orgsRes, limitsRes] = await Promise.all([
+        authClient.organization.list(),
+        fetch('/api/user/limits')
+          .then((r) => r.json())
+          .catch(() => null),
+      ])
+      if (orgsRes.data) {
+        setOrganizations(orgsRes.data as Organization[])
+      }
+      if (limitsRes && !limitsRes.error) {
+        setLimits(limitsRes)
       }
       setLoading(false)
     }
-    fetchOrgs()
+    fetchData()
   }, [])
 
   async function handleToggleActive(orgId: string, isCurrentlyActive: boolean) {
@@ -57,6 +81,15 @@ export default function OrganizationsPage() {
     return <p>{tCommon('loading')}</p>
   }
 
+  // Calculate usage percentage for progress bar
+  const usagePercent = limits
+    ? limits.plan.maxOrganizations === -1
+      ? 0
+      : (limits.usage.organizationsOwned / limits.plan.maxOrganizations) * 100
+    : 0
+  const isAtLimit = limits ? !limits.canCreateOrganization : false
+  const isNearLimit = usagePercent >= 80 && !isAtLimit
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -64,9 +97,50 @@ export default function OrganizationsPage() {
           <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">{t('description')}</p>
         </div>
-        <Link href="/organizations/create">
-          <Button>{t('create')}</Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          {/* Limits Badge */}
+          {limits && (
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={
+                  isAtLimit
+                    ? 'destructive'
+                    : isNearLimit
+                      ? 'secondary'
+                      : 'outline'
+                }
+                className="flex items-center gap-1"
+              >
+                <Building2 className="h-3 w-3" />
+                {limits.plan.maxOrganizations === -1 ? (
+                  <span className="flex items-center gap-1">
+                    {limits.usage.organizationsOwned}
+                    <Infinity className="h-3 w-3" />
+                  </span>
+                ) : (
+                  `${limits.usage.organizationsOwned}/${limits.plan.maxOrganizations}`
+                )}
+              </Badge>
+              {limits.plan.maxOrganizations !== -1 && (
+                <Progress value={usagePercent} className="w-16 h-2" />
+              )}
+            </div>
+          )}
+
+          {/* Create Button or Upgrade Link */}
+          {isAtLimit ? (
+            <Button asChild variant="default">
+              <Link href="/pricing">
+                <Sparkles className="mr-2 h-4 w-4" />
+                {t('upgrade')}
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link href="/organizations/create">{t('create')}</Link>
+            </Button>
+          )}
+        </div>
       </div>
 
       {organizations.length === 0 ? (

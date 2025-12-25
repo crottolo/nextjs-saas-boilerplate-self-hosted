@@ -293,24 +293,32 @@
     }
   },
   "organizations": {
-    "title": "Organizations",
-    "description": "Manage your organizations and teams",
-    "create": "Create Organization",
-    "empty": "You don't have any organizations yet.",
-    "createFirst": "Create your first organization",
-    "active": "Active",
+    "title": "Organizace",
+    "description": "Spravujte své organizace a týmy",
+    "create": "Vytvořit organizaci",
+    "upgrade": "Upgradovat plán",
+    "empty": "Zatím nemáte žádné organizace.",
+    "createFirst": "Vytvořte svou první organizaci",
+    "active": "Aktivní",
     "role": "Role: {role}",
-    "manage": "Manage",
+    "manage": "Spravovat",
     "createPage": {
-      "title": "Create Organization",
-      "description": "Create a new organization to collaborate with your team",
-      "name": "Organization Name",
-      "namePlaceholder": "Acme Inc.",
-      "slug": "URL Slug",
-      "slugPlaceholder": "acme-inc",
-      "submit": "Create Organization",
-      "submitting": "Creating...",
-      "cancel": "Cancel"
+      "title": "Vytvořit organizaci",
+      "description": "Vytvořte novou organizaci pro spolupráci s vaším týmem",
+      "name": "Název organizace",
+      "namePlaceholder": "Acme s.r.o.",
+      "slug": "URL slug",
+      "slugPlaceholder": "acme-sro",
+      "submit": "Vytvořit organizaci",
+      "submitting": "Vytváření...",
+      "cancel": "Zrušit",
+      "limitReached": {
+        "title": "Dosažen limit organizací",
+        "description": "Dosáhli jste maximálního počtu organizací pro váš plán.",
+        "currentUsage": "Aktuální využití",
+        "usageText": "Máte {current} z {max} organizací na plánu {plan}.",
+        "upgrade": "Upgradovat plán"
+      }
     },
     "detail": {
       "title": "Organization",
@@ -419,34 +427,52 @@
     "manage": "Manage Organizations"
   },
   "pricing": {
-    "title": "Choose your plan",
-    "description": "Start free and upgrade as you grow",
-    "noPlans": {
-      "title": "No plans available",
-      "description": "Pricing plans have not been configured yet.",
-      "configure": "Configure Stripe products"
+    "title": "Vyberte si plán",
+    "description": "Začněte zdarma a upgradujte podle potřeby",
+    "monthly": "Měsíčně",
+    "yearly": "Ročně",
+    "savePercent": "Ušetřete {percent}%",
+    "free": "Zdarma",
+    "freePlan": "Bezplatný plán",
+    "noPrice": "Již brzy",
+    "limits": {
+      "organizations": "{count} organizací",
+      "credits": "{count} kreditů",
+      "unlimitedOrgs": "Neomezené organizace"
     },
-    "currentPlan": "Current plan: {name}",
-    "trial": "Trial",
-    "active": "Active",
-    "cancelsOn": "Cancels on",
-    "renewsOn": "Renews on",
-    "manageSubscription": "Manage Subscription",
-    "currentPlanBadge": "Current Plan",
-    "mostPopular": "Most Popular",
+    "noPlans": {
+      "title": "Žádné plány nejsou k dispozici",
+      "description": "Cenové plány ještě nebyly nakonfigurovány.",
+      "configure": "Konfigurovat Stripe produkty"
+    },
+    "currentPlan": "Aktuální plán: {name}",
+    "trial": "Zkušební",
+    "active": "Aktivní",
+    "cancelsOn": "Končí",
+    "renewsOn": "Obnovuje se",
+    "manageSubscription": "Spravovat předplatné",
+    "currentPlanBadge": "Aktuální plán",
+    "mostPopular": "Nejoblíbenější",
     "perInterval": "/{interval}",
-    "trialDays": "{days}-day free trial",
-    "getStarted": "Get Started",
-    "switchPlan": "Switch Plan",
+    "trialDays": "{days} dní zdarma",
+    "getStarted": "Začít",
+    "switchPlan": "Změnit plán",
     "footer": {
-      "guarantee": "All plans include a 14-day money-back guarantee",
-      "custom": "Need something custom?",
-      "contactUs": "Contact us"
+      "guarantee": "Všechny plány zahrnují 14denní záruku vrácení peněz",
+      "custom": "Potřebujete něco na míru?",
+      "contactUs": "Kontaktujte nás"
     },
     "toast": {
-      "activated": "Subscription activated successfully!",
-      "updated": "Plan updated successfully!",
-      "paymentSuccess": "Payment successful! Subscription activated."
+      "activated": "Předplatné úspěšně aktivováno!",
+      "updated": "Plán úspěšně aktualizován!",
+      "paymentSuccess": "Platba proběhla úspěšně! Předplatné aktivováno."
+    },
+    "downgrade": {
+      "title": "Nelze snížit plán",
+      "description": "Před přechodem na tento plán musíte smazat některé pracovní prostory.",
+      "alertTitle": "Příliš mnoho pracovních prostorů",
+      "alertText": "Máte {current} pracovních prostorů, ale tento plán povoluje pouze {max}. Nejdříve smažte {toDelete} pracovní(ch) prostor(ů).",
+      "manageOrgs": "Spravovat pracovní prostory"
     }
   },
   "help": {
@@ -807,7 +833,9 @@
           "features": "Funkce (jedna na řádek)",
           "featuresPlaceholder": "20 projektů\n50 GB úložiště\nPrioritní podpora",
           "sortOrder": "Pořadí",
-          "popular": "Populární"
+          "popular": "Populární",
+          "plan": "Plán",
+          "noPlan": "Žádný plán"
         },
         "table": {
           "order": "Pořadí",
@@ -879,12 +907,64 @@
           "fetchFailed": "Nepodařilo se načíst předplatná"
         }
       }
+    },
+    "plans": {
+      "title": "Plány",
+      "description": "Správa předplatných plánů a limitů",
+      "addPlan": "Přidat Plán",
+      "editPlan": "Upravit Plán",
+      "createDialog": {
+        "title": "Vytvořit Plán",
+        "description": "Vytvořit nový předplatný plán."
+      },
+      "editDialog": {
+        "title": "Upravit Plán",
+        "description": "Aktualizovat detaily a limity plánu."
+      },
+      "deleteDialog": {
+        "title": "Smazat Plán",
+        "description": "Opravdu chcete smazat tento plán? Tuto akci nelze vrátit zpět.",
+        "cannotDelete": "Nelze smazat plán s propojenými Stripe produkty."
+      },
+      "form": {
+        "id": "ID Plánu",
+        "idPlaceholder": "pro",
+        "idHint": "URL identifikátor (např: free, starter, pro)",
+        "name": "Název",
+        "description": "Popis",
+        "price": "Orientační Cena (€)",
+        "credits": "Kredity",
+        "maxOrganizations": "Max Organizací",
+        "maxOrganizationsHint": "-1 pro neomezeno",
+        "sortOrder": "Pořadí",
+        "isDefault": "Výchozí Plán"
+      },
+      "table": {
+        "id": "ID",
+        "name": "Název",
+        "price": "Cena",
+        "credits": "Kredity",
+        "maxOrgs": "Max Org",
+        "order": "Pořadí",
+        "default": "Výchozí",
+        "linkedProducts": "Produkty",
+        "unlimited": "Neomezeno",
+        "empty": "Žádné plány. Vytvořte jeden pro začátek."
+      },
+      "toast": {
+        "created": "Plán vytvořen",
+        "updated": "Plán aktualizován",
+        "deleted": "Plán smazán",
+        "cannotDelete": "Nelze smazat plán s propojenými Stripe produkty",
+        "fetchFailed": "Nepodařilo se načíst plány",
+        "saveFailed": "Nepodařilo se uložit plán"
+      }
     }
   },
   "notifications": {
-    "title": "Notifications",
-    "markAllRead": "Mark all read",
-    "empty": "No notifications"
+    "title": "Oznámení",
+    "markAllRead": "Označit vše jako přečtené",
+    "empty": "Žádná oznámení"
   },
   "impersonation": {
     "message": "You are currently impersonating this user",

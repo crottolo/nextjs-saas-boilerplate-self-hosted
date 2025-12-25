@@ -11,6 +11,20 @@ import {
 } from 'drizzle-orm/pg-core'
 import type { LocalizedField, LocalizedArray } from './localized'
 
+// Plans table for subscription limits
+export const plans = pgTable('plans', {
+  id: text('id').primaryKey(), // 'free', 'starter', 'plus', 'pro', 'agency'
+  name: jsonb('name').$type<LocalizedField>().notNull(),
+  description: jsonb('description').$type<LocalizedField>(),
+  price: integer('price').notNull().default(0), // Indicative price in cents EUR
+  credits: integer('credits').notNull().default(0),
+  maxOrganizations: integer('max_organizations').notNull().default(1), // -1 = unlimited
+  sortOrder: integer('sort_order').notNull().default(0),
+  isDefault: boolean('is_default').default(false),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').$onUpdate(() => new Date()),
+})
+
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -289,6 +303,7 @@ export const stripeProduct = pgTable(
     enabled: boolean('enabled').default(false).notNull(),
     sortOrder: integer('sort_order').default(0),
     popular: boolean('popular').default(false),
+    planId: text('plan_id').references(() => plans.id), // FK to plans table
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
       .defaultNow()
@@ -297,6 +312,7 @@ export const stripeProduct = pgTable(
   (table) => [
     index('stripeProduct_enabled_idx').on(table.enabled),
     index('stripeProduct_sortOrder_idx').on(table.sortOrder),
+    index('stripeProduct_planId_idx').on(table.planId),
   ]
 )
 
@@ -398,5 +414,16 @@ export const notificationRelations = relations(notification, ({ one }) => ({
   user: one(user, {
     fields: [notification.userId],
     references: [user.id],
+  }),
+}))
+
+export const plansRelations = relations(plans, ({ many }) => ({
+  stripeProducts: many(stripeProduct),
+}))
+
+export const stripeProductRelations = relations(stripeProduct, ({ one }) => ({
+  plan: one(plans, {
+    fields: [stripeProduct.planId],
+    references: [plans.id],
   }),
 }))

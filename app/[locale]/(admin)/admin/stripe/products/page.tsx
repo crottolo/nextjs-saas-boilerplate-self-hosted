@@ -69,7 +69,13 @@ interface Product {
   enabled: boolean
   sortOrder: number
   popular: boolean
+  planId: string | null
   createdAt: string
+}
+
+interface Plan {
+  id: string
+  name: LocalizedField
 }
 
 interface ArchivedProduct {
@@ -90,6 +96,7 @@ export default function AdminStripeProductsPage() {
   const tCommon = useTranslations('common')
 
   const [products, setProducts] = useState<Product[]>([])
+  const [plans, setPlans] = useState<Plan[]>([])
   const [archivedProducts, setArchivedProducts] = useState<ArchivedProduct[]>(
     []
   )
@@ -117,6 +124,7 @@ export default function AdminStripeProductsPage() {
   const [formSortOrder, setFormSortOrder] = useState('0')
   const [formPopular, setFormPopular] = useState(false)
   const [formEnabled, setFormEnabled] = useState(false)
+  const [formPlanId, setFormPlanId] = useState<string>('')
 
   useEffect(() => {
     fetchProducts()
@@ -125,10 +133,17 @@ export default function AdminStripeProductsPage() {
   async function fetchProducts() {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/stripe/products')
-      const data = await res.json()
-      if (data.products) {
-        setProducts(data.products)
+      const [productsRes, plansRes] = await Promise.all([
+        fetch('/api/admin/stripe/products'),
+        fetch('/api/admin/plans'),
+      ])
+      const productsData = await productsRes.json()
+      const plansData = await plansRes.json()
+      if (productsData.products) {
+        setProducts(productsData.products)
+      }
+      if (plansData.plans) {
+        setPlans(plansData.plans)
       }
     } catch {
       toast.error(t('toast.fetchFailed'))
@@ -205,6 +220,7 @@ export default function AdminStripeProductsPage() {
           sortOrder: parseInt(formSortOrder) || 0,
           popular: formPopular,
           enabled: formEnabled,
+          planId: formPlanId || null,
         }),
       })
       const data = await res.json()
@@ -246,6 +262,7 @@ export default function AdminStripeProductsPage() {
             sortOrder: parseInt(formSortOrder) || 0,
             popular: formPopular,
             enabled: formEnabled,
+            planId: formPlanId || null,
           }),
         }
       )
@@ -325,6 +342,7 @@ export default function AdminStripeProductsPage() {
     setFormSortOrder(product.sortOrder.toString())
     setFormPopular(product.popular)
     setFormEnabled(product.enabled)
+    setFormPlanId(product.planId || '')
     setEditDialogOpen(true)
   }
 
@@ -339,6 +357,7 @@ export default function AdminStripeProductsPage() {
     setFormSortOrder('0')
     setFormPopular(false)
     setFormEnabled(false)
+    setFormPlanId('')
   }
 
   function formatPrice(cents: number, currency: string) {
@@ -476,6 +495,29 @@ export default function AdminStripeProductsPage() {
                       placeholder={t('form.featuresPlaceholder')}
                       rows={4}
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="plan">{t('form.plan')}</Label>
+                    <Select
+                      value={formPlanId || '__none__'}
+                      onValueChange={(v) =>
+                        setFormPlanId(v === '__none__' ? '' : v)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('form.noPlan')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__none__">
+                          {t('form.noPlan')}
+                        </SelectItem>
+                        {plans.map((plan) => (
+                          <SelectItem key={plan.id} value={plan.id}>
+                            {getLocalized(plan.name, 'en')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -746,6 +788,25 @@ export default function AdminStripeProductsPage() {
                 onChange={(e) => setFormFeatures(e.target.value)}
                 rows={4}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editPlan">{t('form.plan')}</Label>
+              <Select
+                value={formPlanId || '__none__'}
+                onValueChange={(v) => setFormPlanId(v === '__none__' ? '' : v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('form.noPlan')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">{t('form.noPlan')}</SelectItem>
+                  {plans.map((plan) => (
+                    <SelectItem key={plan.id} value={plan.id}>
+                      {getLocalized(plan.name, 'en')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
