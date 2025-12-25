@@ -4,6 +4,7 @@ import { admin, organization, twoFactor, magicLink } from 'better-auth/plugins'
 import { db } from './db'
 import { sendEmail } from './email'
 import { logActivity } from './activity'
+import { canCreateOrganization } from './plans'
 
 // DEBUG: Log configurazione auth
 console.log(
@@ -112,6 +113,11 @@ export const auth = betterAuth({
       issuer: 'AuthApp',
     }),
     organization({
+      async allowUserToCreateOrganization(user) {
+        // Check if user can create more organizations based on their plan limits
+        const result = await canCreateOrganization(user.id)
+        return result.allowed
+      },
       async sendInvitationEmail(data) {
         // Use /en/ as default locale for invite emails (user will be redirected to preferred locale)
         const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/en/invite/${data.id}?email=${encodeURIComponent(data.email)}`

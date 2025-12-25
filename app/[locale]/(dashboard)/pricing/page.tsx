@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { Check, Crown, Loader2, AlertCircle } from 'lucide-react'
+import {
+  Check,
+  Crown,
+  Loader2,
+  AlertCircle,
+  Building2,
+  Zap,
+  Infinity,
+} from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
@@ -16,21 +24,30 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+
+interface PlanPrice {
+  id: string
+  productId: string
+  price: number
+  currency: string
+  interval: string | null
+  trialDays: number
+}
 
 interface Plan {
   id: string
   name: string
   description: string | null
-  price: number
-  currency: string
-  interval: string | null
-  priceId: string
+  credits: number
+  maxOrganizations: number
+  isDefault: boolean | null
   features: string[]
-  limits: { projects?: number; storage?: number }
-  trialDays: number
   popular: boolean
+  prices: PlanPrice[]
 }
 
 export default function PricingPage() {
@@ -42,6 +59,7 @@ export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null)
   const [currentPlan, setCurrentPlan] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isYearly, setIsYearly] = useState(false)
   const [subscription, setSubscription] = useState<{
     status?: string
     cancelAtPeriodEnd?: boolean
@@ -126,8 +144,8 @@ export default function PricingPage() {
     fetchSubscription()
   }, [])
 
-  async function handleUpgrade(planName: string, priceId: string) {
-    setLoading(planName)
+  async function handleUpgrade(planId: string, priceId: string) {
+    setLoading(planId)
     try {
       const baseUrl = window.location.origin
       const successUrl = `${baseUrl}/pricing?upgraded=true`
@@ -151,6 +169,15 @@ export default function PricingPage() {
     } finally {
       setLoading(null)
     }
+  }
+
+  // Get the price for a plan based on current interval toggle
+  function getPlanPrice(plan: Plan): PlanPrice | null {
+    if (plan.prices.length === 0) return null
+    const targetInterval = isYearly ? 'year' : 'month'
+    return (
+      plan.prices.find((p) => p.interval === targetInterval) || plan.prices[0]
+    )
   }
 
   async function handleManageBilling() {
@@ -225,12 +252,51 @@ export default function PricingPage() {
     )
   }
 
+  // Check if we have yearly prices available
+  const hasYearlyPrices = plans.some((plan) =>
+    plan.prices.some((p) => p.interval === 'year')
+  )
+
   return (
     <div className="container max-w-5xl py-8 mx-auto">
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
         <p className="text-muted-foreground">{t('description')}</p>
       </div>
+
+      {/* Monthly/Yearly Toggle */}
+      {hasYearlyPrices && (
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <Label
+            htmlFor="billing-toggle"
+            className={cn(
+              'cursor-pointer transition-colors',
+              !isYearly
+                ? 'text-foreground font-medium'
+                : 'text-muted-foreground'
+            )}
+          >
+            {t('monthly')}
+          </Label>
+          <Switch
+            id="billing-toggle"
+            checked={isYearly}
+            onCheckedChange={setIsYearly}
+          />
+          <Label
+            htmlFor="billing-toggle"
+            className={cn(
+              'cursor-pointer transition-colors',
+              isYearly ? 'text-foreground font-medium' : 'text-muted-foreground'
+            )}
+          >
+            {t('yearly')}
+            <Badge variant="secondary" className="ml-2">
+              {t('savePercent', { percent: 20 })}
+            </Badge>
+          </Label>
+        </div>
+      )}
 
       {subscription && (
         <Card className="mb-8 bg-primary/5 border-primary/20">
@@ -267,16 +333,16 @@ export default function PricingPage() {
 
       <div className="grid md:grid-cols-3 gap-6">
         {plans.map((plan) => {
-          const isCurrentPlan =
-            activePlan.toLowerCase() === plan.name.toLowerCase()
+          const isCurrentPlan = activePlan === plan.id
+          const price = getPlanPrice(plan)
 
           return (
             <Card
               key={plan.id}
               className={cn(
-                'relative transition-all',
+                'relative transition-all flex flex-col',
                 isCurrentPlan &&
-                  'border-5 border-primary ring-2 ring-primary/20 shadow-lg',
+                  'border-2 border-primary ring-2 ring-primary/20 shadow-lg',
                 plan.popular && !isCurrentPlan && 'border-primary/50 shadow-md'
               )}
             >
@@ -294,23 +360,59 @@ export default function PricingPage() {
                 </Badge>
               )}
 
-              <CardHeader className={cn(isCurrentPlan)}>
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   {plan.name}
                   {isCurrentPlan && <Check className="h-5 w-5 text-primary" />}
                 </CardTitle>
                 <CardDescription>{plan.description}</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">
-                    {formatPrice(plan.price, plan.currency)}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {t('perInterval', { interval: plan.interval || 'month' })}
-                  </span>
+                  {price ? (
+                    <>
+                      <span className="text-4xl font-bold">
+                        {formatPrice(price.price, price.currency)}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {t('perInterval', {
+                          interval: price.interval || 'month',
+                        })}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-4xl font-bold">{t('free')}</span>
+                  )}
                 </div>
               </CardHeader>
 
-              <CardContent>
+              <CardContent className="flex-1">
+                {/* Limits Section */}
+                <div className="mb-4 p-3 bg-muted/50 rounded-lg space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                    <span>
+                      {plan.maxOrganizations === -1 ? (
+                        <span className="flex items-center gap-1">
+                          <Infinity className="h-4 w-4" />
+                          {t('limits.unlimitedOrgs')}
+                        </span>
+                      ) : (
+                        t('limits.organizations', {
+                          count: plan.maxOrganizations,
+                        })
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Zap className="h-4 w-4 text-muted-foreground" />
+                    <span>
+                      {t('limits.credits', {
+                        count: plan.credits.toLocaleString(),
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Features */}
                 <ul className="space-y-3">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center gap-2">
@@ -318,11 +420,11 @@ export default function PricingPage() {
                       <span className="text-sm">{feature}</span>
                     </li>
                   ))}
-                  {plan.trialDays > 0 && (
+                  {price && price.trialDays > 0 && (
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-500 shrink-0" />
                       <span className="text-sm">
-                        {t('trialDays', { days: plan.trialDays })}
+                        {t('trialDays', { days: price.trialDays })}
                       </span>
                     </li>
                   )}
@@ -335,18 +437,26 @@ export default function PricingPage() {
                     <Check className="mr-2 h-4 w-4" />
                     {t('currentPlanBadge')}
                   </Button>
-                ) : (
+                ) : plan.isDefault ? (
+                  <Button className="w-full" variant="outline" disabled>
+                    {t('freePlan')}
+                  </Button>
+                ) : price ? (
                   <Button
                     className="w-full"
                     variant={plan.popular ? 'default' : 'outline'}
-                    onClick={() => handleUpgrade(plan.name, plan.priceId)}
-                    disabled={loading === plan.name}
+                    onClick={() => handleUpgrade(plan.id, price.id)}
+                    disabled={loading === plan.id}
                   >
-                    {loading === plan.name
+                    {loading === plan.id
                       ? tCommon('loading')
                       : currentPlan
                         ? t('switchPlan')
                         : t('getStarted')}
+                  </Button>
+                ) : (
+                  <Button className="w-full" variant="outline" disabled>
+                    {t('noPrice')}
                   </Button>
                 )}
               </CardFooter>

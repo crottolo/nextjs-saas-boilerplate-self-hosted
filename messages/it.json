@@ -296,6 +296,7 @@
     "title": "Organizzazioni",
     "description": "Gestisci le tue organizzazioni e i team",
     "create": "Crea organizzazione",
+    "upgrade": "Passa a un piano superiore",
     "empty": "Non hai ancora nessuna organizzazione.",
     "createFirst": "Crea la tua prima organizzazione",
     "active": "Attiva",
@@ -310,7 +311,14 @@
       "slugPlaceholder": "acme-srl",
       "submit": "Crea organizzazione",
       "submitting": "Creazione...",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "limitReached": {
+        "title": "Limite organizzazioni raggiunto",
+        "description": "Hai raggiunto il numero massimo di organizzazioni per il tuo piano.",
+        "currentUsage": "Utilizzo attuale",
+        "usageText": "Hai {current} di {max} organizzazioni con il piano {plan}.",
+        "upgrade": "Passa a un piano superiore"
+      }
     },
     "detail": {
       "title": "Organizzazione",
@@ -421,6 +429,17 @@
   "pricing": {
     "title": "Scegli il tuo piano",
     "description": "Inizia gratis e aggiorna man mano che cresci",
+    "monthly": "Mensile",
+    "yearly": "Annuale",
+    "savePercent": "Risparmia {percent}%",
+    "free": "Gratis",
+    "freePlan": "Piano Gratuito",
+    "noPrice": "Prossimamente",
+    "limits": {
+      "organizations": "{count} organizzazioni",
+      "credits": "{count} crediti",
+      "unlimitedOrgs": "Organizzazioni illimitate"
+    },
     "noPlans": {
       "title": "Nessun piano disponibile",
       "description": "I piani tariffari non sono ancora stati configurati.",

@@ -296,6 +296,7 @@
     "title": "Organizations",
     "description": "Manage your organizations and teams",
     "create": "Create Organization",
+    "upgrade": "Upgrade Plan",
     "empty": "You don't have any organizations yet.",
     "createFirst": "Create your first organization",
     "active": "Active",
@@ -310,7 +311,14 @@
       "slugPlaceholder": "acme-inc",
       "submit": "Create Organization",
       "submitting": "Creating...",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "limitReached": {
+        "title": "Organization Limit Reached",
+        "description": "You've reached the maximum number of organizations for your plan.",
+        "currentUsage": "Current Usage",
+        "usageText": "You have {current} of {max} organizations on the {plan} plan.",
+        "upgrade": "Upgrade Plan"
+      }
     },
     "detail": {
       "title": "Organization",
@@ -421,6 +429,17 @@
   "pricing": {
     "title": "Choose your plan",
     "description": "Start free and upgrade as you grow",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "savePercent": "Save {percent}%",
+    "free": "Free",
+    "freePlan": "Free Plan",
+    "noPrice": "Coming soon",
+    "limits": {
+      "organizations": "{count} organizations",
+      "credits": "{count} credits",
+      "unlimitedOrgs": "Unlimited organizations"
+    },
     "noPlans": {
       "title": "No plans available",
       "description": "Pricing plans have not been configured yet.",
