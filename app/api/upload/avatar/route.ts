@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const filepath = join(uploadDir, filename)
     await writeFile(filepath, buffer)
 
-    const imageUrl = `/uploads/avatars/${filename}`
+    const imageUrl = `/api/uploads/avatars/${filename}`
 
     await db
       .update(user)
