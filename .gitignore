@@ -45,7 +45,6 @@ next-env.d.ts
 .mcp.json
 
 # docker local
-docker-compose.local.yml
 .env.docker
 /pgadmin/
 *.code-workspace

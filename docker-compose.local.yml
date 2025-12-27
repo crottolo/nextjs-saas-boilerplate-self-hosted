@@ -1,0 +1,40 @@
+# Solo database per sviluppo locale
+# Uso: docker compose -f docker-compose.local.yml up -d
+
+services:
+  postgresql:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth_app
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data-local:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth_app"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data-local:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./pgadmin/pgpass:/pgadmin4/pgpass:ro
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+volumes:
+  postgres-data-local:
+  pgadmin-data-local:
