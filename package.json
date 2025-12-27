@@ -1,7 +1,22 @@
 {
-  "name": "temp",
-  "version": "0.1.0",
+  "name": "nextjs-saas-boilerplate-self-hosted",
+  "version": "1.0.0",
+  "description": "The only self-hosted SaaS boilerplate with Docker + Coolify out of the box. Next.js 16, Better Auth, Stripe subscriptions, Organizations, Admin panel, i18n, 2FA. Ship your SaaS in days, not months.",
   "private": true,
+  "author": "crottolo",
+  "license": "MIT",
+  "keywords": [
+    "nextjs",
+    "saas",
+    "boilerplate",
+    "self-hosted",
+    "docker",
+    "coolify",
+    "better-auth",
+    "stripe",
+    "postgresql",
+    "typescript"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
