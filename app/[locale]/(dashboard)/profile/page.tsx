@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
 import { authClient, useSession } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
@@ -41,6 +42,7 @@ export default function ProfilePage() {
   const t2FA = useTranslations('twoFactor')
   const tToast = useTranslations('profile.toast')
   const { data: session } = useSession()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [profileMessage, setProfileMessage] = useState('')
   const [passwordMessage, setPasswordMessage] = useState('')
@@ -245,6 +247,7 @@ export default function ProfilePage() {
               <AvatarUpload
                 currentImage={session?.user.image}
                 name={session?.user.name}
+                onUploadComplete={() => router.refresh()}
               />
               <form
                 onSubmit={handleUpdateProfile}

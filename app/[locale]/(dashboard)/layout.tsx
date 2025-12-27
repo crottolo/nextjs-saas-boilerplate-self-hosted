@@ -97,6 +97,7 @@ export default function DashboardLayout({
           name: session.user.name || 'User',
           email: session.user.email,
           role: session.user.role ?? undefined,
+          image: session.user.image,
         }}
       />
       <SidebarInset>
